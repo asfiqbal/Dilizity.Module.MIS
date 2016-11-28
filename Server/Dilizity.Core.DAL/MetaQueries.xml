@@ -1,0 +1,276 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <Schema Name="Report" DataSource="Server=.;Database=ReportMIS;User Id=sa;Password=Avanza123;Connection Timeout=10;" Provider="System.Data.SqlClient">
+      <Query ID="GetAllReports" DataSource="">
+        <![CDATA[
+          SELECT REPORT_ID ReportId, REPORT_NAME, REPORT_DISPLAY_NAME, REPORT_SQL
+          FROM   REPORT
+        ]]>
+      </Query>
+      <Query ID="GetSpecificReport" DataSource="">
+        <![CDATA[
+          SELECT REPORT_ID ReportId, REPORT_NAME, REPORT_DISPLAY_NAME, REPORT_SQL
+          FROM   REPORT
+          WHERE  REPORT_ID = @ReportId
+        ]]>
+        <Param Name="ReportId" Type="System.Int32"  Size="0"/>
+      </Query>
+      <Query ID="InsertReport">
+        <![CDATA[
+          INSERT INTO REPORT (REPORT_NAME, REPORT_DISPLAY_NAME, REPORT_SQL) VALUES (@ReportName, @ReportDisplayName, @ReportSQL)
+        ]]>
+        <Param Name="ReportName" Type="System.String"  Size="50"/>
+        <Param Name="ReportDisplayName" Type="System.String"  Size="20"/>
+        <Param Name="ReportSQL" Type="System.String"  Size="0"/>
+      </Query>
+      <Query ID="UpdateReport">
+        <![CDATA[
+          UPDATE REPORT
+          SET REPORT_NAME = 'Transaction'
+        ]]>
+      </Query>
+      <Query ID="DeleteReport">
+        <![CDATA[
+          DELETE FROM REPORT
+          WHERE REPORT_ID = @ReportId
+        ]]>
+        <Param Name="ReportId" Type="System.Int32"  Size="0"/>
+      </Query>
+      <Query ID="CountReport">
+        <![CDATA[
+            SELECT COUNT(*) TotalCount
+            FROM   REPORT
+          ]]>
+      </Query>
+      <Query ID="GetMenus" DataSource="">
+        <![CDATA[
+          SELECT  REPORT_MENU_ID Id, 
+                  PARENT_ID ParentId,
+                  DISPLAY_NAME MenuName,
+                  P.PERMISSION_NAME PermissionName,
+                  URL URL
+          FROM	SEC_USER SU 
+		          INNER JOIN (SELECT DISTINCT UR.USER_ID, SP.PERMISSION_ID, SP.PERMISSION_NAME
+			          FROM SEC_USER_ROLE UR
+			          INNER JOIN SEC_ROLE_PERMISSION RP ON UR.ROLE_ID = RP.ROLE_ID
+			          INNER JOIN SEC_PERMISSION SP ON RP.PERMISSION_ID = SP.PERMISSION_ID AND SP.IS_DELETED = 0
+			          ) P ON SU.USER_ID = P.USER_ID
+                  INNER JOIN RPT_REPORT_MENU RM ON P.PERMISSION_ID = RM.PERMISSION_ID
+          WHERE   SU.LOGIN_ID = @LoginId
+        ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+      </Query>
+      <Query ID="GetTemplateCodes" DataSource="">
+        <![CDATA[
+            SELECT TEMPLATE_CODE_ID TemplateCodeId,
+            NAME Name,
+            DESCRIPTION Description,
+            MULTIPLE_RESULT MultipleResult,
+            CONTEXT_AWARE ContextAware,
+            DATA_FUNCTION DataFunction,
+            IS_DELETED IsDeleted,
+            IS_SYSTEM IsSystem,
+            CREATED_ON CreatedOn,
+            CREATED_BY CreatedBy,
+            UPDATED_ON UpdatedOn,
+            UPDATED_BY UpdatedBy
+            FROM MSG_TEMPLATE_CODES
+          ]]>
+      </Query>
+      <Query ID="IsValidMessageTag" DataSource="">
+        <![CDATA[
+            SELECT 1 ValidTag
+            FROM MSG_TEMPLATE_CODES
+            WHERE IS_DELETED = 0
+            AND NAME = @Tag
+          ]]>
+        <Param Name="Tag" Type="System.String"  Size="400"/>
+      </Query>
+      <Query ID="GetSMTPSettings" DataSource="">
+        <![CDATA[
+          select SMTP_SERVER SMTPServer,SMTP_SERVER_FROM_ADDRESS SMTPServerFromAddress,SMTP_SERVER_USER_ID SMTPServerUserId,SMTP_SERVER_Password SMTPServerPassword,SMTP_SERVER_Port SMTPServerPort, SMTP_SERVER_ENABLE_SSL SMTPServerEnableSSL
+          from 
+          (
+            select Name,value
+            from SYSTEM_CONFIGURATION
+          ) src
+          pivot
+          (
+            max(value)
+            for Name in (SMTP_SERVER,SMTP_SERVER_FROM_ADDRESS,SMTP_SERVER_USER_ID,SMTP_SERVER_Password,SMTP_SERVER_Port, SMTP_SERVER_ENABLE_SSL)
+          ) piv;
+            ]]>
+      </Query>
+      <Query ID="GetSMSSettings" DataSource="">
+        <![CDATA[
+          select SMS_SERVER_URL SMSServerURL
+          from 
+          (
+            select Name,value
+            from SYSTEM_CONFIGURATION
+          ) src
+          pivot
+          (
+            max(value)
+            for Name in (SMS_SERVER_URL)
+          ) piv;
+            ]]>
+      </Query>
+      <Query ID="GetEmailTemplate" DataSource="">
+        <![CDATA[
+          SELECT  MT.NAME Name, MT.TEMPLATE Template, MT.SUBJECT Subject, DUP.PERMISSION_NAME PermissionName
+          FROM	[DBO].[MSG_ASSIGNED_TEMPLATES] MAT
+		            INNER JOIN [MSG_TEMPLATES] MT ON MAT.TEMPLATE_ID = MT.TEMPLATE_ID AND MT.IS_DELETED = 0
+		            INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION DUP ON MAT.PERMISSION_ID = DUP.PERMISSION_ID
+          WHERE MT.TEMPLATE_TYPE = 1
+          AND		DUP.LOGIN_ID = @LoginId
+          AND	  MAT.PERMISSION_ID in (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME in ( @Permissions))
+        ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="Permissions" Type="System.String"  Size="200"/>
+      </Query>
+      <Query ID="GetWorkFlowActions" DataSource="">
+        <![CDATA[
+          SELECT	WFA.PERMISSION_ID PermissionId,
+		              SYSTEM_TYPE SystemType,
+		              SYSTEM_ASSEMBLY SystemAssembly,
+		              ACTION_ORDER ActionOrder,
+		              VERSION Version
+          FROM	  WORK_FLOW_ACTION WFA
+		              INNER JOIN SEC_PERMISSION P ON WFA.PERMISSION_ID = P.PERMISSION_ID
+          WHERE   P.PERMISSION_NAME = @Permission
+      ]]>
+        <Param Name="Permission" Type="System.String"  Size="200"/>
+      </Query>
+      <Query ID="GetReportMetaScreenInfo" DataSource="">
+        <![CDATA[
+          select  R.REPORT_ID ReportId, R.REPORT_PERMISSION_ID ReportPermissionId, R.SYSTEM_NAME SystemName, R.DISPLAY_NAME DisplayName
+          from	  RPT_REPORT R
+		              INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION UP ON R.REPORT_PERMISSION_ID = UP.PERMISSION_ID
+          WHERE   R.REPORT_ID = @ReportId
+          AND		  R.IS_DELETED = 0
+          AND		  UP.LOGIN_ID = @LoginId
+        ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="ReportId" Type="System.Int32"  Size="0"/>
+      </Query>
+      <Query ID="GetReportMetaFiltersInfo" DataSource="">
+        <![CDATA[
+            SELECT  FILTER_NAME FilterName,
+		            DISPLAY_NAME DispayName,
+		            TD1.TYPE_DATA FilterType,
+		            TD2.TYPE_DATA FilterDataType,
+		            ISNULL(FILTER_DATA_SOURCE_QUERY, '') FilterDataSourceQuery,
+		            ISNULL(DS.CONNECTION_STRING,'') FilterConnectionString
+            FROM	RPT_REPORT_FILTERS RF
+		            INNER JOIN SYSTEM_TYPE_DATA TD1 ON RF.FILTER_TYPE_ID = TD1.TYPE_DATA_ID
+		            INNER JOIN SYSTEM_TYPE_DATA TD2 ON RF.FILTER_DATA_TYPE_ID = TD2.TYPE_DATA_ID
+		            LEFT OUTER JOIN RPT_REPORT_DATA_SOURCE DS ON RF.REPORT_DATA_SOURCE_ID = DS.REPORT_DATA_SOURCE_ID
+            WHERE  REPORT_ID = @ReportId
+          ]]>
+        <Param Name="ReportId" Type="System.Int32"  Size="0"/>
+      </Query>
+  </Schema>
+  <Schema Name="Security" DataSource="Server=.;Database=ReportMIS;User Id=sa;Password=Avanza123;Connection Timeout=10;" Provider="System.Data.SqlClient">
+      <Query ID="GetAllUsers" DataSource="">
+        <![CDATA[
+          SELECT USER_ID UserId, LOGIN_ID LoginId, PASSWORD Password, PASSWORD_POLICY_ID PasswordPolicyId, PASSWORD_ATTEMPTS PasswordAttempts, ACCOUNT_LOCKED AccountLocked, IS_SYSTEM IsSystem, IS_DELETED IsDeleted, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+          FROM	 [SEC_USER]
+        ]]>
+      </Query>
+      <Query ID="GetUser" DataSource="">
+        <![CDATA[
+            SELECT  USER_ID UserId, NAME Name, LOGIN_ID LoginId, PASSWORD Password, PASSWORD_POLICY_ID PasswordPolicyId, PASSWORD_ATTEMPTS PasswordAttempts, ACCOUNT_LOCKED AccountLocked, [CHANGE_PASSWORD_ON_LOGON] ChangePasswordOnLogon, EMAIL Email, MOBILE_NUMBER MobileNumber, LAST_PASSWORD_CHANGE_DATETIME LastPasswordChangeDateTime, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+            FROM    SEC_USER SU
+            WHERE   SU.IS_DELETED = 0
+            AND     SU.LOGIN_ID = @LoginId
+          ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+      </Query>
+      <Query ID="UpdateUserPasswordAttempt" DataSource="">
+        <![CDATA[
+              UPDATE  SEC_USER
+              SET     PASSWORD_ATTEMPTS = @PasswordAttempt,
+                      ACCOUNT_LOCKED = @AccountLocked
+              WHERE   IS_DELETED = 0
+              AND     LOGIN_ID = @LoginId
+            ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="PasswordAttempt" Type="System.Int32"  Size="0"/>
+        <Param Name="AccountLocked" Type="System.Int32"  Size="0"/>
+      </Query>    
+      <Query ID="ChangeUserPassword" DataSource="">
+        <![CDATA[
+              UPDATE  SEC_USER
+              SET     PASSWORD = @Password,
+                      PASSWORD_ATTEMPTS = (select  DEFAULT_PASSWORD_ATTEMPTS from	SEC_PASSWORD_POLICY WHERE PASSWORD_POLICY_ID = SEC_USER.PASSWORD_POLICY_ID),
+                      ACCOUNT_LOCKED = 0,
+		                  UPDATED_ON = GETDATE(),
+                      LAST_PASSWORD_CHANGE_DATETIME = GETDATE(),
+		                  CHANGE_PASSWORD_ON_LOGON = 0
+              WHERE   IS_DELETED = 0
+              AND     LOGIN_ID = @LoginId;
+            ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="Password" Type="System.String"  Size="200"/>
+      </Query>        
+      <Query ID="InsertChangePasswordHistory" DataSource="">
+        <![CDATA[
+              INSERT INTO [SEC_CHANGE_PASSWORD_HISTORY](USER_ID,PASSWORD,CREATED_ON,CREATED_BY)
+              VALUES((SELECT USER_ID FROM SEC_USER WHERE LOGIN_ID = @LoginId),@Password, GetDate(), @LoginId);
+            ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="Password" Type="System.String"  Size="200"/>
+      </Query>
+      <Query ID="CheckLastNPasswords" DataSource="">
+        <![CDATA[
+                SELECT 1 Matched
+                FROM
+                (
+                select TOP (@NumberCantReuse) CPH.PASSWORD
+                FROM	[SEC_CHANGE_PASSWORD_HISTORY] CPH
+		                INNER JOIN SEC_USER SU ON CPH.USER_ID = SU.USER_ID
+                WHERE   SU.LOGIN_ID = @LoginId
+                ORDER BY CPH.CREATED_ON DESC
+                ) T
+                WHERE T.PASSWORD IN (@Password) 
+            ]]>
+        <Param Name="NumberCantReuse" Type="System.Int32"  Size="0"/>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="Password" Type="System.String"  Size="8000"/>
+      </Query>
+      <Query ID="GetUserPasswordPolicy" DataSource="">
+        <![CDATA[
+              SELECT  SP.PASSWORD_POLICY_ID PasswordPolicyId, SP.POLICY_NAME PolicyName, SP.LENGTH_RULE LengthRule, SP.EXPIRY_RULE ExpiryRule, SP.NUMBER_CANT_REUSE NumberCantReuse, SP.COMPLEXITY_RULE ComplexityRule, SP.FIRST_LOGIN_CHANGE_PASSWORD FirstLoginChangePassword, SP.IS_SYSTEM IsSystem, SP.IS_DELETED IsDeleted, SP.IS_EMAIL_SENT_ON_LOGON IsEmailSentOnLogon, SP.IS_SMS_SENT_ON_LOGON IsSMSSentOnLogon, SP.IS_2FA_ENABLED Is2FAEnabled, SP.DEFAULT_PASSWORD_ATTEMPTS DefaultPasswordAttempts, SP.ACCOUNT_LOCK_ON_FAILED_ATTEMPTS AccountLockOnFailedAttempts, SP.CREATED_ON CreatedOn, SP.CREATED_BY CreatedBy, SP.UPDATED_ON UpdatedOn, SP.UPDATED_BY UpdatedBy
+              FROM	  SEC_USER SU 
+		                  INNER JOIN SEC_PASSWORD_POLICY SP ON SU.PASSWORD_POLICY_ID = SP.PASSWORD_POLICY_ID AND SP.IS_DELETED = 0
+              WHERE   SU.LOGIN_ID = @LoginId
+              AND     SU.IS_DELETED = 0
+            ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+      </Query>    
+      <Query ID="CheckPermission" DataSource="">
+        <![CDATA[
+              select  1 Success
+              FROM	  SEC_USER SU
+		                  INNER JOIN SEC_USER_ROLE SUR ON SU.USER_ID = SUR.USER_ID
+		                  INNER JOIN SEC_ROLE_PERMISSION SRP ON SUR.ROLE_ID = SRP.ROLE_ID
+		                  INNER JOIN SEC_PERMISSION SP ON SRP.PERMISSION_ID = SP.PERMISSION_ID
+              WHERE   SP.PERMISSION_NAME IN (@Permission)
+              AND     SU.LOGIN_ID = @LoginId
+            ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="Permission" Type="System.String"  Size="8000"/>
+      </Query>
+      <Query ID="InsertAudit">
+        <![CDATA[
+            INSERT INTO SEC_AUDIT (USER_ID, PERMISSION_ID, IS_SUCCESS, DATA, CREATED_BY) VALUES ((SELECT USER_ID FROM SEC_USER WHERE LOGIN_ID = @LoginId), (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionName), @IsSuccess, @Data, @CreatedBy);
+          ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="PermissionName" Type="System.String"  Size="200"/>
+        <Param Name="IsSuccess" Type="System.String"  Size="200"/>
+        <Param Name="Data" Type="System.String"  Size="-1"/>
+        <Param Name="CreatedBy" Type="System.String"  Size="200"/>
+      </Query>
+  </Schema>
+</root>
