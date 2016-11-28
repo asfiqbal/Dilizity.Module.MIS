@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html ng-app="ReportingMIS">
+<head>
+    <meta charset="utf-8" />
+    <title>AngularJS User Registration and Login Example</title>
+    <link rel="stylesheet" type="text/css" href="styles/LoginStyle.css">
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="styles/ui-layout.css" />
+    <link rel="stylesheet" type="text/css" href="styles/main.css" />
+    <link rel="stylesheet" type="text/css" href="styles/ui-grid.css" />
+    <link rel="stylesheet" type="text/css" href="styles/ui-navbar.css" />
+
+
+    <script src="scripts/jquery-2.0.3.min.js"></script>
+    <script src="scripts/angular.js"></script>
+    <script src="scripts/angular-ui-router.js"></script>
+    <script src="scripts/angular-cookies.js"></script>
+    <script src="scripts/angular-ui/ui-bootstrap.js"></script>
+    <script src="scripts/ui-layout.min.js"></script>
+    <!--<script src="scripts/angular-ui-router.js"></script>-->
+    <script src="scripts/ui-grid.min.js"></script>
+    <script src="scripts/ui-navbar.js"></script>
+
+    <script src="app/app.module.js"></script>
+    <script src="app/config/app.config.js"></script>
+    <script src="app/config/app.routes.js"></script>
+    <script src="app/services/AuthenticationService.js"></script>
+    <script src="app/services/ReportService.js"></script>
+    <script src="app/services/FlashService.js"></script>
+    <script src="app/services/MenuService.js"></script>
+    <!--<script src="app/directives/menuDirective.js"></script>-->
+    <!-- Real user service that uses an api -->
+    <!-- <script src="app-services/user.service.js"></script> -->
+    <!-- Fake user service for demo that uses local storage -->
+    <script src="app/services/userServiceMock.js"></script>
+    <script src="app/controllers/loginController.js"></script>
+    <script src="app/controllers/homeController.js"></script>
+    <script src="app/controllers/reportController.js"></script>
+    <script src="app/controllers/menuController.js"></script>
+</head>
+<body>
+    <div>
+        <div class="login-page" ng-controller="loginController as vm">
+            <div class="form">
+                <form class="login-form" name="form" ng-submit="vm.login()" role="form">
+                    <fieldset>
+                        <input type="text"
+                               placeholder="username"
+                               name="username"
+                               id="username"
+                               ng-model="vm.username"
+                               ng-minlength=5
+                               ng-maxlength=20
+                               required />
+
+                        <div class="error" ng-show="loginForm.username.$dirty && loginForm.username.$invalid">
+                            <small class="error" ng-show="loginForm.username.$error.required"> Your name is required.</small>
+                            <small class="error" ng-show="loginForm.username.$error.minlength"> Your name is required to be at least 3 characters </small>
+                            <small class="error" ng-show="loginForm.username.$error.maxlength"> Your name cannot be longer than 20 characters </small>
+                        </div>
+
+                        <input type="password"
+                               placeholder="password"
+                               name="password"
+                               id="password"
+                               ng-model="vm.password"
+                               ng-minlength=5
+                               ng-maxlength=20
+                               required />
+
+                        <button type="submit" ng-disabled="form.$invalid || vm.dataLoading">Login</button>
+                    </fieldset>
+                    <img ng-if="vm.dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                    <p class="message">Not registered? <a href="#">Create an account</a></p>
+                </form>
+                <div ng-class="{ 'alert': flash, 'alert-success': flash.type === 'success', 'alert-danger': flash.type === 'error' }" ng-if="flash" ng-bind="flash.message"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

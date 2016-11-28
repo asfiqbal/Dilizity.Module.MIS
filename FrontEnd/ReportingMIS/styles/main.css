@@ -1,0 +1,76 @@
+﻿body { background: #ededff !important;}
+
+
+.html-back{
+  background : #eee url("http://placehold.it/400x300/eee/666&text=HTML") no-repeat center;
+}
+
+.glyphicon-chevron-left,
+.glyphicon-chevron-right,
+.glyphicon-chevron-up,
+.glyphicon-chevron-down{
+  color: #aaa;
+}
+
+#loaderDiv {
+  float:left;
+  margin-right:20px;
+  width:25px;
+  height:25px;
+}
+
+.ajax-loader {
+   position: absolute;
+   left: 25%;
+   top: 25%;
+   margin-left: -32px; /* -1 * image width / 2 */
+   margin-top: -32px; /* -1 * image height / 2 */
+   display: block;
+}
+
+
+.footer {
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#e6e6ff;
+  padding:1em;
+  box-shadow:0 -5px 20px #555;
+}
+
+.navbar-custom {
+    /*color: #FFFFFF;
+    background-color: #e6e6ff;*/
+    background-color: #e6e6ff;
+}
+
+/*-- change navbar dropdown color --*/
+.navbar-custom .navbar-nav .open .dropdown-menu .dropdown-submenu >li>a,.navbar-custom1 .navbar-nav .open .dropdown-menu {
+  background-color: #4d4dff;
+  color:#ffffff;
+}
+
+.dropdown-submenu {
+    background-color: #e6e6ff;
+}     
+
+.dropdown-menu {
+    background-color: #e6e6ff;
+}   
+
+.dropdown:hover {
+    background-color: #428bca;
+}   
+
+.navbar-default .navbar-nav>.active> a, 
+.navbar-default .navbar-nav>.active> a:focus, 
+.navbar-default .navbar-nav>.active> a:hover {
+  background: #428bca; /* Anything you want */
+}
+
+.hidden{display:none !important}
+
+.navbar{
+   margin-bottom: 0!important;
+}
