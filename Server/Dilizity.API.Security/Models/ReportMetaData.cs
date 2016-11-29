@@ -16,6 +16,7 @@ namespace Dilizity.API.Security.Models
     {
         public int FilterId;
         public string FilterName;
+        public string DisplayName;
         public string FilterType;
         public string FilterDataType;
         public List<ReportSelectionControlData> FilterData;
@@ -24,7 +25,7 @@ namespace Dilizity.API.Security.Models
     {
         public int ReportId;
         public string DisplayName;
-        public string PermissionId;
+        public int PermissionId;
         public List<ReportMetaFiltersData> Filters;
     }
 }

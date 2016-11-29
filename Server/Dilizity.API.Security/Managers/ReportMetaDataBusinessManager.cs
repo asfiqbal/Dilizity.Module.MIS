@@ -35,7 +35,7 @@ namespace Dilizity.API.Security.Managers
             }
         }
 
-        private void PopulateReportMetaFiltersData(ReportMetaDataRequest metaDataRequest, ReportMetaData reportMetaDataOutObject)
+        private void PopulateReportMetaData(ReportMetaDataRequest metaDataRequest, ReportMetaData reportMetaDataOutObject)
         {
             using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA))
             {
@@ -46,16 +46,45 @@ namespace Dilizity.API.Security.Managers
             }
         }
 
-        private void PopulateReportMetaData(ReportMetaDataRequest metaDataRequest, ReportMetaData reportMetaDataOutObject)
+        private void PopulateReportMetaFiltersData(ReportMetaDataRequest metaDataRequest, ReportMetaData reportMetaDataOutObject)
         {
             using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA))
             {
-                List<ReportMetaFiltersData> filtersList = new List<ReportMetaFiltersData>();
+                reportMetaDataOutObject.Filters = new List<ReportMetaFiltersData>();
                 foreach (dynamic reportFilters in dataLayer.ExecuteUsingKey(GET_REPORT_META_FILTERS_INFO, "ReportId", metaDataRequest.ReportId))
                 {
-
+                    ReportMetaFiltersData metafilterData = new ReportMetaFiltersData();
+                    string filterDataSourceQuery = string.Empty;
+                    string filterDataConnectionString = string.Empty;
+                    metafilterData.FilterName = reportFilters.FilterName;
+                    metafilterData.DisplayName = reportFilters.DispayName;
+                    metafilterData.FilterType = reportFilters.FilterType;
+                    metafilterData.FilterDataType = reportFilters.FilterDataType;
+                    if (!string.IsNullOrEmpty(reportFilters.FilterConnectionString) && !string.IsNullOrEmpty(reportFilters.FilterDataSourceQuery))
+                    {
+                        metafilterData.FilterData = GetSelectionFilterDataFromRemoteConnection(reportFilters.ProviderName, reportFilters.FilterConnectionString, reportFilters.FilterDataSourceQuery);
+                        reportMetaDataOutObject.Filters.Add(metafilterData);
+                    }
                 }
-                //reportMetaDataOutObject.Filters = new List<ReportMetaFiltersData>();
             }
         }
+
+
+        private List<ReportSelectionControlData> GetSelectionFilterDataFromRemoteConnection(string remoteProviderName, string remoteConnectionString, string remoteSQL)
+        {
+            string decryptConnectionString = Utility.Decrypt(remoteConnectionString, true);
+            using (DynamicDataLayer dataLayer = new DynamicDataLayer(remoteProviderName, decryptConnectionString))
+            {
+                List<ReportSelectionControlData> selectionControlList = new List<ReportSelectionControlData>();
+                foreach (dynamic keyValue in dataLayer.ExecuteText(remoteSQL))
+                {
+                    ReportSelectionControlData selectionControl = new ReportSelectionControlData();
+                    selectionControl.Id = keyValue.Id.ToString();
+                    selectionControl.value = keyValue.Value.ToString();
+                    selectionControlList.Add(selectionControl);
+                }
+                return selectionControlList;
+            }
+        }
+    }
 }

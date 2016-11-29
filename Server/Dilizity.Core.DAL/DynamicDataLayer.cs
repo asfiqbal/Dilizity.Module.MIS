@@ -79,6 +79,21 @@ namespace Dilizity.Core.DAL
             }
         }
 
+        public DynamicDataLayer(string providerName, string connectionString)
+        {
+            using (FnTraceWrap tracer = new FnTraceWrap())
+            {
+                Contract.Requires(!string.IsNullOrWhiteSpace(providerName));
+                Contract.Requires(!string.IsNullOrWhiteSpace(connectionString));
+
+                DbProviderFactory factory = DbProviderFactories.GetFactory(providerName);
+
+                connection = factory.CreateConnection();
+                connection.ConnectionString = connectionString;
+                connection.Open();
+            }
+        }
+
         public DbConnection Connection
         {
             get { return this.connection; }
@@ -384,8 +399,6 @@ namespace Dilizity.Core.DAL
                 sqlCollection.Append(template);
             }
         }
-
-
 
         public object ExecuteScalar(string commandText, params KeyValuePair<string, object>[] parameters)
         {

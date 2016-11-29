@@ -34,11 +34,11 @@ namespace Dilizity.API.Security.Controllers
                     dataBasService.Add(GlobalConstants.LOGIN_ID, reportMetaDataObject.LoginId);
                     dataBasService.Add(GlobalConstants.PERMISSIONS, Utility.Param2List(reportMetaDataObject.PermissionId));
 
-                    IAbstractBusiness menuManager = new MenuBusinessManager();
+                    IAbstractBusiness menuManager = new ReportMetaDataBusinessManager();
 
                     menuManager.Do(dataBasService);
-                    List<MenuTree> menuStructure = (List<MenuTree>)dataBasService.Get(GlobalConstants.OUT_RESULT);
-                    return Ok(menuStructure);
+                    ReportMetaData outObject = (ReportMetaData)dataBasService.Get(GlobalConstants.OUT_RESULT);
+                    return Ok(outObject);
                 }
             }
             catch (Exception e)

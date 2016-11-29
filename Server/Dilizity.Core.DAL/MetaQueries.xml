@@ -161,7 +161,8 @@
 		            TD1.TYPE_DATA FilterType,
 		            TD2.TYPE_DATA FilterDataType,
 		            ISNULL(FILTER_DATA_SOURCE_QUERY, '') FilterDataSourceQuery,
-		            ISNULL(DS.CONNECTION_STRING,'') FilterConnectionString
+		            ISNULL(DS.CONNECTION_STRING,'') FilterConnectionString,
+		            'System.Data.SqlClient' ProviderName
             FROM	RPT_REPORT_FILTERS RF
 		            INNER JOIN SYSTEM_TYPE_DATA TD1 ON RF.FILTER_TYPE_ID = TD1.TYPE_DATA_ID
 		            INNER JOIN SYSTEM_TYPE_DATA TD2 ON RF.FILTER_DATA_TYPE_ID = TD2.TYPE_DATA_ID

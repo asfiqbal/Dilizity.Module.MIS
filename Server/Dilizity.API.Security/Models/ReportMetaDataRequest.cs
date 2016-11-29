@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Dilizity.API.Security.Models
 {
-    class ReportMetaDataRequest
+    public class ReportMetaDataRequest
     {
         public string PermissionId;
         public string LoginId;
