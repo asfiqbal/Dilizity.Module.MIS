@@ -25,12 +25,19 @@
                 },
             },
         })
-         .state('index.Report1', {
+         .state('index.OpenReport', {
+             url: '/Report/:reportId/:permissionId',
+             templateUrl: 'views/metaReport.html',
+             controller: 'metaReportController',
+             controllerAs: 'vm'
+         })
+        .state('index.Report1', {
              url: '/Report1',
              templateUrl: 'views/report1.html',
              controller: 'reportController',
              controllerAs: 'vm'
          });
+
 
 
         //.state('index.report1', {
