@@ -21,13 +21,12 @@
             vm.dataLoading = true;
             console.log("vm.permission", vm.permission);
             AuthenticationService.Login(vm.permission, vm.username, vm.password, function (response) {
+                console.log("AuthenticationService.Login", response.ActionCode)
                 if (response.status == 200) {
-                    console.log("AuthenticationService.Login", response.ActionCode);
                     AuthenticationService.SetCredentials(vm.username, vm.password);
                     $window.location = '/index.html';
                 }
                 if (response.status == 206) {
-                    alert(response.ActionCode);
                     console.log("AuthenticationService.Login", response.ActionCode);
                     AuthenticationService.SetCredentials(vm.username, vm.password);
                     $window.location = '/changePassword.html';
