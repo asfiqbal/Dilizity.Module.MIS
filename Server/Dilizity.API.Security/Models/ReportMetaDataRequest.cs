@@ -10,11 +10,11 @@ namespace Dilizity.API.Security.Models
     {
         public string PermissionId;
         public string LoginId;
-        public string ReportId;
+        public int ReportId;
 
         public override string ToString()
         {
-            return "PermissionId:" + PermissionId + "LoginId:" + LoginId + "|ReportId:" + ReportId;
+            return "PermissionId:" + PermissionId + "LoginId:" + LoginId + "|ReportId:" + ReportId.ToString();
         }
     }
 }
