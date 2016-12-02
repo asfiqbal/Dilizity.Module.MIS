@@ -37,7 +37,7 @@ namespace Dilizity.API.Security.Managers
                         menuTree.Id = userMenu.Id;
                         menuTree.ParentId = userMenu.ParentId;
                         menuTree.name = userMenu.MenuName;
-                        menuTree.link = userMenu.PermissionName;
+                        menuTree.link = userMenu.Url;
                         menuStructure.Add(menuTree);
                     }
 
