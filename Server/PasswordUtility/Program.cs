@@ -11,9 +11,9 @@ namespace PasswordUtility
     {
         static void Main(string[] args)
         {
-            string passwordToEncrypt = "Server=.;Database=ReportMIS;User Id=sa;Password=Avanza123;Connection Timeout=10;";
-            string encryptedString = Utility.Encrypt(passwordToEncrypt, true);
-            Console.WriteLine(encryptedString);
+            string passwordToDecrypt = "FujJSM6yJIEqYrdYRenZYQ==";
+            string decryptPassword = Utility.Decrypt(passwordToDecrypt, false);
+            Console.WriteLine(decryptPassword);
         }
     }
 }
