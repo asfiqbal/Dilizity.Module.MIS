@@ -46,16 +46,17 @@
         <![CDATA[
           SELECT  REPORT_MENU_ID Id, 
                   PARENT_ID ParentId,
-                  DISPLAY_NAME MenuName,
+                  RM.DISPLAY_NAME MenuName,
                   P.PERMISSION_NAME PermissionName,
-                  URL URL
-          FROM	SEC_USER SU 
-		          INNER JOIN (SELECT DISTINCT UR.USER_ID, SP.PERMISSION_ID, SP.PERMISSION_NAME
-			          FROM SEC_USER_ROLE UR
-			          INNER JOIN SEC_ROLE_PERMISSION RP ON UR.ROLE_ID = RP.ROLE_ID
-			          INNER JOIN SEC_PERMISSION SP ON RP.PERMISSION_ID = SP.PERMISSION_ID AND SP.IS_DELETED = 0
-			          ) P ON SU.USER_ID = P.USER_ID
+                  'index.OpenReport({ reportId: '+cast(R.REPORT_ID as nvarchar(10))+', permissionId: '''+P.PERMISSION_NAME+''' })' Url
+          FROM	  SEC_USER SU 
+		              INNER JOIN (SELECT DISTINCT UR.USER_ID, SP.PERMISSION_ID, SP.PERMISSION_NAME
+			              FROM SEC_USER_ROLE UR
+			              INNER JOIN SEC_ROLE_PERMISSION RP ON UR.ROLE_ID = RP.ROLE_ID
+			              INNER JOIN SEC_PERMISSION SP ON RP.PERMISSION_ID = SP.PERMISSION_ID AND SP.IS_DELETED = 0
+			            ) P ON SU.USER_ID = P.USER_ID
                   INNER JOIN RPT_REPORT_MENU RM ON P.PERMISSION_ID = RM.PERMISSION_ID
+                  LEFT OUTER JOIN RPT_REPORT R ON P.PERMISSION_ID = R.REPORT_PERMISSION_ID
           WHERE   SU.LOGIN_ID = @LoginId
         ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
