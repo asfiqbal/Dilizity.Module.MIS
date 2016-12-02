@@ -132,7 +132,6 @@
             var tmpUserName = $rootScope.globals.currentUser.username;
             $http.get(AppSettings.baseUrl + '/Security/GetMenus/' + tmpUserName)
                 .then(function (response) {
-                    alert(response.data);
                     callback(response);
                 }, function (response) {
                     callback(response);
