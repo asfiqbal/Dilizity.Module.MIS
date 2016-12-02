@@ -74,3 +74,14 @@
 .navbar{
    margin-bottom: 0!important;
 }
+
+.row-bottom-margin { margin-bottom: 0!important; }
+
+.row-no-padding {
+  margin-left: 0;
+  margin-right: 0;
+  [class*="col-"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
