@@ -14,7 +14,7 @@
 
         return service;
 
-        function ExecuteReport(callback) {
+        function ExecuteReport(reportId, permissionName, userName, model, successCallBack, errorCallBack) {
 
             /* Dummy authentication for testing, uses $timeout to simulate api call
              ----------------------------------------------*/
@@ -27,18 +27,17 @@
             //        response = { success: false, message: 'Username or password is incorrect' };
             //    }
             //    callback(response);
-            //}, 1000);
+            //}, 1000);111
 
             /* Use this for real execution
              ----------------------------------------------*/
-            $http({
-                method: "GET",
-                url: 'http://localhost:54341/api/Security/GetAll'
-            }).then(function mySucces(response) {
-                callback(response);
-            }, function myError(response) {
-                //$scope.error = response.statusText;
-            });
+            $http.post(AppSettings.baseUrl + 'Report/ExecuteReport', { PermissionId: permissionName, LoginId: userName, ReportId: reportId, fieldCollection: model })
+                .then(function (response) {
+                    successCallBack(response);
+                }, function (response) {
+                    errorCallBack(response);
+                }
+            );
 
         }
 

@@ -12,7 +12,9 @@ SELECT 1, 'TEMPLATE_TYPE', 'Default Message Template Type', 'System', 'System'
 UNION ALL
 SELECT 200, 'FILTER_TYPE', 'Report Filter Type', 'System', 'System'
 UNION ALL
-SELECT 300, 'FILTER_DATA_TYPE', 'Report Filter Type', 'System', 'System'
+SELECT 300, 'FILTER_DATA_TYPE', 'Report Filter Data Type', 'System', 'System'
+UNION ALL
+SELECT 400, 'TEMPLATE_OPTIONS_TYPE', 'Template Options Type', 'System', 'System'
 GO
 
 INSERT INTO SYSTEM_TYPE_DATA
@@ -28,19 +30,37 @@ SELECT 1, 1,'TEMPLATE_TYPE_EMAIL', 'Default Email Template Type', 'System', 'Sys
 UNION ALL
 SELECT 1, 2,'TEMPLATE_TYPE_SMS', 'Default SMS Template Type', 'System', 'System'
 UNION ALL
-SELECT 200, 1000,'SELECTION_BOX', 'Default Selection Box Control', 'System', 'System'
+SELECT 200, 1000,'select', 'Default Selection Box Control', 'System', 'System'
 UNION ALL
-SELECT 200, 1001,'TEXT_BOX', 'Default Text Box Control', 'System', 'System'
+SELECT 200, 1001,'input', 'Default Text Box Control', 'System', 'System'
 UNION ALL
-SELECT 200, 1002,'CALENDER', 'Default Date Calender Control', 'System', 'System'
+SELECT 200, 1002,'datepicker', 'Default Date Calender Control', 'System', 'System'
 UNION ALL
-SELECT 200, 1003,'NUMERIC', 'Default Numeric Control', 'System', 'System'
+SELECT 200, 1003,'textarea', 'Default Text Area Control', 'System', 'System'
 UNION ALL
-SELECT 300, 2000,'STRING', 'String Data Type', 'System', 'System'
+SELECT 200, 1004,'checkbox', 'Default check box Control', 'System', 'System'
 UNION ALL
-SELECT 300, 2001,'INTEGER', 'Integer Data Type', 'System', 'System'
+SELECT 200, 1005,'multiCheckbox', 'Default Multi checkbox Control', 'System', 'System'
 UNION ALL
-SELECT 300, 2002,'DATETIME', 'Datetime Data Type', 'System', 'System'
+SELECT 200, 1006,'radio', 'Default radio Control', 'System', 'System'
+UNION ALL
+SELECT 200, 1007,'file', 'Default file Control', 'System', 'System'
+UNION ALL
+SELECT 300, 2000,'System.String', 'String Data Type', 'System', 'System'
+UNION ALL
+SELECT 300, 2001,'System.Int32', 'Integer Data Type', 'System', 'System'
+UNION ALL
+SELECT 300, 2002,'System.DateTime', 'Datetime Data Type', 'System', 'System'
+UNION ALL
+SELECT 400, 3001,'text', 'Default Text Type', 'System', 'System'
+UNION ALL
+SELECT 400, 3002,'email', 'Default email Type', 'System', 'System'
+UNION ALL
+SELECT 400, 3003,'password', 'Default password Type', 'System', 'System'
+UNION ALL
+SELECT 400, 3004,'number', 'Default number Type', 'System', 'System'
+UNION ALL
+SELECT 400, 3005,'hidden', 'Default hidden Type', 'System', 'System'
 
 GO
 

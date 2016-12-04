@@ -11,7 +11,7 @@
         var vm = this;
 
         var reportId = -1;
-        var permissionId = '';
+        var permissionName = '';
         vm.model = {};
 
         $scope.gridOptions = {
@@ -31,9 +31,9 @@
         (function initController() {
             console.log("metaReportController.initController -> Begin");
             reportId = $stateParams.reportId;
-            permissionId = $stateParams.permissionId;
-            console.log("$stateParams.reportId", $stateParams.reportId);
-            console.log("$stateParams.permissionId", $stateParams.permissionId);
+            permissionName = $stateParams.PermissionName;
+            console.log("reportId", reportId);
+            console.log("permissionName", permissionName);
 
             console.log("metaReportController.initController -> End");
         })();
@@ -42,104 +42,14 @@
             console.log("loadReport Begin");
             //vm.dataLoading = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
-            ReportService.LoadReport(permissionId, tmpUserName, reportId, function (response) {
+            ReportService.LoadReport(permissionName, tmpUserName, reportId, function (response) {
                 vm.MetaReport = response.data;
+                vm.reportId = vm.MetaReport.ReportId;
+                vm.permissionName = vm.MetaReport.PermissionName;
                 console.log("response.data", response.data);
                 console.log("vm.MetaReport.DisplayName", vm.MetaReport.DisplayName);
                 console.log("loadReport Called");
-                vm.fields = [
-                        {
-                            className: 'row row-no-padding',
-                            fieldGroup: [
-                            {
-                                className: 'col-md-4 ',
-                                key: 'first_name',
-                                type: 'input',
-                                templateOptions: {
-                                    type: 'text',
-                                    label: 'First Name',
-                                    placeholder: 'Enter your first name',
-                                    required: true
-                                }
-                            },
-                            {
-                                className: 'col-md-4 ',
-                                key: 'last_name',
-                                type: 'input',
-                                templateOptions: {
-                                    type: 'text',
-                                    label: 'Last Name',
-                                    placeholder: 'Enter your last name',
-                                    required: true
-                                }
-                            },
-                            {
-                                className: 'col-md-4 ',
-                                key: 'state',
-                                type: 'select',
-                                templateOptions: {
-                                    label: 'State',
-                                    required: true,
-                                    options: [
-                                  { name: 'Tennessee', value: 'TN' },
-                                  { name: 'Texas', value: 'TX' }
-                                    ]
-                                }
-                            },
-                            {
-                                className: 'col-md-4 ',
-                                key: 'email',
-                                type: 'input',
-                                templateOptions: {
-                                    type: 'email',
-                                    label: 'Email address',
-                                    placeholder: 'Enter email',
-                                    required: true
-                                }
-                            },
-                            {
-                                className: 'col-md-4 ',
-                                key: 'date1',
-                                type: 'datepicker',
-                                templateOptions: {
-                                    label: 'Date 1',
-                                    type: 'text',
-                                    placeholder: 'Enter Date',
-                                    datepickerPopup: 'dd-MMMM-yyyy',
-                                    required: true
-                                }
-                            }]
-                        }];
-                //,
-                //        {
-                //            className: 'row row-no-padding',
-                //            fieldGroup: [
-                //            {
-                //                className: 'col-xs-4 ',
-                //                key: 'state',
-                //                type: 'select',
-                //                templateOptions: {
-                //                    label: 'State',
-                //                    required: true,
-                //                    options: [
-                //                  { name: 'Tennessee', value: 'TN' },
-                //                  { name: 'Texas', value: 'TX' }
-                //                    ]
-                //                }
-                //            },
-                //            {
-                //                className: 'col-xs-4 ',
-                //                key: 'email',
-                //                type: 'input',
-                //                templateOptions: {
-                //                    type: 'email',
-                //                    label: 'Email address',
-                //                    placeholder: 'Enter email',
-                //                    required: true
-                //                }
-                //            }],
-                //        }
-                //];
+                vm.fields = vm.MetaReport.fieldCollection;
             });
             console.log("loadReport End");
         };
@@ -148,13 +58,19 @@
 
         function reportSubmit() {
             //vm.dataLoading = true;
-            alert("1");
-            console.log("vm.model", vm.model);
+            var tmpUserName = $rootScope.globals.currentUser.username;
+            var stringModel = JSON.stringify(vm.model);
+            console.log("stringModel", stringModel);
 
-            //ReportService.ExecuteReport(function (response) {
-            //    $scope.gridOptions.data = response.data;
-            //    console.log(response.data[0].UserId);
-            //});
+            ReportService.ExecuteReport(vm.reportId, vm.permissionName, tmpUserName, vm.model,
+                function (response) {
+                $scope.gridOptions.data = response.data;
+                console.log("Success!");
+                },
+                function (response) {
+                    console.log("Error!");
+                }
+            );
             //vm.dataLoading = false;
 
         };
