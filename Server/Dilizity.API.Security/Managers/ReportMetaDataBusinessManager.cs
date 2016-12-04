@@ -25,45 +25,64 @@ namespace Dilizity.API.Security.Managers
         {
             using (FnTraceWrap tracer = new FnTraceWrap())
             {
-                ReportMetaData reportMetaDataOutObject = new ReportMetaData();
-                ReportMetaDataRequest metaDataRequest = (ReportMetaDataRequest)parameterBusService.Get(GlobalConstants.IN_PARAM);
-                PopulateReportMetaData(metaDataRequest, reportMetaDataOutObject);
-                PopulateReportMetaFiltersData(metaDataRequest, reportMetaDataOutObject);
+                ReportMetaData outMetaFields = new ReportMetaData();
+                outMetaFields.fieldCollection = new List<ReportMetaFields>();
+                ReportMetaFields metaFields = new ReportMetaFields();
+                outMetaFields.fieldCollection.Add(metaFields);
 
+                //List<ReportMetaFields> listReportMetaData = new List<ReportMetaFields>();
+                //ReportMetaFields reportMetaDataOutObject = new ReportMetaFields();
+                ReportMetaDataRequest metaDataRequest = (ReportMetaDataRequest)parameterBusService.Get(GlobalConstants.IN_PARAM);
+                PopulateReportMetaData(metaDataRequest, outMetaFields);
+                PopulateReportMetaFiltersData(metaDataRequest, metaFields);
                 AuditHelper.Register(parameterBusService, metaDataRequest.LoginId, metaDataRequest.PermissionId, GlobalConstants.SUCCESS, metaDataRequest.ToString());
-                parameterBusService.Add("OUT_RESULT", reportMetaDataOutObject);
+                parameterBusService.Add("OUT_RESULT", outMetaFields);
             }
         }
 
         private void PopulateReportMetaData(ReportMetaDataRequest metaDataRequest, ReportMetaData reportMetaDataOutObject)
         {
-            using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA))
+            using (FnTraceWrap tracer = new FnTraceWrap("LoginId", metaDataRequest.LoginId, "ReportId", metaDataRequest.ReportId))
             {
-                dynamic reportInfo = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_REPORT_META_SCREEN_INFO, "LoginId", metaDataRequest.LoginId, "ReportId", metaDataRequest.ReportId);
-                reportMetaDataOutObject.DisplayName = reportInfo.DisplayName;
-                reportMetaDataOutObject.ReportId = reportInfo.ReportId;
-                reportMetaDataOutObject.PermissionId = reportInfo.ReportPermissionId;
+                using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA))
+                {
+                    dynamic reportInfo = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_REPORT_META_SCREEN_INFO, "LoginId", metaDataRequest.LoginId, "ReportId", metaDataRequest.ReportId);
+                    reportMetaDataOutObject.fieldCollection[0].className = reportInfo.ClassName;
+                    Log.Debug(typeof(ReportMetaDataBusinessManager), reportInfo.DisplayName);
+                    reportMetaDataOutObject.DisplayName = reportInfo.DisplayName;
+                    reportMetaDataOutObject.ReportId = reportInfo.ReportId;
+                    reportMetaDataOutObject.PermissionName = reportInfo.PermissionName;
+                }
             }
         }
 
-        private void PopulateReportMetaFiltersData(ReportMetaDataRequest metaDataRequest, ReportMetaData reportMetaDataOutObject)
+        private void PopulateReportMetaFiltersData(ReportMetaDataRequest metaDataRequest, ReportMetaFields reportMetaDataOutObject)
         {
-            using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA))
+            using (FnTraceWrap tracer = new FnTraceWrap("LoginId", metaDataRequest.LoginId, "ReportId", metaDataRequest.ReportId))
             {
-                reportMetaDataOutObject.Filters = new List<ReportMetaFiltersData>();
-                foreach (dynamic reportFilters in dataLayer.ExecuteUsingKey(GET_REPORT_META_FILTERS_INFO, "ReportId", metaDataRequest.ReportId))
+                using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA))
                 {
-                    ReportMetaFiltersData metafilterData = new ReportMetaFiltersData();
-                    string filterDataSourceQuery = string.Empty;
-                    string filterDataConnectionString = string.Empty;
-                    metafilterData.FilterName = reportFilters.FilterName;
-                    metafilterData.DisplayName = reportFilters.DispayName;
-                    metafilterData.FilterType = reportFilters.FilterType;
-                    metafilterData.FilterDataType = reportFilters.FilterDataType;
-                    if (!string.IsNullOrEmpty(reportFilters.FilterConnectionString) && !string.IsNullOrEmpty(reportFilters.FilterDataSourceQuery))
+                    reportMetaDataOutObject.fieldGroup = new List<ReportMetaFiltersData>();
+                    foreach (dynamic reportFilters in dataLayer.ExecuteUsingKey(GET_REPORT_META_FILTERS_INFO, "ReportId", metaDataRequest.ReportId))
                     {
-                        metafilterData.FilterData = GetSelectionFilterDataFromRemoteConnection(reportFilters.ProviderName, reportFilters.FilterConnectionString, reportFilters.FilterDataSourceQuery);
-                        reportMetaDataOutObject.Filters.Add(metafilterData);
+                        ReportMetaFiltersData metafilterData = new ReportMetaFiltersData();
+                        string filterDataSourceQuery = string.Empty;
+                        string filterDataConnectionString = string.Empty;
+                        metafilterData.key = reportFilters.FilterName;
+                        Log.Debug(typeof(ReportMetaDataBusinessManager), reportFilters.FilterName);
+                        metafilterData.type = reportFilters.FilterType;
+                        metafilterData.className = reportFilters.ClassName;
+                        metafilterData.templateOptions.label = reportFilters.DispayName;
+                        metafilterData.templateOptions.type = reportFilters.TemplateOptionType;
+                        metafilterData.templateOptions.placeholder = reportFilters.PlaceHolder;
+                        metafilterData.templateOptions.datepickerPopup = reportFilters.DatepickerPopup;
+                        metafilterData.templateOptions.required = (reportFilters.IsMandatory == 1) ? true : false;
+                        metafilterData.templateOptions.defaultValue = reportFilters.DefaultValue;
+                        if (!string.IsNullOrEmpty(reportFilters.FilterConnectionString) && !string.IsNullOrEmpty(reportFilters.FilterDataSourceQuery))
+                        {
+                            metafilterData.templateOptions.options = GetSelectionFilterDataFromRemoteConnection(reportFilters.ProviderName, reportFilters.FilterConnectionString, reportFilters.FilterDataSourceQuery);
+                        }
+                        reportMetaDataOutObject.fieldGroup.Add(metafilterData);
                     }
                 }
             }
@@ -72,18 +91,21 @@ namespace Dilizity.API.Security.Managers
 
         private List<ReportSelectionControlData> GetSelectionFilterDataFromRemoteConnection(string remoteProviderName, string remoteConnectionString, string remoteSQL)
         {
-            string decryptConnectionString = Utility.Decrypt(remoteConnectionString, true);
-            using (DynamicDataLayer dataLayer = new DynamicDataLayer(remoteProviderName, decryptConnectionString))
+            using (FnTraceWrap tracer = new FnTraceWrap("remoteProviderName", remoteProviderName, "remoteConnectionString", remoteConnectionString, "remoteSQL", remoteSQL))
             {
-                List<ReportSelectionControlData> selectionControlList = new List<ReportSelectionControlData>();
-                foreach (dynamic keyValue in dataLayer.ExecuteText(remoteSQL))
+                string decryptConnectionString = Utility.Decrypt(remoteConnectionString, false);
+                using (DynamicDataLayer dataLayer = new DynamicDataLayer(remoteProviderName, decryptConnectionString))
                 {
-                    ReportSelectionControlData selectionControl = new ReportSelectionControlData();
-                    selectionControl.Id = keyValue.Id.ToString();
-                    selectionControl.value = keyValue.Value.ToString();
-                    selectionControlList.Add(selectionControl);
+                    List<ReportSelectionControlData> selectionControlList = new List<ReportSelectionControlData>();
+                    foreach (dynamic keyValue in dataLayer.ExecuteText(remoteSQL))
+                    {
+                        ReportSelectionControlData selectionControl = new ReportSelectionControlData();
+                        selectionControl.value  = keyValue.Id.ToString();
+                        selectionControl.name = keyValue.Value.ToString();
+                        selectionControlList.Add(selectionControl);
+                    }
+                    return selectionControlList;
                 }
-                return selectionControlList;
             }
         }
     }

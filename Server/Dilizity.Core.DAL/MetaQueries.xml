@@ -7,6 +7,18 @@
           FROM   REPORT
         ]]>
       </Query>
+    <Query ID="GetReportColumns" DataSource="">
+      <![CDATA[
+          select  COLUMN_NAME ColumnName, 
+		          DISPLAY_NAME DisplayName, 
+		          COLUMN_PERMISSION_NAME ColumnPermissionName, 
+		          MASKING_FILTER_ID MaskingFilter
+          from	RPT_REPORT_COLUMNS
+          where	REPORT_ID = 1
+          AND		IS_DELETED = 0
+        ]]>
+      <Param Name="ReportId" Type="System.Int32"  Size="0"/>
+    </Query>
       <Query ID="GetSpecificReport" DataSource="">
         <![CDATA[
           SELECT REPORT_ID ReportId, REPORT_NAME, REPORT_DISPLAY_NAME, REPORT_SQL
@@ -145,7 +157,7 @@
       </Query>
       <Query ID="GetReportMetaScreenInfo" DataSource="">
         <![CDATA[
-          select  R.REPORT_ID ReportId, R.REPORT_PERMISSION_ID ReportPermissionId, R.SYSTEM_NAME SystemName, R.DISPLAY_NAME DisplayName
+          select  'row row-no-padding' ClassName, R.REPORT_ID ReportId, UP.PERMISSION_NAME PermissionName, R.SYSTEM_NAME SystemName, R.DISPLAY_NAME DisplayName
           from	  RPT_REPORT R
 		              INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION UP ON R.REPORT_PERMISSION_ID = UP.PERMISSION_ID
           WHERE   R.REPORT_ID = @ReportId
@@ -155,21 +167,63 @@
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="ReportId" Type="System.Int32"  Size="0"/>
       </Query>
+      <Query ID="GetReportQueryAndConnectionString" DataSource="">
+        <![CDATA[
+          select  S.CONNECTION_STRING ConnectionString, R.QUERY Query, S.PROVIDER_NAME ProviderName
+          from	RPT_REPORT R
+		          INNER JOIN RPT_REPORT_DATA_SOURCE S ON R.REPORT_DATA_SOURCE_ID = S.REPORT_DATA_SOURCE_ID
+          where   R.REPORT_ID = @ReportId
+          AND		R.IS_DELETED = 0
+          AND		S.IS_DELETED = 0
+        ]]>
+        <Param Name="ReportId" Type="System.Int32"  Size="0"/>
+      </Query>
+      <Query ID="GetReportFilters" DataSource="">
+        <![CDATA[
+          select	Filter_name FilterName, TD.TYPE_DATA DataType, case when TD.TYPE_DATA = 'System.String' THEN 200 ELSE 0 END Size
+          from	RPT_REPORT_FILTERS R
+		          INNER JOIN SYSTEM_TYPE_DATA TD ON R.FILTER_DATA_TYPE_ID = TD.TYPE_DATA_ID
+          where   R.REPORT_ID = @ReportId
+          AND		R.IS_DELETED = 0
+        ]]>
+        <Param Name="ReportId" Type="System.Int32"  Size="0"/>
+      </Query>    
       <Query ID="GetReportMetaFiltersInfo" DataSource="">
         <![CDATA[
-            SELECT  FILTER_NAME FilterName,
+        SELECT  'col-md-3 col-sm-6 col-xs-12' ClassName,
+                FILTER_NAME FilterName,
 		            DISPLAY_NAME DispayName,
+		            PLACE_HOLDER PlaceHolder,
 		            TD1.TYPE_DATA FilterType,
-		            TD2.TYPE_DATA FilterDataType,
+		            TD3.TYPE_DATA TemplateOptionType,
+				        case when TD1.TYPE_DATA = 'datepicker' then 'dd-MMMM-yyyy' ELSE NULL END DatepickerPopup,
+		            IS_MANDATORY IsMandatory,
+				        NULL as DefaultValue,
 		            ISNULL(FILTER_DATA_SOURCE_QUERY, '') FilterDataSourceQuery,
 		            ISNULL(DS.CONNECTION_STRING,'') FilterConnectionString,
 		            'System.Data.SqlClient' ProviderName
-            FROM	RPT_REPORT_FILTERS RF
+        FROM	  RPT_REPORT_FILTERS RF
 		            INNER JOIN SYSTEM_TYPE_DATA TD1 ON RF.FILTER_TYPE_ID = TD1.TYPE_DATA_ID
-		            INNER JOIN SYSTEM_TYPE_DATA TD2 ON RF.FILTER_DATA_TYPE_ID = TD2.TYPE_DATA_ID
-		            LEFT OUTER JOIN RPT_REPORT_DATA_SOURCE DS ON RF.REPORT_DATA_SOURCE_ID = DS.REPORT_DATA_SOURCE_ID
-            WHERE  REPORT_ID = @ReportId
-          ]]>
+		            LEFT OUTER JOIN SYSTEM_TYPE_DATA TD3 ON RF.TEMPLATE_OPTION_TYPE = TD3.TYPE_DATA_ID
+		            LEFT OUTER JOIN RPT_REPORT_DATA_SOURCE DS ON RF.REPORT_DATA_SOURCE_ID = DS.REPORT_DATA_SOURCE_ID   
+        WHERE   REPORT_ID = @ReportId
+        UNION ALL
+        SELECT  'col-md-3 col-sm-6 col-xs-12' ClassName,
+                FIELD_NAME FilterName,
+		            DISPLAY_NAME DispayName,
+		            PLACE_HOLDER PlaceHolder,
+		            TD1.TYPE_DATA FilterType,
+		            TD3.TYPE_DATA TemplateOptionType,
+		            NULL DatepickerPopup,
+		            NULL IsMandatory,
+		            cast(@ReportId as nvarchar(10)) DefaultValue,
+		            NULL FilterDataSourceQuery,
+		            NULL FilterConnectionString,
+		            'System.Data.SqlClient' ProviderName
+        FROM	  RPT_REPORT_SYSTEM_FIELDS SF
+		            INNER JOIN SYSTEM_TYPE_DATA TD1 ON SF.FILTER_TYPE_ID = TD1.TYPE_DATA_ID
+		            LEFT OUTER JOIN SYSTEM_TYPE_DATA TD3 ON SF.TEMPLATE_OPTION_TYPE = TD3.TYPE_DATA_ID
+      ]]>
         <Param Name="ReportId" Type="System.Int32"  Size="0"/>
       </Query>
   </Schema>

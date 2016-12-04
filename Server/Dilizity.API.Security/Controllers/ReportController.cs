@@ -15,6 +15,7 @@ using System.Text;
 using Dilizity.Business.Common;
 using Dilizity.Business.Common.Services;
 using Dilizity.Business.Common.Managers;
+using Newtonsoft.Json.Linq;
 
 namespace Dilizity.API.Security.Controllers
 {
@@ -37,8 +38,8 @@ namespace Dilizity.API.Security.Controllers
                     IAbstractBusiness menuManager = new ReportMetaDataBusinessManager();
 
                     menuManager.Do(dataBasService);
-                    ReportMetaData outObject = (ReportMetaData)dataBasService.Get(GlobalConstants.OUT_RESULT);
-                    return Ok(outObject);
+                    ReportMetaData reportMetaData = (ReportMetaData)dataBasService.Get(GlobalConstants.OUT_RESULT);
+                    return Ok(reportMetaData);
                 }
             }
             catch (Exception e)
@@ -47,5 +48,34 @@ namespace Dilizity.API.Security.Controllers
                 return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
             }
         }
+
+        public IHttpActionResult ExecuteReport(JObject metaReportExecutionRequestObject)
+        {
+            try
+            {
+                using (FnTraceWrap tracer = new FnTraceWrap(metaReportExecutionRequestObject))
+                {
+                    BusService dataBasService = new BusService();
+
+                    dataBasService.Add(GlobalConstants.IN_PARAM, metaReportExecutionRequestObject);
+                    dataBasService.Add(GlobalConstants.LOGIN_ID, metaReportExecutionRequestObject["LoginId"].ToString());
+                    string permissionId = metaReportExecutionRequestObject["PermissionId"].ToString();
+                    dataBasService.Add(GlobalConstants.PERMISSIONS, Utility.Param2List(permissionId));
+
+                    IAbstractBusiness businessManager = new ReportExecutionBusinessManager();
+
+                    businessManager.Do(dataBasService);
+                    List<dynamic> outputDataList = (List<dynamic>)dataBasService.Get(GlobalConstants.OUT_RESULT);
+
+                    return Ok(outputDataList);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Debug(typeof(ReportController), "{0}", e.Message);
+                return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
+            }
+        }
+
     }
 }

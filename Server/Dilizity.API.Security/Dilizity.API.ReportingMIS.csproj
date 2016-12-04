@@ -134,6 +134,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Managers\ReportExecutionBusinessManager.cs" />
     <Compile Include="Managers\ReportMetaDataBusinessManager.cs" />
     <Compile Include="Managers\WorkFlowActionManager.cs" />
     <Compile Include="Managers\ChangePasswordBusinessManager.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Managers\PermissionValidationBusinessManager.cs" />
     <Compile Include="Models\MenuTree.cs" />
     <Compile Include="Models\ChangePasswordModel.cs" />
+    <Compile Include="Models\MetaReportExecutionRequest.cs" />
     <Compile Include="Models\ReportMetaData.cs" />
     <Compile Include="Models\ReportMetaDataRequest.cs" />
     <Compile Include="Models\UserCredential.cs" />

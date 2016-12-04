@@ -22,7 +22,8 @@ namespace DALTest
             //TestExecuteBulkNonQueryUsingKey();
             //StringMessagingAgentTest();
             //TestEmail();
-            TestSMS();
+            //TestSMS();
+            TestExecuteUsingKeyAndModel();
         }
 
         //static void Test1()
@@ -196,6 +197,56 @@ namespace DALTest
         {
             string message = @"Hello Test SMS";
             SMSManager.Instance.Send("03028245884", message);
+        }
+
+        static void TestExecuteUsingKeyAndModel()
+        {
+            QueryDTO queryDTO = new QueryDTO();
+            queryDTO.Provider = @"System.Data.SqlClient";
+            queryDTO.DataSource = "Server=.;Database=ReportMIS;User Id=sa;Password=Avanza123;Connection Timeout=10;"; 
+            queryDTO.Sql = @"SELECT   U.USER_ID, U.NAME, P.PERMISSION_NAME, IS_SUCCESS, DATA, A.CREATED_ON
+                                FROM    SEC_AUDIT A
+                                INNER JOIN SEC_USER U ON A.USER_ID = U.USER_ID
+                                INNER JOIN SEC_PERMISSION P ON A.PERMISSION_ID = P.PERMISSION_ID
+                                WHERE(U.USER_ID = @USER_ID OR @USER_ID = -1)
+                                AND(A.PERMISSION_ID = @PERMISSION_ID OR @PERMISSION_ID = -1)
+                                AND A.CREATED_ON BETWEEN @FROM_DATE AND @TO_DATE";
+            queryDTO.ParamCollection = new Dictionary<string, SqlParamDTO>();
+            SqlParamDTO sqlParam = new SqlParamDTO();
+            sqlParam.DBType = System.Data.DbType.DateTime;
+            sqlParam.Name = "FROM_DATE";
+            sqlParam.Size = 0;
+            queryDTO.ParamCollection.Add("FROM_DATE", sqlParam);
+            sqlParam = new SqlParamDTO();
+            sqlParam.DBType = System.Data.DbType.DateTime;
+            sqlParam.Name = "TO_DATE";
+            sqlParam.Size = 0;
+            queryDTO.ParamCollection.Add("TO_DATE", sqlParam);
+            sqlParam = new SqlParamDTO();
+            sqlParam.DBType = System.Data.DbType.Int32;
+            sqlParam.Name = "USER_ID";
+            sqlParam.Size = 0;
+            queryDTO.ParamCollection.Add("USER_ID", sqlParam);
+            sqlParam = new SqlParamDTO();
+            sqlParam.DBType = System.Data.DbType.Int32;
+            sqlParam.Name = "PERMISSION_ID";
+            sqlParam.Size = 0;
+            queryDTO.ParamCollection.Add("PERMISSION_ID", sqlParam);
+
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters["FROM_DATE"] = "2015-12-03T19:00:00.000Z";
+            parameters["TO_DATE"] = "2016-12-03T19:00:00.000Z";
+            parameters["USER_ID"] = "1";
+            parameters["PERMISSION_ID"] = "2";
+
+            using (var dataLayer = new DynamicDataLayer(queryDTO.Provider, queryDTO.DataSource))
+            {
+                //IEnumerable<dynamic> outList = dataLayer.ExecuteUsingKeyAndModel(queryDTO, parameters);
+                foreach (var n in dataLayer.ExecuteUsingKeyAndModel(queryDTO, parameters, null))
+                {
+                    Console.WriteLine(n);
+                }
+            }
         }
     }
 }

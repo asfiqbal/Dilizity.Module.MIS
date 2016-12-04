@@ -51,23 +51,26 @@ namespace Dilizity.API.Security.Managers
 
         private void Generate(List<MenuTree>  tree)
         {
-            using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA))
+            using (FnTraceWrap tracer = new FnTraceWrap())
             {
-                Dictionary<int, MenuTree> dict = tree.ToDictionary(menu => menu.Id);
-
-                foreach (MenuTree menu in dict.Values)
+                using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA))
                 {
-                    if (menu.ParentId != menu.Id)
+                    Dictionary<int, MenuTree> dict = tree.ToDictionary(menu => menu.Id);
+
+                    foreach (MenuTree menu in dict.Values)
                     {
-                        if (menu.ParentId != 0)
+                        if (menu.ParentId != menu.Id)
                         {
-                            MenuTree parent = dict[menu.ParentId];
-                            if (parent.subtree == null)
+                            if (menu.ParentId != 0)
                             {
-                                parent.subtree = new List<MenuTree>();
+                                MenuTree parent = dict[menu.ParentId];
+                                if (parent.subtree == null)
+                                {
+                                    parent.subtree = new List<MenuTree>();
+                                }
+                                parent.subtree.Add(menu);
+                                tree.Remove(menu);
                             }
-                            parent.subtree.Add(menu);
-                            tree.Remove(menu);
                         }
                     }
                 }
