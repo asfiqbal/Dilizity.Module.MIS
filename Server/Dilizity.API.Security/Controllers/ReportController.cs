@@ -62,9 +62,12 @@ namespace Dilizity.API.Security.Controllers
                     string permissionId = metaReportExecutionRequestObject["PermissionId"].ToString();
                     dataBasService.Add(GlobalConstants.PERMISSIONS, Utility.Param2List(permissionId));
 
-                    IAbstractBusiness businessManager = new ReportExecutionBusinessManager();
+                    WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
+                    workFlowManager.Do(dataBasService);
 
-                    businessManager.Do(dataBasService);
+                    //IAbstractBusiness businessManager = new ReportExecutionBusinessManager();
+
+                    //businessManager.Do(dataBasService);
                     List<dynamic> outputDataList = (List<dynamic>)dataBasService.Get(GlobalConstants.OUT_RESULT);
 
                     return Ok(outputDataList);

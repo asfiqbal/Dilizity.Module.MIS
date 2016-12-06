@@ -187,53 +187,6 @@ namespace Dilizity.Core.DAL
             }
         }
 
-        //public IEnumerable<dynamic> ExecuteUsingKeyAndModel(QueryDTO queryObject, Dictionary<string, object> modelParameters)
-        //{
-        //    using (FnTraceWrap tracer = new FnTraceWrap())
-        //    {
-        //        Contract.Requires(queryObject != null);
-        //        Contract.Requires(!string.IsNullOrWhiteSpace(queryObject.Sql));
-
-        //        Log.Debug(this.GetType(), "query={0}", queryObject.Sql);
-
-        //        //lock (this)
-        //        //{
-        //        using (var command = connection.CreateCommand())
-        //        {
-        //            command.CommandText = queryObject.Sql;
-        //            command.CommandTimeout = Utility.ConvertStringToInt(ConfigReader.Instance.Settings("CommandTimeOut"));
-
-        //            //Log.Debug(this.GetType(), "SQL={0}", query.Sql);
-        //            foreach (var SqlParam in queryObject.ParamCollection)
-        //            {
-        //                string name = SqlParam.Key;
-        //                SqlParamDTO sqlParamDt = SqlParam.Value;
-        //                var p = command.CreateParameter();
-        //                p.ParameterName = sqlParamDt.Name;
-        //                p.DbType = sqlParamDt.DBType;
-        //                p.Value = modelParameters[sqlParamDt.Name];
-        //                command.Parameters.Add(p);
-        //            }
-
-        //            Log.Debug(this.GetType(), "Before Calling CommandSQL={0} with connection state = {1}", queryObject.Sql, command.Connection.State);
-        //            using (var reader = command.ExecuteReader())
-        //            {
-        //                while (reader.Read())
-        //                {
-        //                    dynamic record = new ExpandoObject();
-        //                    var recordMembers = (IDictionary<string, object>)record;
-        //                    for (int i = 0; i < reader.FieldCount; i++)
-        //                    {
-        //                        recordMembers.Add(reader.GetName(i), GetDefaultIfDBNull(reader.GetValue(i), reader.GetFieldType(i)));
-        //                    }
-        //                    yield return record;
-        //                }
-        //            }
-        //        }
-        //        //}
-        //    }
-        //}
-
         public IEnumerable<dynamic> ExecuteUsingKeyAndModel(QueryDTO queryObject, Dictionary<string, object> modelParameters, Dictionary<string, object> columnCollection)
         {
             using (FnTraceWrap tracer = new FnTraceWrap())
