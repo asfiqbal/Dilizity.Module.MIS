@@ -69,7 +69,7 @@ namespace Dilizity.API.Security.Managers
                 else
                 {
                     Log.Debug(typeof(ChangePasswordBusinessManager), "Login Failed");
-                    success = "Failed";
+                    success = GlobalConstants.FAILURE;
                     if (passwordPolicy.AccountLockOnFailedAttempts > 0)
                     {
                         int accountLocked = -1, passwordAttempt = -1;
@@ -92,8 +92,9 @@ namespace Dilizity.API.Security.Managers
                         throw new Exception("Change Password Failed");
                     }
                 }
-                AuditHelper.Register(parameterBusService, changePasswordObject.LoginId, changePasswordObject.PermissionId, success, changePasswordObject.ToString());
+                //AuditHelper.Register(parameterBusService, changePasswordObject.LoginId, changePasswordObject.PermissionId, success, changePasswordObject.ToString());
                 parameterBusService.Add("OUT_RESULT", success);
+                parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, success);
             }
         }
 

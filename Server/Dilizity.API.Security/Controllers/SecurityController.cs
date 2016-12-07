@@ -75,15 +75,7 @@ namespace Security.Controllers
                     WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
                     workFlowManager.Do(dataBasService);
 
-                    //IAbstractBusiness businessManager = new PermissionValidationBusinessManager();
-                    //businessManager.Do(dataBasService);
-                    //businessManager = new AuthenticationBusinessManager();
-                    //businessManager.Do(dataBasService);
-                    //businessManager = new EmailBusinessManager();
-                    //businessManager.Do(dataBasService);
-                    //businessManager = new AuditBusinessManager();
-                    //businessManager.Do(dataBasService);
-                    string result = (string)dataBasService.Get(GlobalConstants.OUT_RESULT);
+                    string result = (string)dataBasService.Get(GlobalConstants.OUT_FUNCTION_STATUS);
                     if (result == GlobalConstants.SUCCESS)
                     {
                         return Ok("Login Success!");
@@ -121,19 +113,9 @@ namespace Security.Controllers
 
                     WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
                     workFlowManager.Do(dataBasService);
-                    //IAbstractBusiness businessManager = new PermissionValidationBusinessManager();
-                    //businessManager.Do(dataBasService);
-                    //businessManager = new ChangePasswordBusinessManager();
-                    //businessManager.Do(dataBasService);
-                    //businessManager = new EmailBusinessManager();
-                    //businessManager.Do(dataBasService);
-                    //businessManager = new AuditBusinessManager();
-                    //businessManager.Do(dataBasService);
 
-                    //IAbstractBusiness changePasswordManager = new ChangePasswordBusinessManager();
-                    //changePasswordManager.Do(dataBasService);
                     string result = (string)dataBasService.Get(GlobalConstants.OUT_RESULT);
-                    if (result == GlobalConstants.SUCCESS)
+                    if (result == GlobalConstants.OUT_FUNCTION_STATUS)
                     {
                         return Ok("Change Password Success!");
                     }

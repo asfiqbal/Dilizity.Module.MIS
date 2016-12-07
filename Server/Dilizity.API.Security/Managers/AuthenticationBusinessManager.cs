@@ -40,7 +40,7 @@ namespace Dilizity.API.Security.Managers
                     string encryptedPassword = Utility.Encrypt(userCredentials.Password, false);
                     if (dbPassword == encryptedPassword)
                     {
-                        success = "Success";
+                        success = GlobalConstants.SUCCESS;
                         Log.Info(typeof(AuthenticationBusinessManager), "Passowrd Matched");
                         dataLayer.ExecuteNonQueryUsingKey("UpdateUserPasswordAttempt", "LoginId", userCredentials.LoginId, "PasswordAttempt", passwordPolicy.DefaultPasswordAttempts, "AccountLocked", secUser.AccountLocked);
 
@@ -63,7 +63,7 @@ namespace Dilizity.API.Security.Managers
                     else
                     {
                         Log.Debug(typeof(AuthenticationBusinessManager), "Login Failed");
-                        success = "Failed";
+                        success = GlobalConstants.FAILURE;
                         if (passwordPolicy.AccountLockOnFailedAttempts > 0)
                         {
                             if (secUser.PasswordAttempts > 1)
@@ -78,10 +78,11 @@ namespace Dilizity.API.Security.Managers
                                 dataLayer.ExecuteNonQueryUsingKey("UpdateUserPasswordAttempt", "LoginId", userCredentials.LoginId, "PasswordAttempt", 0, "AccountLocked", 1);
                             }
                         }
-
+                        throw new Exception("Login Failed");
                     }
-                    AuditHelper.Register(parameterBusService, userCredentials.LoginId, userCredentials.PermissionId, success, userCredentials.ToString());
-                    parameterBusService.Add("OUT_RESULT", success);
+                    //AuditHelper.Register(parameterBusService, userCredentials.LoginId, userCredentials.PermissionId, success, userCredentials.ToString());
+                    parameterBusService.Add(GlobalConstants.OUT_RESULT, success);
+                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, success);
                 }
             }
         }

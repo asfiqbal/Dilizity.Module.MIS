@@ -148,12 +148,15 @@
 		              SYSTEM_TYPE SystemType,
 		              SYSTEM_ASSEMBLY SystemAssembly,
 		              ACTION_ORDER ActionOrder,
-		              VERSION Version
+		              VERSION Version,
+                  EXECUTION_BEHAVIOR ExecutionBehavior
           FROM	  WORK_FLOW_ACTION WFA
 		              INNER JOIN SEC_PERMISSION P ON WFA.PERMISSION_ID = P.PERMISSION_ID
           WHERE   P.PERMISSION_NAME = @Permission
+          AND     WFA.EXECUTION_BEHAVIOR = @ExecutionBehavior
       ]]>
         <Param Name="Permission" Type="System.String"  Size="200"/>
+        <Param Name="ExecutionBehavior" Type="System.Int32"  Size="0"/>
       </Query>
       <Query ID="GetReportMetaScreenInfo" DataSource="">
         <![CDATA[

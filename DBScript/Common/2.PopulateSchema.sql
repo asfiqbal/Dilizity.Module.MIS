@@ -15,6 +15,8 @@ UNION ALL
 SELECT 300, 'FILTER_DATA_TYPE', 'Report Filter Data Type', 'System', 'System'
 UNION ALL
 SELECT 400, 'TEMPLATE_OPTIONS_TYPE', 'Template Options Type', 'System', 'System'
+UNION ALL
+SELECT 500, 'EXECUTION_BEHAVIOR', 'Template Options Type', 'System', 'System'
 GO
 
 INSERT INTO SYSTEM_TYPE_DATA
@@ -61,6 +63,12 @@ UNION ALL
 SELECT 400, 3004,'number', 'Default number Type', 'System', 'System'
 UNION ALL
 SELECT 400, 3005,'hidden', 'Default hidden Type', 'System', 'System'
+UNION ALL
+SELECT 500, 4001,'ON_SUCCESS', 'Default On Success Behavior', 'System', 'System'
+UNION ALL
+SELECT 500, 4002,'ON_FAIL', 'Default On Fail Behavior', 'System', 'System'
+UNION ALL
+SELECT 500, 4003,'ON_BOTH', 'Default On Both Success and Fail Behavior', 'System', 'System'
 
 GO
 

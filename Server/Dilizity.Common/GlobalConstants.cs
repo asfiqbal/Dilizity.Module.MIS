@@ -14,6 +14,7 @@ namespace Dilizity.Business.Common
 
         public const string IN_PARAM = "IN_PARAM";
         public const string OUT_RESULT = "OUT_RESULT";
+        public const string OUT_FUNCTION_STATUS = "OUT_FUNCTION_STATUS";
         public const string LOGIN_ID = "LOGIN_ID";
         public const string PERMISSIONS = "PERMISSIONS";
         public const string SUCCESS = "Success";
