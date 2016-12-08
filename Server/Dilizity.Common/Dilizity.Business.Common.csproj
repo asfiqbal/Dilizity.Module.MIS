@@ -48,6 +48,7 @@
     <Compile Include="AuditHelper.cs" />
     <Compile Include="GlobalConstants.cs" />
     <Compile Include="IAbstractBusiness.cs" />
+    <Compile Include="Managers\SMSBusinessManager.cs" />
     <Compile Include="Managers\EmailBusinessManager.cs" />
     <Compile Include="MessagingTemplateHelper.cs" />
     <Compile Include="Model\ExecutionBehavior.cs" />

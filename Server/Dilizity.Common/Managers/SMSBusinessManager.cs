@@ -8,10 +8,10 @@ using Dilizity.Business.Common.Services;
 
 namespace Dilizity.Business.Common.Managers
 {
-    public class EmailBusinessManager : IAbstractBusiness
+    public class SMSBusinessManager : IAbstractBusiness
     {
         private const string GET_TEMPLATE = "GetTemplate";
-        private const string EMAIL_PERMISSION = ".Email";
+        private const string SMS_PERMISSION = ".SMS";
         private const string GET_USER = "GetUser";
 
         public void Do(BusService parameterBusService)
@@ -26,7 +26,7 @@ namespace Dilizity.Business.Common.Managers
                         if (parameterBusService.IsKeyPresent(GlobalConstants.PERMISSIONS))
                         {
                             List<string> permissions = (List<string>)parameterBusService.Get(GlobalConstants.PERMISSIONS);
-                            string comaSeparatedPermission = Utility.AppendStringInStringList(permissions, EMAIL_PERMISSION);
+                            string comaSeparatedPermission = Utility.AppendStringInStringList(permissions, SMS_PERMISSION);
                             dynamic secUser = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_USER, "LoginId", loginId);
 
                             foreach (dynamic templateObject in dataLayer.ExecuteUsingKey(GET_TEMPLATE, "LoginId", loginId, "Permissions", comaSeparatedPermission))
@@ -36,7 +36,7 @@ namespace Dilizity.Business.Common.Managers
                                 string subject = templateObject.Subject;
                                 MessagingTemplateHelper mtHelper = new MessagingTemplateHelper();
                                 templateBody = mtHelper.Resolve(templateBody, loginId);
-                                EmailManager.Instance.Send(secUser.Email, subject, templateBody);
+                                //EmailManager.Instance.Send(secUser.Email, subject, templateBody);
                                 AuditHelper.Register(parameterBusService, loginId, permissionName, GlobalConstants.SUCCESS, templateBody);
                             }
 

@@ -129,7 +129,7 @@
           ) piv;
             ]]>
       </Query>
-      <Query ID="GetEmailTemplate" DataSource="">
+      <Query ID="GetTemplate" DataSource="">
         <![CDATA[
           SELECT  MT.NAME Name, MT.TEMPLATE Template, MT.SUBJECT Subject, DUP.PERMISSION_NAME PermissionName
           FROM	[DBO].[MSG_ASSIGNED_TEMPLATES] MAT
@@ -144,17 +144,31 @@
       </Query>
       <Query ID="GetWorkFlowActions" DataSource="">
         <![CDATA[
-          SELECT	WFA.PERMISSION_ID PermissionId,
-		              SYSTEM_TYPE SystemType,
-		              SYSTEM_ASSEMBLY SystemAssembly,
-		              ACTION_ORDER ActionOrder,
-		              VERSION Version,
-                  EXECUTION_BEHAVIOR ExecutionBehavior
-          FROM	  WORK_FLOW_ACTION WFA
-		              INNER JOIN SEC_PERMISSION P ON WFA.PERMISSION_ID = P.PERMISSION_ID
-          WHERE   P.PERMISSION_NAME = @Permission
-          AND     WFA.EXECUTION_BEHAVIOR = @ExecutionBehavior
-      ]]>
+            WITH WF ( Permission_id, PARENT_PERMISSION_ID )
+            AS
+            (
+            SELECT	Permission_id, PARENT_PERMISSION_ID  
+            from	SEC_PERMISSION P
+            WHERE   P.PERMISSION_NAME = @Permission
+            UNION ALL
+            SELECT	P.PARENT_PERMISSION_ID, WF.Permission_id
+            from	SEC_PERMISSION P
+		            INNER JOIN WF ON P.Permission_id  = WF.PARENT_PERMISSION_ID
+            WHERE   WF.Permission_id not in (SELECT PERMISSION_ID FROM WORK_FLOW_ACTION)
+            )
+            SELECT WF.Permission_id PermissionId, 
+		            FA.SYSTEM_TYPE SystemType,
+		            SYSTEM_ASSEMBLY SystemAssembly,
+		            ACTION_ORDER ActionOrder,
+		            VERSION Version,
+		            EXECUTION_BEHAVIOR ExecutionBehavior,
+                IS_ERROR_TOLERANT IsErrorTolerant
+            FROM WF
+	             INNER JOIN SEC_PERMISSION SP ON WF.Permission_id = SP.PERMISSION_ID
+	             INNER JOIN WORK_FLOW_ACTION FA ON WF.Permission_id = FA.PERMISSION_ID
+            WHERE FA.EXECUTION_BEHAVIOR = @ExecutionBehavior
+            order by ActionOrder 
+        ]]>
         <Param Name="Permission" Type="System.String"  Size="200"/>
         <Param Name="ExecutionBehavior" Type="System.Int32"  Size="0"/>
       </Query>
@@ -239,7 +253,7 @@
       </Query>
       <Query ID="GetUser" DataSource="">
         <![CDATA[
-            SELECT  USER_ID UserId, NAME Name, LOGIN_ID LoginId, PASSWORD Password, PASSWORD_POLICY_ID PasswordPolicyId, PASSWORD_ATTEMPTS PasswordAttempts, ACCOUNT_LOCKED AccountLocked, [CHANGE_PASSWORD_ON_LOGON] ChangePasswordOnLogon, EMAIL Email, MOBILE_NUMBER MobileNumber, LAST_PASSWORD_CHANGE_DATETIME LastPasswordChangeDateTime, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+            SELECT  USER_ID UserId, NAME Name, LOGIN_ID LoginId, PASSWORD Password, PASSWORD_POLICY_ID PasswordPolicyId, PASSWORD_ATTEMPTS PasswordAttempts, ACCOUNT_LOCKED AccountLocked, [CHANGE_PASSWORD_ON_LOGON] ChangePasswordOnLogon, EMAIL Email, MOBILE_NUMBER MobileNumber, LAST_PASSWORD_CHANGE_DATETIME LastPasswordChangeDateTime, [LAST_LOGIN_DATETIME] LastLoginDateTime, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
             FROM    SEC_USER SU
             WHERE   SU.IS_DELETED = 0
             AND     SU.LOGIN_ID = @LoginId
@@ -250,7 +264,8 @@
         <![CDATA[
               UPDATE  SEC_USER
               SET     PASSWORD_ATTEMPTS = @PasswordAttempt,
-                      ACCOUNT_LOCKED = @AccountLocked
+                      ACCOUNT_LOCKED = @AccountLocked,
+                      LAST_LOGIN_DATETIME = GetDate()
               WHERE   IS_DELETED = 0
               AND     LOGIN_ID = @LoginId
             ]]>

@@ -1,8 +1,16 @@
-/****** Object:  UserDefinedFunction [dbo].[get_Global_State]    Script Date: 11/17/2016 4:50:52 PM ******/
+/****** Object:  UserDefinedFunction [dbo].[FN_MSG_GET_USER_NAME]    Script Date: 12/8/2016 4:33:37 PM ******/
 DROP FUNCTION [dbo].[FN_MSG_GET_USER_NAME]
 GO
 
-CREATE FUNCTION [FN_MSG_GET_USER_NAME]
+/****** Object:  UserDefinedFunction [dbo].[FN_MSG_GET_USER_NAME]    Script Date: 12/8/2016 4:33:37 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE FUNCTION [dbo].[FN_MSG_GET_USER_NAME]
 (
 	@LoginId as nvarchar(200)
 )
@@ -18,7 +26,7 @@ BEGIN
 END
 
 
-GO
 
+GO
 
 

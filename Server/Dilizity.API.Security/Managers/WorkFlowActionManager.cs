@@ -39,13 +39,27 @@ namespace Dilizity.API.Security.Managers
                         foreach (dynamic businessAction in dataLayer.ExecuteUsingKey(GET_WORKFLOW_ACTIONS, "Permission", permission, "ExecutionBehavior", ExecutionBehavior.OnSuccess))
                         {
                             string binPath = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "bin"); // note: don't use CurrentEntryAssembly or anything like that.
-                            Log.Error(this.GetType(), binPath + @"/" + businessAction.SystemAssembly + "|" + businessAction.SystemType);
+                            Log.Debug(this.GetType(), binPath + @"/" + businessAction.SystemAssembly + "|" + businessAction.SystemType);
 
                             Assembly businessModule = Assembly.LoadFrom(binPath + @"/" + businessAction.SystemAssembly);
-
+                            int isErrorTolerant = businessAction.IsErrorTolerant;
                             Type systemtype = businessModule.GetType(businessAction.SystemType);
                             dynamic businessObject = Activator.CreateInstance(systemtype);
-                            businessObject.Do(parameterBusService);
+                            if (isErrorTolerant == 0)
+                            {
+                                businessObject.Do(parameterBusService);
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    businessObject.Do(parameterBusService);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Error(this.GetType(), ex.Message, ex);
+                                }
+                            }
                         }
                     }
                 }
@@ -54,7 +68,7 @@ namespace Dilizity.API.Security.Managers
             {
                 Log.Error(this.GetType(), ex.Message, ex);
                 parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
-                throw ex;
+                //throw ex;
             }
         }
 

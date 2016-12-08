@@ -12,7 +12,7 @@ namespace PasswordUtility
         static void Main(string[] args)
         {
             //string passwordToDecrypt = "FujJSM6yJIEqYrdYRenZYQ==";
-            string decryptPassword = Decrypt("vtNXgcRYo+6n+kBlsSslfg==");
+            string decryptPassword = Decrypt("FujJSM6yJIEghB7oq65OZQ==");
             string encryptedString = Encrypt("Server=.;Database=ReportMIS;User Id=sa;Password=Avanza123;Connection Timeout=10;");
             Console.WriteLine(decryptPassword);
         }

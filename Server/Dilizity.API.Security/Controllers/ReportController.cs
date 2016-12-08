@@ -36,16 +36,25 @@ namespace Dilizity.API.Security.Controllers
                     dataBasService.Add(GlobalConstants.PERMISSIONS, Utility.Param2List(reportMetaDataObject.PermissionId));
 
                     IAbstractBusiness menuManager = new ReportMetaDataBusinessManager();
-
                     menuManager.Do(dataBasService);
-                    ReportMetaData reportMetaData = (ReportMetaData)dataBasService.Get(GlobalConstants.OUT_RESULT);
-                    return Ok(reportMetaData);
+
+                    string result = (string)dataBasService.Get(GlobalConstants.OUT_FUNCTION_STATUS);
+                    if (result == GlobalConstants.SUCCESS)
+                    {
+                        ReportMetaData reportMetaData = (ReportMetaData)dataBasService.Get(GlobalConstants.OUT_RESULT);
+                        return Ok(reportMetaData);
+                    }
+                    else
+                    {
+                        return Content(HttpStatusCode.BadRequest, "Menu Execution Failed!");
+                    }
+
                 }
             }
             catch (Exception e)
             {
                 Log.Debug(typeof(ReportController), "{0}", e.Message);
-                return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
+                return Content(HttpStatusCode.InternalServerError, "Menu Execution Failed!");
             }
         }
 
@@ -62,18 +71,26 @@ namespace Dilizity.API.Security.Controllers
                     string permissionId = metaReportExecutionRequestObject["PermissionId"].ToString();
                     dataBasService.Add(GlobalConstants.PERMISSIONS, Utility.Param2List(permissionId));
 
-                    IAbstractBusiness businessManager = new ReportExecutionBusinessManager();
+                    WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
+                    workFlowManager.Do(dataBasService);
 
-                    businessManager.Do(dataBasService);
-                    List<dynamic> outputDataList = (List<dynamic>)dataBasService.Get(GlobalConstants.OUT_RESULT);
 
-                    return Ok(outputDataList);
+                    string result = (string)dataBasService.Get(GlobalConstants.OUT_FUNCTION_STATUS);
+                    if (result == GlobalConstants.SUCCESS)
+                    {
+                        List<dynamic> outputDataList = (List<dynamic>)dataBasService.Get(GlobalConstants.OUT_RESULT);
+                        return Ok(outputDataList);
+                    }
+                    else
+                    {
+                        return Content(HttpStatusCode.BadRequest, "Report Execution Failed!");
+                    }
                 }
             }
             catch (Exception e)
             {
                 Log.Debug(typeof(ReportController), "{0}", e.Message);
-                return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
+                return Content(HttpStatusCode.InternalServerError, "Report Execution Failed!");
             }
         }
 

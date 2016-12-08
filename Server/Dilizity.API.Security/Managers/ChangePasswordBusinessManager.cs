@@ -93,7 +93,7 @@ namespace Dilizity.API.Security.Managers
                     }
                 }
                 //AuditHelper.Register(parameterBusService, changePasswordObject.LoginId, changePasswordObject.PermissionId, success, changePasswordObject.ToString());
-                parameterBusService.Add("OUT_RESULT", success);
+                parameterBusService.Add(GlobalConstants.OUT_RESULT, success);
                 parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, success);
             }
         }

@@ -41,7 +41,8 @@ namespace Dilizity.API.Security.Managers
                 List<dynamic> outList = ExecuteQueryDTO(queryDTO, fieldCollectionDict, columnCollection);
 
                 AuditHelper.Register(parameterBusService, LoginId, permissionId, GlobalConstants.SUCCESS, metaReportExecutionRequestObject.ToString());
-                parameterBusService.Add("OUT_RESULT", outList);
+                parameterBusService.Add(GlobalConstants.OUT_RESULT, outList);
+                parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.SUCCESS);
             }
         }
 

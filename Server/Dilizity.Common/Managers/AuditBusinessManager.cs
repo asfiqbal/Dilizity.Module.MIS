@@ -25,19 +25,21 @@ namespace Dilizity.Business.Common.Managers
                     if (parameterBusService.IsKeyPresent(GlobalConstants.PERMISSIONS))
                     {
                         List<string> permissions = (List<string>)parameterBusService.Get(GlobalConstants.PERMISSIONS);
+                        string permission = permissions[0];
                         string comaSeparatedPermission = Utility.AppendStringInStringList(permissions, AUDIT_PERMISSION);
                         string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
 
                         using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                         {
-                            int isSuccess = (int)dataLayer.ExecuteScalarUsingKey(CHECK_PERMISSION, "LoginId", loginId, "Permission", comaSeparatedPermission);
-                            if (isSuccess == 1)
+                            int haveAuditPermission = (int)dataLayer.ExecuteScalarUsingKey(CHECK_PERMISSION, "LoginId", loginId, "Permission", comaSeparatedPermission);
+                            if (haveAuditPermission == 1)
                             {
-                                if (parameterBusService.IsKeyPresent(GlobalConstants.AUDIT))
-                                {
-                                    List<dynamic> audits = (List<dynamic>)parameterBusService.Get(GlobalConstants.AUDIT);
-                                    dataLayer.ExecuteBulkNonQueryUsingKey(INSERT_AUDIT, audits);
-                                }
+                                string success = (string)parameterBusService.Get(GlobalConstants.OUT_FUNCTION_STATUS);
+                                object data = parameterBusService.Get(GlobalConstants.IN_PARAM);
+                                AuditHelper.Register(parameterBusService, loginId, permission, success, data.ToString());
+
+                                List<dynamic> audits = (List<dynamic>)parameterBusService.Get(GlobalConstants.AUDIT);
+                                dataLayer.ExecuteBulkNonQueryUsingKey(INSERT_AUDIT, audits);
                             }
                         }
                     }

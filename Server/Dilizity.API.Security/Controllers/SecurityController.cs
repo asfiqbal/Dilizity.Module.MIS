@@ -114,8 +114,8 @@ namespace Security.Controllers
                     WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
                     workFlowManager.Do(dataBasService);
 
-                    string result = (string)dataBasService.Get(GlobalConstants.OUT_RESULT);
-                    if (result == GlobalConstants.OUT_FUNCTION_STATUS)
+                    string result = (string)dataBasService.Get(GlobalConstants.OUT_FUNCTION_STATUS);
+                    if (result == GlobalConstants.SUCCESS)
                     {
                         return Ok("Change Password Success!");
                     }

@@ -66,17 +66,11 @@ namespace Dilizity.API.Security.Managers
                         success = GlobalConstants.FAILURE;
                         if (passwordPolicy.AccountLockOnFailedAttempts > 0)
                         {
-                            if (secUser.PasswordAttempts > 1)
-                            {
-                                //Decrease Password Retry Attempt
-                                dataLayer.ExecuteNonQueryUsingKey("UpdateUserPasswordAttempt", "LoginId", userCredentials.LoginId, "PasswordAttempt", secUser.PasswordAttempts-1, "AccountLocked", 0);
-
-                            }
-                            else
-                            {
-                                //Retries Expired, Lock Account
-                                dataLayer.ExecuteNonQueryUsingKey("UpdateUserPasswordAttempt", "LoginId", userCredentials.LoginId, "PasswordAttempt", 0, "AccountLocked", 1);
-                            }
+                            int passwordAttempts = secUser.PasswordAttempts;
+                            int accountLock = (passwordAttempts > 0) ? 0 : 1;
+                            passwordAttempts--;
+ 
+                            dataLayer.ExecuteNonQueryUsingKey("UpdateUserPasswordAttempt", "LoginId", userCredentials.LoginId, "PasswordAttempt", passwordAttempts, "AccountLocked", accountLock);
                         }
                         throw new Exception("Login Failed");
                     }
