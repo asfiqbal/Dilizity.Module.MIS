@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Dilizity.Core.Util
 {
@@ -16,6 +13,7 @@ namespace Dilizity.Core.Util
         string methodName;
         string className;
         Type classType;
+        Stopwatch executionTimeWatcher = new Stopwatch();
 
         private bool _disposed = false;
 
@@ -28,6 +26,7 @@ namespace Dilizity.Core.Util
             this.classType = method.GetType();
             this.methodName = method.Name;
             this.className = method.DeclaringType.Name;
+            executionTimeWatcher.Start();
 
             Log.Debug(this.classType, "{0}.{1} - Begin", this.className, this.methodName);
         }
@@ -60,7 +59,9 @@ namespace Dilizity.Core.Util
             {
                 this._disposed = true;
                 //MyEventSourceClass.Log.TraceExit(this.className, this.methodName);
-                Log.Debug(this.classType, "{0}.{1} - End", this.className, this.methodName);
+                executionTimeWatcher.Stop();
+                
+                Log.Debug(this.classType, "{0}.{1} - End - Execution Time: {2} ms", this.className, this.methodName, this.executionTimeWatcher.ElapsedMilliseconds);
             }
         }
     }

@@ -98,6 +98,7 @@
     <Content Include="app\config\formly.config.js" />
     <Content Include="app\controllers\homeController.js" />
     <Content Include="app\controllers\changePasswordController.js" />
+    <Content Include="app\controllers\sidebarController.js" />
     <Content Include="app\controllers\menuController.js" />
     <Content Include="app\controllers\loginController.js" />
     <Content Include="app\controllers\metaReportController.js" />
@@ -143,6 +144,7 @@
     <Content Include="scripts\angular.min.js" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <None Include="scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="scripts\api-check.js" />
     <Content Include="scripts\formly.js" />
@@ -152,6 +154,7 @@
     <Content Include="scripts\ui-layout.min.js" />
     <Content Include="scripts\ui-layout.js" />
     <Content Include="scripts\ui-navbar.js" />
+    <Content Include="styles\bootstrap.css" />
     <Content Include="styles\select.css" />
     <Content Include="styles\ui-navbar.css" />
     <Content Include="styles\LoginStyle.css" />
@@ -198,8 +201,11 @@
     <Content Include="index.html" />
     <Content Include="styles\ui-layout.css" />
     <Content Include="login.html" />
+    <Content Include="DemiLayout.html" />
+    <Content Include="TestLayout.html" />
     <Content Include="views\layout.html" />
     <Content Include="views\metaReport.html" />
+    <Content Include="views\sidebar.html" />
     <Content Include="views\welcome.html" />
     <Content Include="views\header.html" />
     <Content Include="views\footer.html" />

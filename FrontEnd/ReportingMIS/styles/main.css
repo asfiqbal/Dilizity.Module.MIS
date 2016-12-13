@@ -49,6 +49,21 @@
 .navbar-custom .navbar-nav .open .dropdown-menu .dropdown-submenu >li>a,.navbar-custom1 .navbar-nav .open .dropdown-menu {
   background-color: #4d4dff;
   color:#ffffff;
+  overflow: visible; 
+}
+
+.navbar-nav>li>.dropdown-menu {
+    margin-top: 0;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    z-index:5000  !important;
+    overflow: visible; 
+}
+
+.open>.dropdown-menu {
+    display: block;
+    z-index:5000 !important;
+    overflow: visible; 
 }
 
 .dropdown-submenu {
@@ -57,6 +72,7 @@
 
 .dropdown-menu {
     background-color: #e6e6ff;
+    position:absolute;
 }   
 
 .dropdown:hover {
@@ -84,4 +100,14 @@
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
+}
+
+.ui-layout-container {
+    display: inline-block;
+}
+.panel-group .panel+.panel {
+margin-top: 0px;
+}
+.panel-body {
+padding: 15px;
 }

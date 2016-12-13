@@ -1,9 +1,18 @@
-﻿<div ui-layout="{ dividerSize: '0px' }">
-    <div ui-layout-container>
+﻿<div ui-layout="{ flow:'row', dividerSize:'0' }" ui-layout-loaded>
+    <div ui-layout-container size="8%" style="overflow:visible">
         <div ui-view="nav"></div>
-        <div ui-view></div>
+    </div>
+    <div ui-layout-container>
+        <div ui-layout="{ flow:'column', dividerSize:'2', disableToggle:true }">
+            <div ui-layout-container size="15%" collapsed="layout.four">
+                <div ui-view="sidebar"></div>
+            </div>
+            <div ui-layout-container>
+                <div ui-view></div>
+            </div>
+        </div>
     </div>
     <div ui-layout-container size="7%" class="footer">
         Reporting MIS copyright (©) 2016
     </div>
-</div>
+</div> 

@@ -23,6 +23,11 @@
                     controller: 'menuController',
                     controllerAs: 'vm'
                 },
+                'sidebar@index': {
+                    templateUrl: 'views/sidebar.html',
+                    controller: 'sidebarController',
+                    controllerAs: 'vm'
+                },
             },
         })
          .state('index.OpenReport', {
