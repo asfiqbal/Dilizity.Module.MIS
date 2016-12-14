@@ -16,7 +16,8 @@
             views: {
                 '@': {
                     templateUrl: 'views/layout.html',
-                    //controller: 'IndexCtrl'
+                    controller: 'layoutController',
+                    controllerAs: 'vm'
                 },
                 'nav@index': {
                     templateUrl: 'views/nav.html',

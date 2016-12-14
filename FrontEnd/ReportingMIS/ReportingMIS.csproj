@@ -98,6 +98,7 @@
     <Content Include="app\config\formly.config.js" />
     <Content Include="app\controllers\homeController.js" />
     <Content Include="app\controllers\changePasswordController.js" />
+    <Content Include="app\controllers\layoutController.js" />
     <Content Include="app\controllers\sidebarController.js" />
     <Content Include="app\controllers\menuController.js" />
     <Content Include="app\controllers\loginController.js" />
@@ -112,6 +113,7 @@
     <Content Include="app\templates\datepicker.html" />
     <Content Include="images\ajax-loader.gif" />
     <Content Include="changePassword.html" />
+    <Content Include="images\favicon.ico" />
     <Content Include="scripts\angular-animate.js" />
     <Content Include="scripts\angular-animate.min.js" />
     <Content Include="scripts\angular-aria.js" />
@@ -140,6 +142,7 @@
     <Content Include="scripts\angular-touch.min.js" />
     <Content Include="scripts\angular-ui-router.js" />
     <Content Include="scripts\angular-ui-router.min.js" />
+    <Content Include="scripts\angular-ui\ui-bootstrap-tpls-2.3.1.js" />
     <Content Include="scripts\angular.js" />
     <Content Include="scripts\angular.min.js" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
@@ -191,7 +194,6 @@
     <Content Include="app\config\app.config.js" />
     <Content Include="app\app.module.js" />
     <Content Include="app\config\app.routes.js" />
-    <Content Include="app\controllers\reportController.js" />
     <Content Include="styles\bootstrap.min.css" />
     <Content Include="styles\main.css" />
     <Content Include="styles\ui-bootstrap-csp.css" />

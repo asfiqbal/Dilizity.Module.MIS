@@ -111,3 +111,8 @@ margin-top: 0px;
 .panel-body {
 padding: 15px;
 }
+
+.panel-body {
+background:#ededff;}
+
+.panel-heading {background-color: #428bca!important}

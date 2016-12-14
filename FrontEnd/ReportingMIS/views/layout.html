@@ -3,11 +3,11 @@
         <div ui-view="nav"></div>
     </div>
     <div ui-layout-container>
-        <div ui-layout="{ flow:'column', dividerSize:'2', disableToggle:true }">
-            <div ui-layout-container size="15%" collapsed="layout.four">
+        <div ui-layout="{ flow:'column', dividerSize:'0' }">
+            <div ui-layout-container size="250px" collapsed="menuContainer.left">
                 <div ui-view="sidebar"></div>
             </div>
-            <div ui-layout-container>
+            <div ui-layout-container="central" >
                 <div ui-view></div>
             </div>
         </div>
