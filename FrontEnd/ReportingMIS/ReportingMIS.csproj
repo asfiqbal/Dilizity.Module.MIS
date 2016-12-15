@@ -206,6 +206,7 @@
     <Content Include="DemiLayout.html" />
     <Content Include="TestLayout.html" />
     <Content Include="views\layout.html" />
+    <Content Include="views\searchRole.html" />
     <Content Include="views\metaReport.html" />
     <Content Include="views\sidebar.html" />
     <Content Include="views\welcome.html" />

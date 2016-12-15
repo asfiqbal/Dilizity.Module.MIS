@@ -108,11 +108,39 @@
 .panel-group .panel+.panel {
 margin-top: 0px;
 }
-.panel-body {
+/*.panel-body {
 padding: 15px;
-}
+}*/
+
 
 .panel-body {
 background:#ededff;}
 
-.panel-heading {background-color: #428bca!important}
+.panel-heading {
+    background-color: #428bca!important;
+}
+
+.list-group-item {
+    background-color: #c5c5f6; !important;
+    color: #000000;     !important;
+}
+
+.panel-body.no-padding {
+  margin-left: 0;
+  margin-right: 0;
+  padding:0px;!important;
+}
+
+.panel-default.no-padding {
+  margin-left: 0;
+  margin-right: 0;
+  padding:0px;!important;
+}
+
+.my-paddings{
+    padding:0px;!important;
+}
+
+.panel-group .panel-heading + .panel-collapse > .panel-body, .panel-group .panel-heading + .panel-collapse > .list-group {
+    padding:0px;!important;
+}

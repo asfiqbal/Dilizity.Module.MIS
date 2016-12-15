@@ -9,7 +9,7 @@
     function layoutController($scope, $http, MenuService, FlashService) {
 
         $scope.menuContainer = {
-            left: true
+            left: false
         };
 
         //$scope.$on('ui.layout.loaded', function(){

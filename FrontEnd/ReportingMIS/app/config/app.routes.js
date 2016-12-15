@@ -37,6 +37,12 @@
              controller: 'metaReportController',
              controllerAs: 'vm'
          })
+        .state('index.Role', {
+            url: '/Role',
+            templateUrl: 'views/searchRole.html',
+            //controller: 'searchRoleController',
+            //controllerAs: 'vm'
+        })
         .state('index.Report1', {
              url: '/Report1',
              templateUrl: 'views/report1.html',
