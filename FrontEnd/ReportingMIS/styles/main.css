@@ -42,7 +42,7 @@
 .navbar-custom {
     /*color: #FFFFFF;
     background-color: #e6e6ff;*/
-    background-color: #e6e6ff;
+    background-color: #010117;
 }
 
 /*-- change navbar dropdown color --*/
@@ -105,42 +105,30 @@
 .ui-layout-container {
     display: inline-block;
 }
-.panel-group .panel+.panel {
-margin-top: 0px;
-}
-/*.panel-body {
-padding: 15px;
-}*/
 
-
-.panel-body {
-background:#ededff;}
-
-.panel-heading {
-    background-color: #428bca!important;
+input.form-control {
+   height:25px !important;
 }
 
-.list-group-item {
-    background-color: #c5c5f6; !important;
-    color: #000000;     !important;
+.col-form-label{
+    margin-top:3px; !important;
 }
 
-.panel-body.no-padding {
-  margin-left: 0;
-  margin-right: 0;
-  padding:0px;!important;
+.navbar .divider-vertical {
+    height: 20px;
+    border-right: 1px solid #ffffff;
+    border-left: 1px solid #f2f2f2;
 }
 
-.panel-default.no-padding {
-  margin-left: 0;
-  margin-right: 0;
-  padding:0px;!important;
-}
+a.user-profile {
+  color: #5E6974 !important; }
 
-.my-paddings{
-    padding:0px;!important;
-}
+.user-profile img {
+  width: 29px;
+  height: 29px;
+  border-radius: 50%;
+  margin-right: 10px; }
 
-.panel-group .panel-heading + .panel-collapse > .panel-body, .panel-group .panel-heading + .panel-collapse > .list-group {
-    padding:0px;!important;
-}
+.divider {
+  border-bottom: 1px solid #ddd;
+  margin: 10px; }

@@ -1,7 +1,4 @@
-﻿<!--<nav class="navbar navbar-default navbar-static-top">
-    <div menu="menu"></div>
-</nav>-->
-<nav class="navbar navbar-default navbar-static-top  navbar-custom" role="navigation">
+﻿<nav class="navbar navbar-default navbar-static-top  navbar-custom" role="navigation">
 
     <div class="navbar-header">
 
@@ -24,9 +21,25 @@
         <ul class="nav navbar-nav">
             <trees trees="tree"></trees>
         </ul>
-        <a type="button" ng-click="toggle('left')" class="btn btn-default navbar-btn pull-right">
-            <span class="glyphicon glyphicons-hand-up"></span>Close
-        </a>
+        <div class="nav navbar-nav navbar-right">
+            <button type="button" class="btn" style="background-color: #010117;" >
+                <img src="../images/envelope.png" />
+            </button>
+            <button type="button" ng-click="toggle('left')" class="btn" style="background-color: #010117;">
+                <img src="images/cancel.png">
+            </button>
+            <div class="btn-group" uib-dropdown style="padding-right: 25px;padding-top: 10px; padding-bottom:10px;">
+                <a  class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" uib-dropdown-toggle>
+                    <img src="images/img.jpg" alt="">John Doe
+                </a>
+                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-append-to-single-button">
+                    <li role="menuitem"><a href="#">Profile</a></li>
+                    <li role="menuitem"><a href="#">Settings</a></li>
+                    <li role="menuitem"><a href="#">Help</a></li>
+                    <li class="divider"></li>
+                    <li role="menuitem"><a href="#">Log Out</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
-    <!-- /.navbar-collapse -->
 </nav>

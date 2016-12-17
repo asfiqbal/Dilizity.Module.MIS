@@ -1,10 +1,10 @@
 ﻿<div ui-layout="{ flow:'row', dividerSize:'0' }" ui-layout-loaded>
-    <div ui-layout-container size="8%" style="overflow:visible">
+    <div ui-layout-container size="7%" style="overflow:visible">
         <div ui-view="nav"></div>
     </div>
     <div ui-layout-container>
         <div ui-layout="{ flow:'column', dividerSize:'0' }">
-            <div ui-layout-container size="250px" collapsed="menuContainer.left">
+            <div ui-layout-container size="250px" class="sidebar-container" collapsed="menuContainer.left">
                 <div ui-view="sidebar"></div>
             </div>
             <div ui-layout-container="central" >
