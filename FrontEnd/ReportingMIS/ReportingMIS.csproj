@@ -99,6 +99,7 @@
     <Content Include="app\controllers\homeController.js" />
     <Content Include="app\controllers\changePasswordController.js" />
     <Content Include="app\controllers\layoutController.js" />
+    <Content Include="app\controllers\roleController.js" />
     <Content Include="app\controllers\sidebarController.js" />
     <Content Include="app\controllers\menuController.js" />
     <Content Include="app\controllers\loginController.js" />
@@ -106,7 +107,9 @@
     <Content Include="app\directives\loader.js" />
     <Content Include="app\factories\httpInterceptor.js" />
     <Content Include="app\services\AuthenticationService.js" />
+    <Content Include="app\services\AlertService.js" />
     <Content Include="app\services\MenuService.js" />
+    <Content Include="app\services\RoleService.js" />
     <Content Include="app\services\ReportService.js" />
     <Content Include="app\services\FlashService.js" />
     <Content Include="app\services\UserServiceMock.js" />
@@ -117,6 +120,9 @@
     <Content Include="images\cancel.png" />
     <Content Include="images\envelope.png" />
     <Content Include="images\favicon.ico" />
+    <Content Include="images\glyphicons-191-plus-sign.png" />
+    <Content Include="images\glyphicons-257-delete.png" />
+    <Content Include="images\glyphicons-529-database-search.png" />
     <Content Include="images\glyphicons-721-closed.png" />
     <Content Include="images\settings.png" />
     <Content Include="scripts\angular-animate.js" />

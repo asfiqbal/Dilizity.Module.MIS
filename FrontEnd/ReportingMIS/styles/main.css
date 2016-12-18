@@ -132,3 +132,22 @@ a.user-profile {
 .divider {
   border-bottom: 1px solid #ddd;
   margin: 10px; }
+
+.panel-container {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    height:30px;
+}
+.abc{
+    height:30px;
+      display:table-cell !important;
+      vertical-align:middle;
+      padding:0px;
+}
+
+.alert {
+  height:30px;
+  padding-top:5px;
+  margin-bottom:2px;
+  margin-top:2px;
+}

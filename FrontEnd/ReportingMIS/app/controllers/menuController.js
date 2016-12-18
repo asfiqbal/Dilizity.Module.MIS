@@ -10,9 +10,10 @@
         var vm = this;
 
         vm.loadMenu = loadMenu;
+        vm.fullName = "";
 
         (function initController() {
-            // reset 
+            vm.fullName = "Asif Iqbal";
         })();
 
         function loadMenu() {

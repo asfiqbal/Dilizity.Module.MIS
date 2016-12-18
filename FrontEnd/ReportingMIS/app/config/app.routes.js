@@ -40,8 +40,8 @@
         .state('index.Role', {
             url: '/Role',
             templateUrl: 'views/searchRole.html',
-            //controller: 'searchRoleController',
-            //controllerAs: 'vm'
+            controller: 'roleController',
+            controllerAs: 'vm'
         })
         .state('index.Report1', {
              url: '/Report1',
