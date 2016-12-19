@@ -151,3 +151,29 @@ a.user-profile {
   margin-bottom:2px;
   margin-top:2px;
 }
+
+.ui-grid-cell-contents {
+  padding: 1px 1px;
+}
+
+.ui-grid-render-container-body .ui-grid-header-cell,
+.ui-grid-render-container-left .ui-grid-header-cell,
+.grid .ui-grid-row,
+.grid .ui-grid-cell,
+.grid .ui-grid-cell .ui-grid-vertical-bar {
+  height: 22px !important;
+  font-size: 12px;
+  line-height: 20px;
+}
+.ui-grid-render-container-body .ui-grid-header-cell,
+.ui-grid-render-container-left .ui-grid-header-cell,
+ui-grid-header-cell {
+  height: 25px !important;
+}
+.ui-grid-filter-container {
+  padding: 1px 3px;
+}
+
+.grid {
+  height: 400px;
+}

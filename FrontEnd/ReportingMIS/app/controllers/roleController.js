@@ -17,12 +17,18 @@
         $scope.gridOptions = {
             enableGridMenu: true,
             enableSelectAll: true,
+            paginationPageSizes: [25, 50, 75],
+            paginationPageSize: 25,
+            useExternalPagination: true,
+            useExternalSorting: true,
             data:[],
             exporterCsvFilename: 'myFile.csv',
             onRegisterApi: function (gridApi) {
                 $scope.gridApi = gridApi;
             }
         };
+
+        $scope.gridOptions.multiSelect = false;
 
 
         (function initController() {
