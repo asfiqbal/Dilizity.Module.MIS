@@ -48,11 +48,16 @@
 
             </div>
         </form>
-
-
     </div>
     <div  class="panel-footer">Result
     </div>
-    <div ui-grid="gridOptions" ui-grid-selection ui-grid-pagination ui-grid-exporter ui-grid-move-columns class="grid"></div>
+    <div ui-grid="gridOptions" external-scopes="editClickHandler" ui-grid-selection ui-grid-pagination ui-grid-exporter class="grid"></div>
+    <p>Current page: {{ pagination.pageNumber }} of {{ pagination.getTotalPages() }}</p>
+    <button type="button" class="btn btn-success" ng-click="pagination.previousPage()">
+        previous page
+    </button>
+    <button type="button" class="btn btn-success" ng-click="pagination.nextPage()">
+        next page
+    </button>
 </div>
 

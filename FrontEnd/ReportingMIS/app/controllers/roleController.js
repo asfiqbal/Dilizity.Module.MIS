@@ -13,22 +13,81 @@
         var permissionName = '';
         vm.searchRole = searchRole;
         vm.addRole = addRole;
+        vm.load = load;
+
+        $scope.sort = [];
+
+        $scope.pagination = {
+            pageSize: 15,
+            pageNumber: 1,
+            totalItems: null,
+            getTotalPages: function () {
+                console.log("getTotalPages Begin");
+                return Math.ceil(this.totalItems / this.pageSize);
+            },
+            nextPage: function () {
+                console.log("nextPage Begin");
+                if (this.pageNumber < this.getTotalPages()) {
+                    this.pageNumber++;
+                    load();
+                }
+                console.log("nextPage End");
+            },
+            previousPage: function () {
+                console.log("previousPage Begin");
+                if (this.pageNumber > 1) {
+                    this.pageNumber--;
+                    load();
+                }
+                console.log("previousPage End");
+            }
+        };
 
         $scope.gridOptions = {
             enableGridMenu: true,
             enableSelectAll: true,
-            paginationPageSizes: [25, 50, 75],
-            paginationPageSize: 25,
+            enablePaginationControls: false,
             useExternalPagination: true,
             useExternalSorting: true,
+            columnDefs:[ 
+              {name:'Role Id',field:'RoleId'},
+              {name:'Role Name',field:'RoleName'},
+              {name:'Created By',field:'CreatedBy'},
+              { name: 'Created On', field: 'CreatedOn' },
+              { name: 'Edit', cellTemplate: '<div><button ng-click="grid.appScope.editClickHandler(row.entity.RoleId)">Edit</button></div>' }
+            ],
             data:[],
-            exporterCsvFilename: 'myFile.csv',
+            exporterCsvFilename: 'Roles.csv',
             onRegisterApi: function (gridApi) {
-                $scope.gridApi = gridApi;
+            $scope.gridApi = gridApi;
+            $scope.gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
+                    console.log("sortChanged Begin");
+                    $scope.sort = [];
+                    angular.forEach(sortColumns, function (sortColumn) {
+                        $scope.sort.push({
+                            fieldName: sortColumn.name,
+                            order: sortColumn.sort.direction
+                        });
+                    });
+                    load();
+                    console.log("sortChanged End");
+
+                });
             }
         };
 
         $scope.gridOptions.multiSelect = false;
+
+        $scope.editClickHandler = function (val) {
+            console.log(val);
+            alert('Name: ' + val);
+        };
+
+        function load() {
+            console.log("load Begin");
+            searchRole();
+            console.log("load End");
+        };
 
 
         (function initController() {
@@ -62,13 +121,14 @@
             console.log("roleId", vm.roleId);
             console.log("roleName", vm.roleName);
 
-            RoleService.SearchRole(vm.permissionName, tmpUserName, vm.roleId, vm.roleName,
+            RoleService.SearchRole(vm.permissionName, tmpUserName, vm.roleId, vm.roleName, $scope.pagination.pageSize, $scope.pagination.pageNumber, $scope.sort,
                 function (response) {
-                $scope.gridOptions.data = response.data;
-                console.log("Success!");
-                AlertService.Add("warning", "This is a warning.");
+                    console.log("Success!");
+                    $scope.gridOptions.data = response.data;
+                    $scope.pagination.totalItems = 100;
                 },
                 function (response) {
+                    AlertService.Add("Error", "Data not received.");
                     console.log("Error!");
                 }
             );

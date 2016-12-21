@@ -14,7 +14,7 @@
 
         return service;
 
-        function SearchRole(permissionName, userName, roleId, roleName, successCallBack, errorCallBack) {
+        function SearchRole(permissionName, userName, roleId, roleName, pageSize, pageNumber, sort, successCallBack, errorCallBack) {
 
             /* Dummy authentication for testing, uses $timeout to simulate api call
              ----------------------------------------------*/
@@ -22,111 +22,111 @@
                 var response = {
                     data: [
                     {
-                        "Role Id": 1,
-                        "Role Name": "Administrator",
-                        "Created By": "Admin",
-                        "Created On": "17-Dec-2016"
+                        "RoleId": 1,
+                        "RoleName": "Administrator",
+                        "CreatedBy": "Admin",
+                        "CreatedOn": "17-Dec-2016"
                     },
                     {
-                        "Role Id": 2,
-                        "Role Name": "Test Role 2",
-                        "Created By": "Admin",
-                        "Created On": "17-Dec-2016"
+                        "RoleId": 2,
+                        "RoleName": "Test Role 2",
+                        "CreatedBy": "Admin",
+                        "CreatedOn": "17-Dec-2016"
                     },
                     {
-                        "Role Id": 3,
-                        "Role Name": "Test Role 3",
-                        "Created By": "Admin",
-                        "Created On": "17-Dec-2016"
+                        "RoleId": 3,
+                        "RoleName": "Test Role 3",
+                        "CreatedBy": "Admin",
+                        "CreatedOn": "17-Dec-2016"
                     },
                     {
-                        "Role Id": 4,
-                        "Role Name": "Test Role 2",
-                        "Created By": "Admin",
-                        "Created On": "17-Dec-2016"
+                        "RoleId": 4,
+                        "RoleName": "Test Role 2",
+                        "CreatedBy": "Admin",
+                        "CreatedOn": "17-Dec-2016"
                     },
                     {
-                        "Role Id": 5,
-                        "Role Name": "Test Role 2",
-                        "Created By": "Admin",
-                        "Created On": "17-Dec-2016"
+                        "RoleId": 5,
+                        "RoleName": "Test Role 2",
+                        "CreatedBy": "Admin",
+                        "CreatedOn": "17-Dec-2016"
                     },
                     {
-                        "Role Id": 6,
-                        "Role Name": "Test Role 2",
-                        "Created By": "Admin",
-                        "Created On": "17-Dec-2016"
+                        "RoleId": 6,
+                        "RoleName": "Test Role 2",
+                        "CreatedBy": "Admin",
+                        "CreatedOn": "17-Dec-2016"
                     },
                     {
-                        "Role Id": 7,
-                        "Role Name": "Test Role 2",
-                        "Created By": "Admin",
-                        "Created On": "17-Dec-2016"
+                        "RoleId": 7,
+                        "RoleName": "Test Role 2",
+                        "CreatedBy": "Admin",
+                        "CreatedOn": "17-Dec-2016"
                     },
                     {
-                        "Role Id": 8,
-                        "Role Name": "Test Role 2",
-                        "Created By": "Admin",
-                        "Created On": "17-Dec-2016"
+                        "RoleId": 8,
+                        "RoleName": "Test Role 2",
+                        "CreatedBy": "Admin",
+                        "CreatedOn": "17-Dec-2016"
                     },
                     {
-                        "Role Id": 9,
-                        "Role Name": "Test Role 2",
-                        "Created By": "Admin",
-                        "Created On": "17-Dec-2016"
+                        "RoleId": 9,
+                        "RoleName": "Test Role 2",
+                        "CreatedBy": "Admin",
+                        "CreatedOn": "17-Dec-2016"
                     },
                     {
-                        "Role Id": 10,
-                        "Role Name": "Test Role 2",
-                        "Created By": "Admin",
-                        "Created On": "17-Dec-2016"
+                        "RoleId": 10,
+                        "RoleName": "Test Role 2",
+                        "CreatedBy": "Admin",
+                        "CreatedOn": "17-Dec-2016"
                     },
                     {
-                        "Role Id": 7,
-                    "Role Name": "Test Role 2",
-                    "Created By": "Admin",
-                    "Created On": "17-Dec-2016"
+                        "RoleId": 7,
+                    "RoleName": "Test Role 2",
+                    "CreatedBy": "Admin",
+                    "CreatedOn": "17-Dec-2016"
                 },
                 {
-                    "Role Id": 8,
-                    "Role Name": "Test Role 2",
-                    "Created By": "Admin",
-                    "Created On": "17-Dec-2016"
+                    "RoleId": 8,
+                    "RoleName": "Test Role 2",
+                    "CreatedBy": "Admin",
+                    "CreatedOn": "17-Dec-2016"
                 },
                 {
-                    "Role Id": 9,
-                    "Role Name": "Test Role 2",
-                    "Created By": "Admin",
-                    "Created On": "17-Dec-2016"
+                    "RoleId": 9,
+                    "RoleName": "Test Role 2",
+                    "CreatedBy": "Admin",
+                    "CreatedOn": "17-Dec-2016"
                 },
                     {
-                        "Role Id": 10,
-                        "Role Name": "Test Role 2",
-                        "Created By": "Admin",
-                        "Created On": "17-Dec-2016"
+                        "RoleId": 10,
+                        "RoleName": "Test Role 2",
+                        "CreatedBy": "Admin",
+                        "CreatedOn": "17-Dec-2016"
                     },
                     {
-                        "Role Id": 7,
-                        "Role Name": "Test Role 2",
-                        "Created By": "Admin",
-                        "Created On": "17-Dec-2016"
+                        "RoleId": 7,
+                        "RoleName": "Test Role 2",
+                        "CreatedBy": "Admin",
+                        "CreatedOn": "17-Dec-2016"
                     },
                 {
-                    "Role Id": 8,
-                    "Role Name": "Test Role 2",
-                    "Created By": "Admin",
-                    "Created On": "17-Dec-2016"
+                    "RoleId": 8,
+                    "RoleName": "Test Role 2",
+                    "CreatedBy": "Admin",
+                    "CreatedOn": "17-Dec-2016"
                 },
                 {
-                    "Role Id": 9,
-                    "Role Name": "Test Role 2",
-                    "Created By": "Admin",
-                    "Created On": "17-Dec-2016"
+                    "RoleId": 9,
+                    "RoleName": "Test Role 2",
+                    "CreatedBy": "Admin",
+                    "CreatedOn": "17-Dec-2016"
                 }, {
-                    "Role Id": 10,
-                    "Role Name": "Test Role 2",
-                    "Created By": "Admin",
-                    "Created On": "17-Dec-2016"
+                    "RoleId": 10,
+                    "RoleName": "Test Role 2",
+                    "CreatedBy": "Admin",
+                    "CreatedOn": "17-Dec-2016"
                 }]
                 };
 
