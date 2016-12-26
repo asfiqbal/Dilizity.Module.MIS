@@ -18,9 +18,19 @@ namespace Dilizity.API.Security.Managers
 
     public class ChangePasswordBusinessManager : IAbstractBusiness
     {
-        private const string USER_CREDENTIAL = "USER_CREDENTIAL";
-        private const string DILIZITY_LOGIN = "Dilizity.ChangePassword";
+        private const string GET_USER_PASSWORD_POLICY = "GetUserPasswordPolicy";
+        private const string LOGIN_PARAM = "LoginId";
+        private const string PASSWORD_PARAM = "Password";
         private const string GET_USER = "GetUser";
+        private const string CHECK_LAST_N_PASSWORDS = "CheckLastNPasswords";
+        private const string CHANGE_USER_PASSWORD = "ChangeUserPassword";
+        private const string INSERT_CHANGE_PASSWORD_HISTORY = "InsertChangePasswordHistory";
+        private const string UPDATE_USER_PASSWORD_ATTEMPT = "UpdateUserPasswordAttempt";
+        private const string PASSWORD_ATTEMPT = "PasswordAttempt";
+        private const string ACCOUNT_LOCKED = "AccountLocked";
+        private const string NUMBER_CANT_REUSE = "NumberCantReuse";
+        
+
 
         public void Do(BusService parameterBusService)
         {
@@ -34,11 +44,11 @@ namespace Dilizity.API.Security.Managers
 
                 using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                 {
-                    passwordPolicy = dataLayer.ExecuteAndGetSingleRowUsingKey("GetUserPasswordPolicy", "LoginId", changePasswordObject.LoginId);
-                    secUser = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_USER, "LoginId", changePasswordObject.LoginId);
+                    passwordPolicy = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_USER_PASSWORD_POLICY, LOGIN_PARAM, changePasswordObject.LoginId);
+                    secUser = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_USER, LOGIN_PARAM, changePasswordObject.LoginId);
                     if (passwordPolicy.NumberCantReuse > 0)
                     {
-                        CheckLastNPasswords = dataLayer.ExecuteScalarUsingKey("CheckLastNPasswords", "NumberCantReuse", passwordPolicy.NumberCantReuse, "LoginId", changePasswordObject.LoginId, "Password", Utility.GetSecureString(changePasswordObject.NewPassword));
+                        CheckLastNPasswords = dataLayer.ExecuteScalarUsingKey(CHECK_LAST_N_PASSWORDS, NUMBER_CANT_REUSE, passwordPolicy.NumberCantReuse, LOGIN_PARAM, changePasswordObject.LoginId, PASSWORD_PARAM, Utility.GetSecureString(changePasswordObject.NewPassword));
                         CheckLastNPasswords = (CheckLastNPasswords == null) ? 0 : CheckLastNPasswords;
                     }
                 }
@@ -48,19 +58,19 @@ namespace Dilizity.API.Security.Managers
                 string encryptedPassword = Utility.Encrypt(changePasswordObject.OldPassword, false);
                 if (dbPassword == encryptedPassword)
                 {
-                    Log.Debug(typeof(AuthenticationBusinessManager), "Password matched");
+                    Log.Debug(typeof(AuthenticationBusinessManager), MessageResource.Dilizity_ChangePassword_PasswordMatch);
                     if (passwordPolicy.NumberCantReuse > 0)
                     {
                         if (CheckLastNPasswords > 0)
                         {
-                            throw new Exception("Password can't reuse");
+                            throw new Exception(MessageResource.Dilizity_ChangePassword_Exception_Password_Cant_Reuse);
                         }
                     }
                     string newEncryptedPassword = Utility.Encrypt(changePasswordObject.NewPassword, false);
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA, true, true))
                     {
-                        dataLayer.DelayExecuteNonQueryUsingKey("ChangeUserPassword", "LoginId", changePasswordObject.LoginId, "Password", newEncryptedPassword);
-                        dataLayer.DelayExecuteNonQueryUsingKey("InsertChangePasswordHistory", "LoginId", changePasswordObject.LoginId, "Password", newEncryptedPassword);
+                        dataLayer.DelayExecuteNonQueryUsingKey(CHANGE_USER_PASSWORD, LOGIN_PARAM, changePasswordObject.LoginId, PASSWORD_PARAM, newEncryptedPassword);
+                        dataLayer.DelayExecuteNonQueryUsingKey(INSERT_CHANGE_PASSWORD_HISTORY, LOGIN_PARAM, changePasswordObject.LoginId, PASSWORD_PARAM, newEncryptedPassword);
                         dataLayer.DelayExecuteBulk();
                         dataLayer.CommitTransaction();
                     }
@@ -68,7 +78,7 @@ namespace Dilizity.API.Security.Managers
                 }
                 else
                 {
-                    Log.Debug(typeof(ChangePasswordBusinessManager), "Login Failed");
+                    Log.Debug(typeof(ChangePasswordBusinessManager), MessageResource.Dilizity_ChangePassword_Login_Failed);
                     success = GlobalConstants.FAILURE;
                     if (passwordPolicy.AccountLockOnFailedAttempts > 0)
                     {
@@ -87,9 +97,9 @@ namespace Dilizity.API.Security.Managers
                         }
                         using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                         {
-                            dataLayer.ExecuteNonQueryUsingKey("UpdateUserPasswordAttempt", "LoginId", changePasswordObject.LoginId, "PasswordAttempt", passwordAttempt, "AccountLocked", accountLocked);
+                            dataLayer.ExecuteNonQueryUsingKey(UPDATE_USER_PASSWORD_ATTEMPT, LOGIN_PARAM, changePasswordObject.LoginId, PASSWORD_ATTEMPT, passwordAttempt, ACCOUNT_LOCKED, accountLocked);
                         }
-                        throw new Exception("Change Password Failed");
+                        throw new Exception(MessageResource.Dilizity_ChangePassword_Exception_Change_Password_failed);
                     }
                 }
                 //AuditHelper.Register(parameterBusService, changePasswordObject.LoginId, changePasswordObject.PermissionId, success, changePasswordObject.ToString());
@@ -104,8 +114,8 @@ namespace Dilizity.API.Security.Managers
             {
                 if (userAccountLocked > 0)
                 {
-                    Log.Debug(typeof(ChangePasswordBusinessManager), "Account is Locked!");
-                    throw new AccessViolationException("Account is Locked!");
+                    Log.Debug(typeof(ChangePasswordBusinessManager), MessageResource.Dilizity_ChangePassword_Account_Locked);
+                    throw new AccessViolationException(MessageResource.Dilizity_ChangePassword_Account_Locked);
                 }
             }
         }

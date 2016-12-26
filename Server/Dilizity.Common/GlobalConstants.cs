@@ -17,9 +17,13 @@ namespace Dilizity.Business.Common
         public const string OUT_FUNCTION_STATUS = "OUT_FUNCTION_STATUS";
         public const string LOGIN_ID = "LOGIN_ID";
         public const string PERMISSIONS = "PERMISSIONS";
+        public const string PERMISSION = "PERMISSION";
         public const string SUCCESS = "Success";
         public const string FAILURE = "Failure";
         public const string AUDIT = "Audit";
+        public const string LOGIN_PARAM = "LoginId";
+        public const string PASSWORD_PARAM = "Password";
+        public const string PERMISSION_PARAM = "PermissionId";
 
     }
 }

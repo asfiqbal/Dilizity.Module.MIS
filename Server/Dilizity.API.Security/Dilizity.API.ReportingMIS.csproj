@@ -130,17 +130,25 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Managers\ReportExecutionBusinessManager.cs" />
+    <Compile Include="Managers\RoleSearchBusinessManager.cs" />
     <Compile Include="Managers\ReportMetaDataBusinessManager.cs" />
+    <Compile Include="Managers\RoleScreenManager.cs" />
     <Compile Include="Managers\WorkFlowActionManager.cs" />
     <Compile Include="Managers\ChangePasswordBusinessManager.cs" />
     <Compile Include="Managers\AuthenticationBusinessManager.cs" />
     <Compile Include="Managers\MenuBusinessManager.cs" />
     <Compile Include="Managers\PermissionValidationBusinessManager.cs" />
+    <Compile Include="MessageResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MessageResource.resx</DependentUpon>
+    </Compile>
     <Compile Include="Models\MenuTree.cs" />
     <Compile Include="Models\ChangePasswordModel.cs" />
     <Compile Include="Models\MetaReportExecutionRequest.cs" />
@@ -181,6 +189,12 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MessageResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MessageResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

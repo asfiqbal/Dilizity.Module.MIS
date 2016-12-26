@@ -346,5 +346,68 @@
         <Param Name="Data" Type="System.String"  Size="-1"/>
         <Param Name="CreatedBy" Type="System.String"  Size="200"/>
       </Query>
+        <Query ID="RoleScreenUserPermission" DataSource="">
+        <![CDATA[
+            SELECT	REVERSE(SUBSTRING(REVERSE(P.PERMISSION_NAME),0,CHARINDEX('.',REVERSE(P.PERMISSION_NAME)))) FieldKey, P.PERMISSION_NAME PermissionName
+            FROM	  SEC_PERMISSION P
+		                INNER JOIN
+		                (
+			                SELECT PERMISSION_ID
+			                FROM	SEC_PERMISSION
+			                WHERE  PERMISSION_NAME = @PermissionId
+		                ) T ON P.PARENT_PERMISSION_ID = T.PERMISSION_ID
+		                INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION V ON T.PERMISSION_ID = V.PERMISSION_ID
+            WHERE   V.LOGIN_ID = @LoginId
+            ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="PermissionId" Type="System.String"  Size="200"/>
+      </Query>    
+      <Query ID="UserSpecficPermissions" DataSource="">
+        <![CDATA[
+            SELECT  -1 PermissionId, 'All' PermissionName
+            UNION ALL        
+            SELECT	PERMISSION_ID PermissionId, PERMISSION_NAME PermissionName
+            FROM	  SEC_VW_DISTINCT_USER_PERMISSION 
+            WHERE   LOGIN_ID = @LoginId
+            ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+      </Query>    
+      <Query ID="SearchRole" DataSource="">
+        <![CDATA[
+              WITH SQLPaging
+              AS
+              (
+              SELECT TOP(@PageSize * @PageNumber) ResultNum = ROW_NUMBER() OVER (ORDER BY 
+					              CASE WHEN @SortOrder = 'RoleId' AND @SortDirection = 'ASC' THEN ROLE_ID END ASC,
+					              CASE WHEN @SortOrder = 'RoleId' AND @SortDirection = 'DESC' THEN ROLE_ID END DESC,
+					              CASE WHEN @SortOrder = 'RoleName' AND @SortDirection = 'ASC' THEN ROLE_NAME END ASC,
+					              CASE WHEN @SortOrder = 'RoleName' AND @SortDirection = 'DESC' THEN ROLE_NAME END DESC,
+					              CASE WHEN @SortOrder = 'IsSystem' AND @SortDirection = 'ASC' THEN IS_SYSTEM END ASC,
+					              CASE WHEN @SortOrder = 'IsSystem' AND @SortDirection = 'DESC' THEN IS_SYSTEM END DESC,
+					              CASE WHEN @SortOrder = 'UpdatedBy' AND @SortDirection = 'ASC' THEN UPDATED_BY END ASC,
+					              CASE WHEN @SortOrder = 'UpdatedBy' AND @SortDirection = 'DESC' THEN UPDATED_BY END DESC,
+					              CASE WHEN @SortOrder = 'UpdatedOn' AND @SortDirection = 'ASC' THEN UPDATED_ON END ASC,
+					              CASE WHEN @SortOrder = 'UpdatedOn' AND @SortDirection = 'DESC' THEN UPDATED_ON END DESC
+			              )
+				              , *
+              FROM SEC_ROLE
+              WHERE   IS_DELETED = 0
+              AND	(ROLE_ID = @RoleId OR @RoleId = 0)
+              AND	(ROLE_NAME LIKE '%'+@RoleName+'%' OR @RoleName =  '')
+              AND	(ROLE_ID IN (SELECT ROLE_ID FROM SEC_ROLE_PERMISSION WHERE PERMISSION_ID in (@RolePermissionId)) OR @RolePermissionId = -1)
+              )
+              SELECT ROLE_ID RoleId, ROLE_NAME RoleName, IS_SYSTEM IsSystem, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+              FROM SQLPaging
+              WHERE ResultNum > ((@PageNumber - 1) * @PageSize)
+              order by ResultNum
+            ]]>
+        <Param Name="RoleId" Type="System.Int32"  Size="0"/>
+        <Param Name="RoleName" Type="System.String"  Size="200"/>
+        <Param Name="RolePermissionId" Type="System.Int32"  Size="0"/>
+        <Param Name="PageSize" Type="System.Int32"  Size="0"/>
+        <Param Name="PageNumber" Type="System.Int32"  Size="0"/>
+        <Param Name="SortOrder" Type="System.String"  Size="200"/>
+        <Param Name="SortDirection" Type="System.String"  Size="200"/>
+      </Query>      
   </Schema>
 </root>

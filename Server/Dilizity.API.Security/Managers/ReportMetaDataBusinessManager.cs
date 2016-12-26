@@ -36,7 +36,7 @@ namespace Dilizity.API.Security.Managers
                 PopulateReportMetaData(metaDataRequest, outMetaFields);
                 PopulateReportMetaFiltersData(metaDataRequest, metaFields);
                 AuditHelper.Register(parameterBusService, metaDataRequest.LoginId, metaDataRequest.PermissionId, GlobalConstants.SUCCESS, metaDataRequest.ToString());
-                parameterBusService.Add("OUT_RESULT", outMetaFields);
+                parameterBusService.Add(GlobalConstants.OUT_RESULT, outMetaFields);
                 parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.SUCCESS);
             }
         }
