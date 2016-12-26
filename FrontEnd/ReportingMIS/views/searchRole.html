@@ -8,17 +8,17 @@
             </div>
             <div class="col-xs-10 text-right">
                 <span class="panel-title btn-group">
-                    <button type="button" class="btn-sm abc" ng-click="addUser()">
+                    <button ng-show="vm.userPermission.Add=='Dilizity.Backoffice.Role.Add'" uib-tooltip="Add User" tooltip-placement="left" type="button" class="btn-sm abc" ng-click="addUser()">
                         <img  src="../images/glyphicons-191-plus-sign.png" />
                     </button>
                 </span>
                 <span class="panel-title btn-group">
-                    <button  type="button" class="btn-sm abc" ng-click="addUser()">
+                    <button ng-show="vm.userPermission.Delete=='Dilizity.Backoffice.Role.Delete'" uib-tooltip="Delete User" tooltip-placement="left" type="button" class="btn-sm abc" ng-click="addUser()">
                         <img src="../images/glyphicons-257-delete.png" />
                     </button>
                 </span>
                 <span class="panel-title btn-group">
-                    <button type="button" class="btn-sm abc" ng-click="vm.searchRole()">
+                    <button ng-show="vm.userPermission.Search=='Dilizity.Backoffice.Role.Search'" uib-tooltip="Search User" tooltip-placement="left" type="button" class="btn-sm abc" ng-click="vm.searchRole()">
                         <img src="../images/glyphicons-529-database-search.png" />
                     </button>
                 </span>
@@ -33,17 +33,26 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-2">
-                        <label for="example-month-input" class=" col-form-label">Role Id</label>
+                        <label for="example-month-input" class="col-form-label">Role Id</label>
                     </div>
                     <div class="col-md-4">
-                        <input class="form-control" type="text" id="inputRoleId">
+                        <input class="form-control" type="text" ng-model="vm.roleId" id="roleId">
                     </div>
                     <div class="col-md-2">
-                        <label for="example-month-input" class=" col-form-label">Role Name</label>
+                        <label for="example-month-input" class="col-form-label">Role Name</label>
                     </div>
                     <div class="col-md-4">
-                        <input class="form-control" type="text" id="inputRoleName">
+                        <input class="form-control" type="text" ng-model="vm.roleName" id="roleName">
                     </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="example-month-input" class="col-form-label">Permissions</label>
+                    </div>
+                    <div class="col-md-4">
+                        <select ng-model="vm.selectedRolePermission"
+                                ng-options="rolePermission.PermissionId as rolePermission.PermissionName for rolePermission in vm.permissionList">
+                        </select>
                 </div>
 
             </div>
@@ -53,11 +62,11 @@
     </div>
     <div ui-grid="gridOptions" external-scopes="editClickHandler" ui-grid-selection ui-grid-pagination ui-grid-exporter class="grid"></div>
     <p>Current page: {{ pagination.pageNumber }} of {{ pagination.getTotalPages() }}</p>
-    <button type="button" class="btn btn-success" ng-click="pagination.previousPage()">
-        previous page
+    <button type="button" class="btn btn-page-navigation" ng-click="pagination.previousPage()">
+        <
     </button>
-    <button type="button" class="btn btn-success" ng-click="pagination.nextPage()">
-        next page
+    <button type="button" class="btn btn-page-navigation" ng-click="pagination.nextPage()">
+        >
     </button>
 </div>
 

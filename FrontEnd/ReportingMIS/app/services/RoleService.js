@@ -11,137 +11,138 @@
 
         service.SearchRole = SearchRole;
         service.AddRole = AddRole;
+        service.GetScreenPermissions = GetScreenPermissions;
 
         return service;
 
-        function SearchRole(permissionName, userName, roleId, roleName, pageSize, pageNumber, sort, successCallBack, errorCallBack) {
+        function SearchRole(permissionName, userName, roleId, roleName, rolePermissionId, pageSize, pageNumber, sort, successCallBack, errorCallBack) {
 
             /* Dummy authentication for testing, uses $timeout to simulate api call
              ----------------------------------------------*/
-            $timeout(function () {
-                var response = {
-                    data: [
-                    {
-                        "RoleId": 1,
-                        "RoleName": "Administrator",
-                        "CreatedBy": "Admin",
-                        "CreatedOn": "17-Dec-2016"
-                    },
-                    {
-                        "RoleId": 2,
-                        "RoleName": "Test Role 2",
-                        "CreatedBy": "Admin",
-                        "CreatedOn": "17-Dec-2016"
-                    },
-                    {
-                        "RoleId": 3,
-                        "RoleName": "Test Role 3",
-                        "CreatedBy": "Admin",
-                        "CreatedOn": "17-Dec-2016"
-                    },
-                    {
-                        "RoleId": 4,
-                        "RoleName": "Test Role 2",
-                        "CreatedBy": "Admin",
-                        "CreatedOn": "17-Dec-2016"
-                    },
-                    {
-                        "RoleId": 5,
-                        "RoleName": "Test Role 2",
-                        "CreatedBy": "Admin",
-                        "CreatedOn": "17-Dec-2016"
-                    },
-                    {
-                        "RoleId": 6,
-                        "RoleName": "Test Role 2",
-                        "CreatedBy": "Admin",
-                        "CreatedOn": "17-Dec-2016"
-                    },
-                    {
-                        "RoleId": 7,
-                        "RoleName": "Test Role 2",
-                        "CreatedBy": "Admin",
-                        "CreatedOn": "17-Dec-2016"
-                    },
-                    {
-                        "RoleId": 8,
-                        "RoleName": "Test Role 2",
-                        "CreatedBy": "Admin",
-                        "CreatedOn": "17-Dec-2016"
-                    },
-                    {
-                        "RoleId": 9,
-                        "RoleName": "Test Role 2",
-                        "CreatedBy": "Admin",
-                        "CreatedOn": "17-Dec-2016"
-                    },
-                    {
-                        "RoleId": 10,
-                        "RoleName": "Test Role 2",
-                        "CreatedBy": "Admin",
-                        "CreatedOn": "17-Dec-2016"
-                    },
-                    {
-                        "RoleId": 7,
-                    "RoleName": "Test Role 2",
-                    "CreatedBy": "Admin",
-                    "CreatedOn": "17-Dec-2016"
-                },
-                {
-                    "RoleId": 8,
-                    "RoleName": "Test Role 2",
-                    "CreatedBy": "Admin",
-                    "CreatedOn": "17-Dec-2016"
-                },
-                {
-                    "RoleId": 9,
-                    "RoleName": "Test Role 2",
-                    "CreatedBy": "Admin",
-                    "CreatedOn": "17-Dec-2016"
-                },
-                    {
-                        "RoleId": 10,
-                        "RoleName": "Test Role 2",
-                        "CreatedBy": "Admin",
-                        "CreatedOn": "17-Dec-2016"
-                    },
-                    {
-                        "RoleId": 7,
-                        "RoleName": "Test Role 2",
-                        "CreatedBy": "Admin",
-                        "CreatedOn": "17-Dec-2016"
-                    },
-                {
-                    "RoleId": 8,
-                    "RoleName": "Test Role 2",
-                    "CreatedBy": "Admin",
-                    "CreatedOn": "17-Dec-2016"
-                },
-                {
-                    "RoleId": 9,
-                    "RoleName": "Test Role 2",
-                    "CreatedBy": "Admin",
-                    "CreatedOn": "17-Dec-2016"
-                }, {
-                    "RoleId": 10,
-                    "RoleName": "Test Role 2",
-                    "CreatedBy": "Admin",
-                    "CreatedOn": "17-Dec-2016"
-                }]
-                };
+            //$timeout(function () {
+            //    var response = {
+            //        data: [
+            //        {
+            //            "RoleId": 1,
+            //            "RoleName": "Administrator",
+            //            "CreatedBy": "Admin",
+            //            "CreatedOn": "17-Dec-2016"
+            //        },
+            //        {
+            //            "RoleId": 2,
+            //            "RoleName": "Test Role 2",
+            //            "CreatedBy": "Admin",
+            //            "CreatedOn": "17-Dec-2016"
+            //        },
+            //        {
+            //            "RoleId": 3,
+            //            "RoleName": "Test Role 3",
+            //            "CreatedBy": "Admin",
+            //            "CreatedOn": "17-Dec-2016"
+            //        },
+            //        {
+            //            "RoleId": 4,
+            //            "RoleName": "Test Role 2",
+            //            "CreatedBy": "Admin",
+            //            "CreatedOn": "17-Dec-2016"
+            //        },
+            //        {
+            //            "RoleId": 5,
+            //            "RoleName": "Test Role 2",
+            //            "CreatedBy": "Admin",
+            //            "CreatedOn": "17-Dec-2016"
+            //        },
+            //        {
+            //            "RoleId": 6,
+            //            "RoleName": "Test Role 2",
+            //            "CreatedBy": "Admin",
+            //            "CreatedOn": "17-Dec-2016"
+            //        },
+            //        {
+            //            "RoleId": 7,
+            //            "RoleName": "Test Role 2",
+            //            "CreatedBy": "Admin",
+            //            "CreatedOn": "17-Dec-2016"
+            //        },
+            //        {
+            //            "RoleId": 8,
+            //            "RoleName": "Test Role 2",
+            //            "CreatedBy": "Admin",
+            //            "CreatedOn": "17-Dec-2016"
+            //        },
+            //        {
+            //            "RoleId": 9,
+            //            "RoleName": "Test Role 2",
+            //            "CreatedBy": "Admin",
+            //            "CreatedOn": "17-Dec-2016"
+            //        },
+            //        {
+            //            "RoleId": 10,
+            //            "RoleName": "Test Role 2",
+            //            "CreatedBy": "Admin",
+            //            "CreatedOn": "17-Dec-2016"
+            //        },
+            //        {
+            //            "RoleId": 7,
+            //        "RoleName": "Test Role 2",
+            //        "CreatedBy": "Admin",
+            //        "CreatedOn": "17-Dec-2016"
+            //    },
+            //    {
+            //        "RoleId": 8,
+            //        "RoleName": "Test Role 2",
+            //        "CreatedBy": "Admin",
+            //        "CreatedOn": "17-Dec-2016"
+            //    },
+            //    {
+            //        "RoleId": 9,
+            //        "RoleName": "Test Role 2",
+            //        "CreatedBy": "Admin",
+            //        "CreatedOn": "17-Dec-2016"
+            //    },
+            //        {
+            //            "RoleId": 10,
+            //            "RoleName": "Test Role 2",
+            //            "CreatedBy": "Admin",
+            //            "CreatedOn": "17-Dec-2016"
+            //        },
+            //        {
+            //            "RoleId": 7,
+            //            "RoleName": "Test Role 2",
+            //            "CreatedBy": "Admin",
+            //            "CreatedOn": "17-Dec-2016"
+            //        },
+            //    {
+            //        "RoleId": 8,
+            //        "RoleName": "Test Role 2",
+            //        "CreatedBy": "Admin",
+            //        "CreatedOn": "17-Dec-2016"
+            //    },
+            //    {
+            //        "RoleId": 9,
+            //        "RoleName": "Test Role 2",
+            //        "CreatedBy": "Admin",
+            //        "CreatedOn": "17-Dec-2016"
+            //    }, {
+            //        "RoleId": 10,
+            //        "RoleName": "Test Role 2",
+            //        "CreatedBy": "Admin",
+            //        "CreatedOn": "17-Dec-2016"
+            //    }]
+            //    };
 
-                successCallBack(response);
-            }, 1000);
+            //    successCallBack(response);
+            //}, 1000);
 
             /* Use this for real execution
              ----------------------------------------------*/
-            //$http.post(AppSettings.baseUrl + 'Report/ExecuteReport', { PermissionId: permissionName, LoginId: userName, ReportId: reportId, fieldCollection: model })
-            //    .then(function (response) {
-            //        successCallBack(response);
-            //    }, function (response) {
-            //        errorCallBack(response);
-            //    }
-            //);
+            $http.post(AppSettings.baseUrl + 'Role/SearchRole', { PermissionId: permissionName, LoginId: userName, RoleId: roleId, RoleName: roleName, RolePermissionId: rolePermissionId, PageSize: pageSize, PageNumber:pageNumber, Sort:sort})
+                .then(function (response) {
+                    successCallBack(response);
+                }, function (response) {
+                    errorCallBack(response);
+                }
+            );
 
         }
 
@@ -170,6 +171,19 @@
             //    }
             //);
 
+        }
+
+        function GetScreenPermissions(permissionName, userName, successCallback, errorCallback) {
+            console.log("GetScreenPermissions Begin");
+
+            $http.post(AppSettings.baseUrl + 'Role/GetRoleScreenInfo', { PermissionId: permissionName, LoginId: userName })
+                .then(function (response) {
+                    successCallback(response);
+                }, function (response) {
+                    errorCallback(response);
+                }
+            );
+            console.log("GetScreenPermissions Begin");
         }
 
          

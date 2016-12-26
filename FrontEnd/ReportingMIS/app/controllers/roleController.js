@@ -13,9 +13,16 @@
         var permissionName = '';
         vm.searchRole = searchRole;
         vm.addRole = addRole;
+        vm.loadScreenPermissionsAndInfo = loadScreenPermissionsAndInfo;
         vm.load = load;
+        vm.roleId = '';
+        vm.roleName = '';
+        vm.userPermission = {};
+        vm.permissionList = [];
+        vm.selectedRolePermission = -1;
+        
 
-        $scope.sort = [];
+        $scope.sort = { fieldName: "RoleId", order: "ASC" };
 
         $scope.pagination = {
             pageSize: 15,
@@ -23,14 +30,14 @@
             totalItems: null,
             getTotalPages: function () {
                 console.log("getTotalPages Begin");
-                return Math.ceil(this.totalItems / this.pageSize);
+                return Math.ceil(this.pageNumber * this.pageSize);
             },
             nextPage: function () {
                 console.log("nextPage Begin");
-                if (this.pageNumber < this.getTotalPages()) {
+                //if (this.pageNumber < this.getTotalPages()) {
                     this.pageNumber++;
                     load();
-                }
+                //}
                 console.log("nextPage End");
             },
             previousPage: function () {
@@ -54,7 +61,7 @@
               {name:'Role Name',field:'RoleName'},
               {name:'Created By',field:'CreatedBy'},
               { name: 'Created On', field: 'CreatedOn' },
-              { name: 'Edit', cellTemplate: '<div><button ng-click="grid.appScope.editClickHandler(row.entity.RoleId)">Edit</button></div>' }
+              { name: 'Action', cellTemplate: '<div><button ng-show="vm.userPermission.Edit==Dilizity.Backoffice.Role.Edit" class="pull-right" ng-click="grid.appScope.editClickHandler(row.entity.RoleId)">Edit</button><button ng-show="vm.userPermission.View==Dilizity.Backoffice.Role.View" class="pull-right" ng-click="grid.appScope.editClickHandler(row.entity.RoleId)">View</button></div>' }
             ],
             data:[],
             exporterCsvFilename: 'Roles.csv',
@@ -89,10 +96,25 @@
             console.log("load End");
         };
 
+        function loadScreenPermissionsAndInfo() {
+            console.log("loadScreenPermissionsAndInfo Begin");
+            var tmpUserName = $rootScope.globals.currentUser.username;
+            RoleService.GetScreenPermissions('Dilizity.Backoffice.Role', tmpUserName, function (response) {
+                var data = angular.fromJson(response.data);
+                vm.userPermission = data.UserPermission;
+                vm.permissionList = data.PermissionList;
+                console.log("data", data);
+                console.log("vm.userPermission.Add", vm.userPermission.Add);
+            }, function (response) {
+                AlertService.Add("Error", "You don't have permission");
+            });
+            console.log("loadScreenPermissionsAndInfo End");
+        };
+
 
         (function initController() {
             console.log("roleController.initController -> Begin");
-            
+            loadScreenPermissionsAndInfo();
             console.log("roleController.initController -> End");
         })();
 
@@ -116,16 +138,17 @@
             //vm.dataLoading = true;
             console.log("searchRole Begin");
             var tmpUserName = $rootScope.globals.currentUser.username;
-            vm.permissionName = "Dilizity.Backoffice.Role";
+            vm.permissionName = "Dilizity.Backoffice.Role.Search";
             console.log("permissionName", vm.permissionName);
             console.log("roleId", vm.roleId);
             console.log("roleName", vm.roleName);
-
-            RoleService.SearchRole(vm.permissionName, tmpUserName, vm.roleId, vm.roleName, $scope.pagination.pageSize, $scope.pagination.pageNumber, $scope.sort,
+            console.log("selectedRolePermission", vm.selectedRolePermission);
+            
+            RoleService.SearchRole(vm.permissionName, tmpUserName, vm.roleId, vm.roleName, vm.selectedRolePermission, $scope.pagination.pageSize, $scope.pagination.pageNumber, $scope.sort,
                 function (response) {
                     console.log("Success!");
                     $scope.gridOptions.data = response.data;
-                    $scope.pagination.totalItems = 100;
+                    $scope.pagination.totalItems = 25;
                 },
                 function (response) {
                     AlertService.Add("Error", "Data not received.");
@@ -136,6 +159,8 @@
             console.log("searchRole End");
 
         };
+
+
     }
 
 })();
