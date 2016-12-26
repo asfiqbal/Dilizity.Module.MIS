@@ -22,7 +22,7 @@
         vm.selectedRolePermission = -1;
         
 
-        $scope.sort = { fieldName: "RoleId", order: "ASC" };
+        $scope.sort = { fieldName: "Role Id", order: "asc" };
 
         $scope.pagination = {
             pageSize: 15,
@@ -53,14 +53,16 @@
         $scope.gridOptions = {
             enableGridMenu: true,
             enableSelectAll: true,
+            multiSelect: true,
             enablePaginationControls: false,
             useExternalPagination: true,
             useExternalSorting: true,
             columnDefs:[ 
               {name:'Role Id',field:'RoleId'},
               {name:'Role Name',field:'RoleName'},
-              {name:'Created By',field:'CreatedBy'},
-              { name: 'Created On', field: 'CreatedOn' },
+              { name: 'Is System', field: 'IsSystem' },
+              { name: 'Updated By', field: 'UpdatedBy' },
+              { name: 'Updated On', field: 'UpdatedOn' },
               { name: 'Action', cellTemplate: '<div><button ng-show="vm.userPermission.Edit==Dilizity.Backoffice.Role.Edit" class="pull-right" ng-click="grid.appScope.editClickHandler(row.entity.RoleId)">Edit</button><button ng-show="vm.userPermission.View==Dilizity.Backoffice.Role.View" class="pull-right" ng-click="grid.appScope.editClickHandler(row.entity.RoleId)">View</button></div>' }
             ],
             data:[],
@@ -69,13 +71,14 @@
             $scope.gridApi = gridApi;
             $scope.gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
                     console.log("sortChanged Begin");
-                    $scope.sort = [];
+                    $scope.sort = {};
                     angular.forEach(sortColumns, function (sortColumn) {
-                        $scope.sort.push({
+                        $scope.sort = {
                             fieldName: sortColumn.name,
                             order: sortColumn.sort.direction
-                        });
+                        };
                     });
+                    console.log("sort", $scope.sort);
                     load();
                     console.log("sortChanged End");
 
@@ -83,7 +86,7 @@
             }
         };
 
-        $scope.gridOptions.multiSelect = false;
+        //$scope.gridOptions.multiSelect = true;
 
         $scope.editClickHandler = function (val) {
             console.log(val);

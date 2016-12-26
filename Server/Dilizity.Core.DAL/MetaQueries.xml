@@ -378,16 +378,16 @@
               AS
               (
               SELECT TOP(@PageSize * @PageNumber) ResultNum = ROW_NUMBER() OVER (ORDER BY 
-					              CASE WHEN @SortOrder = 'RoleId' AND @SortDirection = 'ASC' THEN ROLE_ID END ASC,
-					              CASE WHEN @SortOrder = 'RoleId' AND @SortDirection = 'DESC' THEN ROLE_ID END DESC,
-					              CASE WHEN @SortOrder = 'RoleName' AND @SortDirection = 'ASC' THEN ROLE_NAME END ASC,
-					              CASE WHEN @SortOrder = 'RoleName' AND @SortDirection = 'DESC' THEN ROLE_NAME END DESC,
-					              CASE WHEN @SortOrder = 'IsSystem' AND @SortDirection = 'ASC' THEN IS_SYSTEM END ASC,
-					              CASE WHEN @SortOrder = 'IsSystem' AND @SortDirection = 'DESC' THEN IS_SYSTEM END DESC,
-					              CASE WHEN @SortOrder = 'UpdatedBy' AND @SortDirection = 'ASC' THEN UPDATED_BY END ASC,
-					              CASE WHEN @SortOrder = 'UpdatedBy' AND @SortDirection = 'DESC' THEN UPDATED_BY END DESC,
-					              CASE WHEN @SortOrder = 'UpdatedOn' AND @SortDirection = 'ASC' THEN UPDATED_ON END ASC,
-					              CASE WHEN @SortOrder = 'UpdatedOn' AND @SortDirection = 'DESC' THEN UPDATED_ON END DESC
+					              CASE WHEN @SortOrder = 'Role Id' AND @SortDirection = 'asc' THEN ROLE_ID END ASC,
+					              CASE WHEN @SortOrder = 'Role Id' AND @SortDirection = 'desc' THEN ROLE_ID END DESC,
+					              CASE WHEN @SortOrder = 'Role Name' AND @SortDirection = 'asc' THEN ROLE_NAME END ASC,
+					              CASE WHEN @SortOrder = 'Role Name' AND @SortDirection = 'desc' THEN ROLE_NAME END DESC,
+					              CASE WHEN @SortOrder = 'Is System' AND @SortDirection = 'asc' THEN IS_SYSTEM END ASC,
+					              CASE WHEN @SortOrder = 'Is System' AND @SortDirection = 'desc' THEN IS_SYSTEM END DESC,
+					              CASE WHEN @SortOrder = 'Updated By' AND @SortDirection = 'asc' THEN UPDATED_BY END ASC,
+					              CASE WHEN @SortOrder = 'Updated By' AND @SortDirection = 'desc' THEN UPDATED_BY END DESC,
+					              CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'asc' THEN UPDATED_ON END ASC,
+					              CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'desc' THEN UPDATED_ON END DESC
 			              )
 				              , *
               FROM SEC_ROLE

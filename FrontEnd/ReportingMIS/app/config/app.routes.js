@@ -43,7 +43,12 @@
             controller: 'roleController',
             controllerAs: 'vm'
         })
-        .state('index.Report1', {
+        .state('index.AddRole', {
+            url: '/Role',
+            templateUrl: 'views/addRole.html',
+            controller: 'roleController',
+            controllerAs: 'vm'
+        }).state('index.Report1', {
              url: '/Report1',
              templateUrl: 'views/report1.html',
              controller: 'reportController',

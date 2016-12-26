@@ -36,8 +36,13 @@ namespace Dilizity.API.Security.Managers
                     int pageSize = Utility.ConvertStringToInt(parameterBusService.Get("PageSize").ToString());
                     int pageNumber = Utility.ConvertStringToInt(parameterBusService.Get("PageNumber").ToString());
                     JObject sortInfo = (JObject)parameterBusService.Get("Sort");
-                    string sortOrder = sortInfo["fieldName"].ToString();
-                    string sortDirection = sortInfo["order"].ToString();
+                    string sortOrder = "Role Id";
+                    string sortDirection = "asc";
+                    if (sortInfo.HasValues)
+                    {
+                        sortOrder = sortInfo["fieldName"].ToString();
+                        sortDirection = sortInfo["order"].ToString();
+                    }
 
                     outList = dataLayer.ExecuteUsingKey(SEARCH_ROLE, "RoleId", roleId, "RoleName", roleName, "RolePermissionId", rolePermissionId, "PageSize", pageSize, "PageNumber", pageNumber, "SortOrder", sortOrder, "SortDirection", sortDirection);
                     parameterBusService.Add(GlobalConstants.OUT_RESULT, outList.ToList<dynamic>());
