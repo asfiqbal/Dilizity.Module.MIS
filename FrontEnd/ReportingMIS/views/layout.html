@@ -1,4 +1,4 @@
-﻿<div ui-layout="{ flow:'row', dividerSize:'0' }" ui-layout-loaded>
+﻿<!--<div ui-layout="{ flow:'row', dividerSize:'0' }" ui-layout-loaded>
     <div ui-layout-container size="7%" style="overflow:visible">
         <div ui-view="nav"></div>
     </div>
@@ -15,4 +15,41 @@
     <div ui-layout-container size="5%" class="footer">
         Reporting MIS copyright (©) 2016
     </div>
-</div> 
+</div>--> 
+
+<div class="container body">
+    <div class="main_container">
+        <div class="col-md-3 left_col" ng-show="menuContainer.left" >
+            <div class="left_col scroll-view">
+                <div class="navbar nav_title" style="border: 0;">
+                    <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>Reporting MIS</span></a>
+                </div>
+                <div class="clearfix"></div>
+                <br />
+                <div ui-view="sidebar"></div>
+            </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+            <div class="nav_menu">
+                <div ui-view="nav">
+                </div>
+            </div>
+        </div>
+        <!-- /top navigation -->
+        <!-- page content -->
+        <div class="right_col" role="main">
+            <div ui-view></div>
+        </div>
+        <!-- /page content -->
+        <!-- footer content -->
+        <footer>
+            <div class="pull-right">
+                Reporting MIS copyright (©) 2016
+            </div>
+            <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+    </div>
+</div>
