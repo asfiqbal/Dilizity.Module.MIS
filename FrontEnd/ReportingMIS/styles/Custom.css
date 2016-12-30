@@ -1,4 +1,4 @@
-@charset "UTF-8";
+﻿@charset "UTF-8";
 .left_col {
   background: #2A3F54; }
 
@@ -199,7 +199,9 @@
   position: fixed; }
 
 body .container.body .right_col {
-  background: #F7F7F7; }
+  background: #F7F7F7; 
+  min-height: 685px;
+}
 
 .nav-md .container.body .right_col {
   padding: 10px 20px 0;
