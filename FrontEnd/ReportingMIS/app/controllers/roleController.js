@@ -6,11 +6,12 @@
         .module('ReportingMIS')
         .controller('roleController', roleController);
 
-    roleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'AlertService'];
-    function roleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, AlertService) {
+    roleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'AlertService','FlashService'];
+    function roleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, AlertService, FlashService) {
         var vm = this;
 
         var permissionName = '';
+        vm.slide = false;
         vm.searchRole = searchRole;
         vm.addRole = addRole;
         vm.loadScreenPermissionsAndInfo = loadScreenPermissionsAndInfo;
@@ -29,7 +30,7 @@
             pageNumber: 1,
             totalItems: null,
             getTotalPages: function () {
-                console.log("getTotalPages Begin");
+                //console.log("getTotalPages Begin");
                 return Math.ceil(this.pageNumber * this.pageSize);
             },
             nextPage: function () {
@@ -63,7 +64,16 @@
               { name: 'Is System', field: 'IsSystem' },
               { name: 'Updated By', field: 'UpdatedBy' },
               { name: 'Updated On', field: 'UpdatedOn' },
-              { name: 'Action', cellTemplate: '<div><button ng-show="vm.userPermission.Edit==Dilizity.Backoffice.Role.Edit" class="pull-right" ng-click="grid.appScope.editClickHandler(row.entity.RoleId)">Edit</button><button ng-show="vm.userPermission.View==Dilizity.Backoffice.Role.View" class="pull-right" ng-click="grid.appScope.editClickHandler(row.entity.RoleId)">View</button></div>' }
+              { name: 'Action', cellTemplate: '<div>'+
+                                                '<ul class="nav navbar-right panel_toolbox">'+
+	                                                '<li>'+
+                                                		'<a ng-show="vm.userPermission.View==Dilizity.Backoffice.Role.View" uib-tooltip="View Role" tooltip-placement="left" ng-click="grid.appScope.editClickHandler(row.entity.RoleId)" class="pull-right"><i class="fa fa-eye"></i></a>' +
+	                                                '</li>'+
+	                                                '<li>'+
+		                                                '<a ng-show="vm.userPermission.Edit==Dilizity.Backoffice.Role.Edit" uib-tooltip="Edit Role" tooltip-placement="left" ng-click="grid.appScope.editClickHandler(row.entity.RoleId)" class="pull-right"><i class="fa fa-pencil-square"></i></a>' +
+	                                                '<li>'+
+                                                '</ul>'+
+                                               '</div>' }
             ],
             data:[],
             exporterCsvFilename: 'Roles.csv',
@@ -140,13 +150,16 @@
         function searchRole() {
             //vm.dataLoading = true;
             console.log("searchRole Begin");
+            vm.slide = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
             vm.permissionName = "Dilizity.Backoffice.Role.Search";
             console.log("permissionName", vm.permissionName);
             console.log("roleId", vm.roleId);
             console.log("roleName", vm.roleName);
             console.log("selectedRolePermission", vm.selectedRolePermission);
-            
+            console.log("$scope.pagination.pageSize", $scope.pagination.pageSize);
+            console.log("$scope.pagination.pageNumber", $scope.pagination.pageNumber);
+
             RoleService.SearchRole(vm.permissionName, tmpUserName, vm.roleId, vm.roleName, vm.selectedRolePermission, $scope.pagination.pageSize, $scope.pagination.pageNumber, $scope.sort,
                 function (response) {
                     console.log("Success!");
@@ -154,8 +167,13 @@
                     $scope.pagination.totalItems = 25;
                 },
                 function (response) {
-                    AlertService.Add("Error", "Data not received.");
-                    console.log("Error!");
+                    console.log("response!", response);
+                    if (response.status == -1) {
+                        AlertService.Add("error", "Service Not Available.");
+                    }
+                    else {
+                        AlertService.Add("error", response.statusText);
+                    }
                 }
             );
             //vm.dataLoading = false;

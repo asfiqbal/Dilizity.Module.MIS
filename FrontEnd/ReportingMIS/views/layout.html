@@ -4,13 +4,11 @@
             <div class="left_col scroll-view">
 
                 <div class="navbar nav_title" style="border: 0;">
-                    <div id="loaderDiv" loader class="hidden">
-                        <img src="../images/ajax-loader.gif" />
-                    </div>
-                    <a href="index.html" class="site_title"><i class="fa fa-cubes"></i> <span>Reporting MIS</span></a>
+                    <!--<img class=""  src="../images/ajax-loader.gif" />-->
+                    
+                    <a href="index.html" class="site_title"><i loader class="hidden fa fa-spinner fa-spin"></i> <span>Reporting MIS</span></a>
                 </div>
                 <div class="clearfix"></div>
-                <br />
                 <div ui-view="sidebar"></div>
             </div>
         </div>
@@ -25,6 +23,12 @@
         <!-- /top navigation -->
         <!-- page content -->
         <div class="right_col" role="main">
+            <div class="alert alert-dismissible fade in" ng-class="'alert-' + (alert.type || 'warning')" ng-repeat="alert in alerts" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                {{alert.msg}}
+            </div>
             <div ui-view></div>
         </div>
         <!-- /page content -->

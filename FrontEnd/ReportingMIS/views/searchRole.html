@@ -1,76 +1,4 @@
-﻿<!--<div class="panel panel-default">
-    <div class="panel-heading">
-        <div class="container-fluid panel-container">
-            <div class="col-xs-2 text-left">
-                <h4 class="panel-title abc">
-                    Search Role
-                </h4>
-            </div>
-            <div class="col-xs-10 text-right">
-                <span class="panel-title btn-group">
-                    <button ng-show="vm.userPermission.Add=='Dilizity.Backoffice.Role.Add'" uib-tooltip="Add User" tooltip-placement="left" type="button" class="btn-sm abc" ui-sref='index.AddRole'>
-                        <img  src="../images/glyphicons-191-plus-sign.png" />
-                    </button>
-                </span>
-                <span class="panel-title btn-group">
-                    <button ng-show="vm.userPermission.Delete=='Dilizity.Backoffice.Role.Delete'" uib-tooltip="Delete User" tooltip-placement="left" type="button" class="btn-sm abc" ng-click="addUser()">
-                        <img src="../images/glyphicons-257-delete.png" />
-                    </button>
-                </span>
-                <span class="panel-title btn-group">
-                    <button ng-show="vm.userPermission.Search=='Dilizity.Backoffice.Role.Search'" uib-tooltip="Search User" tooltip-placement="left" type="button" class="btn-sm abc" ng-click="vm.searchRole()">
-                        <img src="../images/glyphicons-529-database-search.png" />
-                    </button>
-                </span>
-           </div>
-        </div> 
-    </div>
-    <div>
-        <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="alert.Close()">{{alert.msg}}</div>
-    </div>
-    <div class="panel-body">
-        <form role="form" class="form-horizontal">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-2">
-                        <label for="example-month-input" class="col-form-label">Role Id</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input class="form-control" type="text" ng-model="vm.roleId" id="roleId">
-                    </div>
-                    <div class="col-md-2">
-                        <label for="example-month-input" class="col-form-label">Role Name</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input class="form-control" type="text" ng-model="vm.roleName" id="roleName">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-2">
-                        <label for="example-month-input" class="col-form-label">Permissions</label>
-                    </div>
-                    <div class="col-md-4">
-                        <select class="form-control" ng-model="vm.selectedRolePermission"
-                                ng-options="rolePermission.PermissionId as rolePermission.PermissionName for rolePermission in vm.permissionList"></select>
-                    </div>
-                </div>
-
-            </div>
-        </form>
-    </div>
-    <div  class="panel-footer">Result
-    </div>
-    <div ui-grid="gridOptions" external-scopes="editClickHandler" ui-grid-selection ui-grid-pagination ui-grid-exporter class="grid"></div>
-    <p>Current page: {{ pagination.pageNumber }} of {{ pagination.getTotalPages() }}</p>
-    <button type="button" class="btn btn-page-navigation" ng-click="pagination.previousPage()">
-        <
-    </button>
-    <button type="button" class="btn btn-page-navigation" ng-click="pagination.nextPage()">
-        >
-    </button>
-</div>-->
-
-<div class="">
+﻿<div class="">
     <div class="page-title">
         <div class="title_left">
             <h3>Role Management</h3>
@@ -84,13 +12,13 @@
                     <h2>Search Role</h2>
                     <ul class="nav navbar-right panel_toolbox">
                         <li>
-                            <a ng-show="vm.userPermission.Add=='Dilizity.Backoffice.Role.Add'" uib-tooltip="Add User" tooltip-placement="left" ui-sref='index.AddRole' class="collapse-link"><i class="fa fa-plus"></i></a>
+                            <a ng-show="vm.userPermission.Add=='Dilizity.Backoffice.Role.Add'" uib-tooltip="Add Role" tooltip-placement="left" ui-sref='index.AddRole' class="collapse-link"><i class="fa fa-plus"></i></a>
                         </li>
                         <li class="dropdown">
-                            <a ng-show="vm.userPermission.Delete=='Dilizity.Backoffice.Role.Delete'" uib-tooltip="Delete User" tooltip-placement="left" ui-sref='index.AddRole' class="collapse-link"><i class="fa fa-trash"></i></a>
+                            <a ng-show="vm.userPermission.Delete=='Dilizity.Backoffice.Role.Delete'" uib-tooltip="Delete Role" tooltip-placement="left" ui-sref='index.AddRole' class="collapse-link"><i class="fa fa-trash"></i></a>
                         </li>
                         <li>
-                            <a ng-show="vm.userPermission.Search=='Dilizity.Backoffice.Role.Search'" uib-tooltip="Search User" tooltip-placement="left" ng-click="vm.searchRole()" class="collapse-link"><i class="fa fa-search"></i></a>
+                            <a ng-show="vm.userPermission.Search=='Dilizity.Backoffice.Role.Search'" uib-tooltip="Search Role" tooltip-placement="left" ng-click="vm.searchRole()" class="collapse-link"><i class="fa fa-search"></i></a>
                         </li>
                     </ul>
                     <div class="clearfix"></div>
@@ -98,7 +26,6 @@
                 <div class="x_content">
                     <br />
                     <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
-
                         <div class="form-group">
                             <label class="control-label col-md-2 col-sm-2 col-xs-12">
                                 Role Id
@@ -119,16 +46,33 @@
                             </label>
                             <div class="col-md-4 col-sm-4 col-xs-12">
                                 <select class="form-control col-md-7 col-xs-12" ng-model="vm.selectedRolePermission"
-                                        ng-options="rolePermission.PermissionId as rolePermission.PermissionName for rolePermission in vm.permissionList">
-                                </select>
+                                        ng-options="rolePermission.PermissionId as rolePermission.PermissionName for rolePermission in vm.permissionList"></select>
 
                             </div>
                         </div>
                         <div class="ln_solid"></div>
+                        <div ui-grid="gridOptions" external-scopes="editClickHandler" ui-grid-selection ui-grid-pagination ui-grid-exporter class="grid"></div>
+                        <br />
+                        <div class="row">
+                            <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                                <label class="col-md-2 col-sm-2 col-xs-12 pull-left" ng-show="!gridOptions.data.length">
+                                    No Data Available
+                                </label>
+                                <label class="col-md-2 col-sm-2 col-xs-12 pull-left" ng-show="gridOptions.data.length > 0">
+                                    Showing {{ pagination.pageNumber }} to {{ pagination.getTotalPages() }}
+                                </label>
+                                <button class="btn btn-default pull-right" ng-click="pagination.previousPage()" type="button">
+                                    <span class="glyphicon glyphicon-hand-left" aria-hidden="true"></span>
+                                </button>
+                                <button class="btn btn-default pull-right" ng-click="pagination.nextPage()" type="button">
+                                    <span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
                     </form>
-                    <div ui-grid="gridOptions" external-scopes="editClickHandler" ui-grid-selection ui-grid-pagination ui-grid-exporter class="grid"></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+

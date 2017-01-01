@@ -12,12 +12,6 @@
             left: true
         };
 
-        //$scope.$on('ui.layout.loaded', function(){
-        //    $timeout(function(){
-        //        $scope.layout.one = true;
-        //    });
-        //})
-
         $scope.toggle = function(which) {
             //console.log("$scope.layout", $scope.menuContainer);
             if (angular.element(document.body).hasClass('nav-sm')) {

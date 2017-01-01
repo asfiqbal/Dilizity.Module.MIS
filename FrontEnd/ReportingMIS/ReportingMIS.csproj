@@ -1088,7 +1088,7 @@
     <Content Include="scripts\ui-layout.min.js" />
     <Content Include="scripts\ui-layout.js" />
     <Content Include="scripts\ui-navbar.js" />
-    <Content Include="Setting Icon %28 Button Based_ %281%29.png" />
+    <Content Include="favicon.ico" />
     <Content Include="styles\bootstrap.css" />
     <Content Include="styles\Custom.css" />
     <Content Include="styles\font-awesome.css" />
