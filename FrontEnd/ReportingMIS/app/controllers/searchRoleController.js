@@ -4,10 +4,10 @@
 
     angular
         .module('ReportingMIS')
-        .controller('roleController', roleController);
+        .controller('searchRoleController', searchRoleController);
 
-    roleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'AlertService','FlashService'];
-    function roleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, AlertService, FlashService) {
+    searchRoleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'AlertService', 'FlashService'];
+    function searchRoleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, AlertService, FlashService) {
         var vm = this;
 
         var permissionName = '';

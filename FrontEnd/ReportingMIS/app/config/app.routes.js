@@ -21,7 +21,7 @@
                 },
                 'nav@index': {
                     templateUrl: 'views/nav.html',
-                    controller: 'menuController',
+                    controller: 'navController',
                     controllerAs: 'vm'
                 },
                 'sidebar@index': {
@@ -45,13 +45,13 @@
         .state('index.Role', {
             url: '/Role',
             templateUrl: 'views/searchRole.html',
-            controller: 'roleController',
+            controller: 'searchRoleController',
             controllerAs: 'vm'
         })
         .state('index.AddRole', {
             url: '/Role',
             templateUrl: 'views/addRole.html',
-            controller: 'roleController',
+            controller: 'addRoleController',
             controllerAs: 'vm'
         }).state('index.Report1', {
              url: '/Report1',

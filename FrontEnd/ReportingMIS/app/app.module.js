@@ -18,7 +18,8 @@
             'ui.navbar',
             'formly',
             'formlyBootstrap',
-            'ui.select'])
+            'ui.select',
+            'ui.tree'])
     
 })();
 

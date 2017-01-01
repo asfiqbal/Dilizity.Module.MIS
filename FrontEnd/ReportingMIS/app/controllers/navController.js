@@ -3,10 +3,10 @@
 
     angular
         .module('ReportingMIS')
-        .controller('menuController', menuController);
+        .controller('navController', navController);
 
-    menuController.$inject = ['$scope', '$http', 'MenuService', 'FlashService'];
-    function menuController($scope, $http, MenuService, FlashService) {
+    navController.$inject = ['$scope', '$http', 'MenuService', 'FlashService'];
+    function navController($scope, $http, MenuService, FlashService) {
         var vm = this;
 
         vm.loadMenu = loadMenu;
