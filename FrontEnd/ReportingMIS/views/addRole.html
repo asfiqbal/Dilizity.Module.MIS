@@ -24,14 +24,14 @@
                     <br />
                     <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
                         <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12" for="first-name">
                                 Role Name <span class="required">*</span>
                             </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="col-md-2 col-sm-2 col-xs-12">
                                 <input type="text" ng-model="vm.roleName" id="roleName" required="required" class="form-control col-md-7 col-xs-12">
                             </div>
                         </div>
-                        <div class="form-group">
+                        <!--<div class="form-group">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">
                                 Permissions <span class="required">*</span>
                             </label>
@@ -47,15 +47,36 @@
 
                                 {{vm.selectedRolePermissions}}
                             </div>
-                        </div>
+                        </div>-->
                         <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12" for="last-name">
                                 Permissions <span class="required">*</span>
                             </label>
-                            <div ui-tree>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <treecontrol class="tree-classic"
+                                             tree-model="vm.dataForTheTree"
+                                             options="vm.treeOptions"
+                                             on-selection="showSelected(node)"
+                                             selected-node="node1">
+                                    employee: {{node.name}} age {{node.age}}
+                                </treecontrol>
+                            </div>
+                            <div class="col-md-1 col-sm-1 col-xs-12">
+                                <button type="button" class="btn btn-primary">>></button>
+                                <button type="button" class="btn btn-primary">></button>
+                                <button type="button" class="btn btn-primary"><</button>
+                                <button type="button" class="btn btn-primary"><<</button>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <treecontrol class="tree-classic"
+                                             tree-model="vm.dataForTheTree"
+                                             options="vm.treeOptions"
+                                             on-selection="showSelected(node)"
+                                             selected-node="node1">
+                                    employee: {{node.name}} age {{node.age}}
+                                </treecontrol>
                             </div>
                         </div>
-
                     </form>
                 </div>
             </div>
