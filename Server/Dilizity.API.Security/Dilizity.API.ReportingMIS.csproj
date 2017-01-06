@@ -136,6 +136,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Managers\ReportExecutionBusinessManager.cs" />
+    <Compile Include="Managers\ActionRoleScreenManager.cs" />
     <Compile Include="Managers\RoleSearchBusinessManager.cs" />
     <Compile Include="Managers\ReportMetaDataBusinessManager.cs" />
     <Compile Include="Managers\RoleScreenManager.cs" />
@@ -149,6 +150,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MessageResource.resx</DependentUpon>
     </Compile>
+    <Compile Include="Models\PermissionTree.cs" />
     <Compile Include="Models\MenuTree.cs" />
     <Compile Include="Models\ChangePasswordModel.cs" />
     <Compile Include="Models\MetaReportExecutionRequest.cs" />

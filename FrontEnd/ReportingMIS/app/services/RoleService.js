@@ -11,7 +11,9 @@
 
         service.SearchRole = SearchRole;
         service.AddRole = AddRole;
-        service.GetScreenPermissions = GetScreenPermissions;
+        service.GetRoleScreenInfo = GetRoleScreenInfo;
+        service.GetActionRoleScreenInfo = GetActionRoleScreenInfo;
+
 
         return service;
 
@@ -173,7 +175,7 @@
 
         }
 
-        function GetScreenPermissions(permissionName, userName, successCallback, errorCallback) {
+        function GetRoleScreenInfo(permissionName, userName, successCallback, errorCallback) {
             console.log("GetScreenPermissions Begin");
 
             $http.post(AppSettings.baseUrl + 'Role/GetRoleScreenInfo', { PermissionId: permissionName, LoginId: userName })
@@ -186,6 +188,18 @@
             console.log("GetScreenPermissions Begin");
         }
 
+        function GetActionRoleScreenInfo(permissionName, userName, roleId, successCallback, errorCallback) {
+            console.log("GetScreenPermissions Begin");
+
+            $http.post(AppSettings.baseUrl + 'Role/GetActionRoleScreenInfo', { PermissionId: permissionName, LoginId: userName, RoleId: roleId })
+                .then(function (response) {
+                    successCallback(response);
+                }, function (response) {
+                    errorCallback(response);
+                }
+            );
+            console.log("GetScreenPermissions Begin");
+        }
          
     }
 

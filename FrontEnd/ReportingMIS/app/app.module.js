@@ -19,7 +19,7 @@
             'formly',
             'formlyBootstrap',
             'ui.select',
-            'treeControl'])
+            'angularTreeview'])
     
 })();
 

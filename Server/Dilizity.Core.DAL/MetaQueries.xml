@@ -408,6 +408,30 @@
         <Param Name="PageNumber" Type="System.Int32"  Size="0"/>
         <Param Name="SortOrder" Type="System.String"  Size="200"/>
         <Param Name="SortDirection" Type="System.String"  Size="200"/>
-      </Query>      
-  </Schema>
+      </Query>
+      <Query ID="GetRoleAvailablePermissions" DataSource="">
+        <![CDATA[
+          SELECT PERMISSION_ID PermissionId, PARENT_PERMISSION_ID ParentPermissionId, USER_FRIENDLY_NAME PermissionName
+          FROM	VW_PERMISSION_HIERARCHY
+          EXCEPT
+          SELECT	RP.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID,REVERSE(SUBSTRING(REVERSE(P.PERMISSION_NAME),0,CHARINDEX('.',REVERSE(P.PERMISSION_NAME))))  USER_FRIENDLY_NAME
+          FROM	SEC_ROLE_PERMISSION RP
+		          INNER JOIN SEC_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
+          WHERE   ROLE_ID = @RoleId
+            ]]>
+        <Param Name="RoleId" Type="System.Int32"  Size="0"/>
+      </Query>
+      <Query ID="GetRoleAssignedPermissions" DataSource="">
+        <![CDATA[
+            SELECT  P.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID ParentPermissionId, P.PERMISSION_NAME PermissionName
+            FROM    SEC_PERMISSION P
+            WHERE	P.PERMISSION_ID = 1
+            UNION ALL      
+            SELECT	RP.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID,REVERSE(SUBSTRING(REVERSE(P.PERMISSION_NAME),0,CHARINDEX('.',REVERSE(P.PERMISSION_NAME))))  USER_FRIENDLY_NAME
+            FROM	  SEC_ROLE_PERMISSION RP
+		                INNER JOIN SEC_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
+            WHERE   ROLE_ID = @RoleId
+            ]]>
+        <Param Name="RoleId" Type="System.String"  Size="200"/>
+      </Query>    </Schema>
 </root>

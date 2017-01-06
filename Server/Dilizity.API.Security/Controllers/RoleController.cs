@@ -50,6 +50,38 @@ namespace Dilizity.API.Security.Controllers
             }
         }
 
+        [ActionName("GetActionRoleScreenInfo")]
+        [HttpPost]
+        public IHttpActionResult GetActionRoleScreenInfo(JObject jobject)
+        {
+            try
+            {
+                using (FnTraceWrap tracer = new FnTraceWrap(jobject))
+                {
+                    BusService dataBasService = new BusService();
+
+                    dataBasService.Add(GlobalConstants.IN_PARAM, jobject);
+                    dataBasService.Add(GlobalConstants.LOGIN_ID, jobject[GlobalConstants.LOGIN_PARAM].ToString());
+                    dataBasService.Add(GlobalConstants.ROLE_ID_PARAM, (int)jobject[GlobalConstants.ROLE_ID_PARAM]);
+
+                    string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
+                    dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
+
+                    IAbstractBusiness businessManager = new ActionRoleScreenManager();
+
+                    businessManager.Do(dataBasService);
+                    dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);
+                    return Ok(outObject);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Debug(typeof(RoleController), "{0}", e.Message);
+                return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
+            }
+        }
+
+
         [ActionName("SearchRole")]
         [HttpPost]
         public IHttpActionResult SearchRole(JObject jobject)

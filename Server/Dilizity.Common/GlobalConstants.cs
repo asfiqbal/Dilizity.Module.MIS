@@ -24,6 +24,8 @@ namespace Dilizity.Business.Common
         public const string LOGIN_PARAM = "LoginId";
         public const string PASSWORD_PARAM = "Password";
         public const string PERMISSION_PARAM = "PermissionId";
+        public const string ROLE_ID_PARAM = "RoleId";
+
 
     }
 }

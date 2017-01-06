@@ -12,7 +12,7 @@
                     <h2>Add Role</h2>
                     <ul class="nav navbar-right panel_toolbox">
                         <li>
-                            <a ng-show="vm.userPermission.Add=='Dilizity.Backoffice.Role.Add'" uib-tooltip="Add Role" tooltip-placement="left" ui-sref='index.AddRole' class="collapse-link"><i class="fa fa-plus"></i></a>
+                            <a ng-show="vm.userPermission.Add=='Dilizity.Backoffice.Role.Add'" uib-tooltip="Add Role" tooltip-placement="left" ui-sref='index.AddRole' class="collapse-link"><i class="glyphicon glyphicon-floppy-save"></i></a>
                         </li>
                         <li class="dropdown">
                             <a ng-show="vm.userPermission.Delete=='Dilizity.Backoffice.Role.Delete'" uib-tooltip="Delete Role" tooltip-placement="left" ui-sref='index.AddRole' class="collapse-link"><i class="fa fa-trash"></i></a>
@@ -53,28 +53,32 @@
                                 Permissions <span class="required">*</span>
                             </label>
                             <div class="col-md-4 col-sm-4 col-xs-12">
-                                <treecontrol class="tree-classic"
-                                             tree-model="vm.dataForTheTree"
-                                             options="vm.treeOptions"
-                                             on-selection="showSelected(node)"
-                                             selected-node="node1">
-                                    employee: {{node.name}} age {{node.age}}
-                                </treecontrol>
+                                <div data-angular-treeview="true"
+                                     data-tree-id="allPermissionsTree"
+                                     data-tree-model="vm.availablePermissions"
+                                     data-node-id="Id"
+                                     data-node-label="label"
+                                     data-node-children="children"
+                                     ng-click="vm.printParent($event);">
+                                </div>
                             </div>
+
                             <div class="col-md-1 col-sm-1 col-xs-12">
-                                <button type="button" class="btn btn-primary">>></button>
-                                <button type="button" class="btn btn-primary">></button>
-                                <button type="button" class="btn btn-primary"><</button>
-                                <button type="button" class="btn btn-primary"><<</button>
+                                <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="vm.movePermissions(allPermissionsTree, assignedPermissionsTree,vm.availablePermissions, vm.assignedPermissions)">
+                                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="vm.movePermissions(assignedPermissionsTree,allPermissionsTree,vm.assignedPermissions, vm.availablePermissions )">
+                                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                </button>
                             </div>
                             <div class="col-md-4 col-sm-4 col-xs-12">
-                                <treecontrol class="tree-classic"
-                                             tree-model="vm.dataForTheTree"
-                                             options="vm.treeOptions"
-                                             on-selection="showSelected(node)"
-                                             selected-node="node1">
-                                    employee: {{node.name}} age {{node.age}}
-                                </treecontrol>
+                                <div data-angular-treeview="true"
+                                     data-tree-id="assignedPermissionsTree"
+                                     data-tree-model="vm.assignedPermissions"
+                                     data-node-id="Id"
+                                     data-node-label="label"
+                                     data-node-children="children">
+                                </div>
                             </div>
                         </div>
                     </form>

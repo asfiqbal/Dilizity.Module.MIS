@@ -112,7 +112,7 @@
         function loadScreenPermissionsAndInfo() {
             console.log("loadScreenPermissionsAndInfo Begin");
             var tmpUserName = $rootScope.globals.currentUser.username;
-            RoleService.GetScreenPermissions('Dilizity.Backoffice.Role', tmpUserName, function (response) {
+            RoleService.GetRoleScreenInfo('Dilizity.Backoffice.Role', tmpUserName, function (response) {
                 var data = angular.fromJson(response.data);
                 vm.userPermission = data.UserPermission;
                 vm.permissionList = data.PermissionList;
