@@ -189,7 +189,7 @@
         }
 
         function GetActionRoleScreenInfo(permissionName, userName, roleId, successCallback, errorCallback) {
-            console.log("GetScreenPermissions Begin");
+            console.log("GetActionRoleScreenInfo Begin");
 
             $http.post(AppSettings.baseUrl + 'Role/GetActionRoleScreenInfo', { PermissionId: permissionName, LoginId: userName, RoleId: roleId })
                 .then(function (response) {
@@ -198,7 +198,7 @@
                     errorCallback(response);
                 }
             );
-            console.log("GetScreenPermissions Begin");
+            console.log("GetActionRoleScreenInfo Begin");
         }
          
     }

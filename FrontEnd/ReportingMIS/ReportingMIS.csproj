@@ -101,7 +101,7 @@
     <Content Include="app\controllers\homeController.js" />
     <Content Include="app\controllers\changePasswordController.js" />
     <Content Include="app\controllers\layoutController.js" />
-    <Content Include="app\controllers\addRoleController.js" />
+    <Content Include="app\controllers\actionRoleController.js" />
     <Content Include="app\controllers\searchRoleController.js" />
     <Content Include="app\controllers\sidebarController.js" />
     <Content Include="app\controllers\navController.js" />
@@ -1204,7 +1204,7 @@
     <Content Include="DemiLayout.html" />
     <Content Include="TestLayout.html" />
     <Content Include="views\layout.html" />
-    <Content Include="views\addRole.html" />
+    <Content Include="views\actionRole.html" />
     <Content Include="views\searchRole.html" />
     <Content Include="views\metaReport.html" />
     <Content Include="views\sidebar.html" />

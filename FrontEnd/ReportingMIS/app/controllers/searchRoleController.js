@@ -22,7 +22,6 @@
         vm.permissionList = [];
         vm.selectedRolePermission = -1;
         
-
         $scope.sort = { fieldName: "Role Id", order: "asc" };
 
         $scope.pagination = {
@@ -67,10 +66,10 @@
               { name: 'Action', cellTemplate: '<div>'+
                                                 '<ul class="nav navbar-right panel_toolbox">'+
 	                                                '<li>'+
-                                                		'<a ng-show="vm.userPermission.View==Dilizity.Backoffice.Role.View" uib-tooltip="View Role" tooltip-placement="left" ng-click="grid.appScope.editClickHandler(row.entity.RoleId)" class="pull-right"><i class="fa fa-eye"></i></a>' +
+                                                		'<a ng-show="vm.userPermission.View==Dilizity.Backoffice.Role.View" uib-tooltip="View Role" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, permissionName: \'Dilizity.Backoffice.Role.View\' })" class="pull-right"><i class="fa fa-eye"></i></a>' +
 	                                                '</li>'+
 	                                                '<li>'+
-		                                                '<a ng-show="vm.userPermission.Edit==Dilizity.Backoffice.Role.Edit" uib-tooltip="Edit Role" tooltip-placement="left" ng-click="grid.appScope.editClickHandler(row.entity.RoleId)" class="pull-right"><i class="fa fa-pencil-square"></i></a>' +
+		                                                '<a ng-show="vm.userPermission.Edit==Dilizity.Backoffice.Role.Edit" uib-tooltip="Edit Role" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, permissionName: \'Dilizity.Backoffice.Role.Edit\' })" class="pull-right"><i class="fa fa-pencil-square"></i></a>' +
 	                                                '<li>'+
                                                 '</ul>'+
                                                '</div>' }

@@ -48,12 +48,13 @@
             controller: 'searchRoleController',
             controllerAs: 'vm'
         })
-        .state('index.AddRole', {
-            url: '/Role',
-            templateUrl: 'views/addRole.html',
-            controller: 'addRoleController',
+        .state('index.ActionRole', {
+            url: '/Role/:roleId/:permissionName',
+            templateUrl: 'views/actionRole.html',
+            controller: 'actionRoleController',
             controllerAs: 'vm'
-        }).state('index.Report1', {
+        })
+        .state('index.Report1', {
              url: '/Report1',
              templateUrl: 'views/report1.html',
              controller: 'reportController',
