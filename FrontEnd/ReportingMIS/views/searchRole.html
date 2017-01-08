@@ -15,7 +15,7 @@
                             <a ng-show="vm.userPermission.Add=='Dilizity.Backoffice.Role.Add'" uib-tooltip="Add Role" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: 0, permissionName: 'Dilizity.Backoffice.Role.Add' })" class="collapse-link"><i class="fa fa-plus"></i></a>
                         </li>
                         <li class="dropdown">
-                            <a ng-show="vm.userPermission.Delete=='Dilizity.Backoffice.Role.Delete'" uib-tooltip="Delete Role" tooltip-placement="left" ui-sref='index.AddRole' class="collapse-link"><i class="fa fa-trash"></i></a>
+                            <a ng-show="vm.userPermission.Delete=='Dilizity.Backoffice.Role.Delete'" data-toggle="modal" data-target=".bs-example-modal-sm" uib-tooltip="Delete Role" tooltip-placement="left" class="collapse-link"><i class="fa fa-trash"></i></a>
                         </li>
                         <li>
                             <a ng-show="vm.userPermission.Search=='Dilizity.Backoffice.Role.Search'" uib-tooltip="Search Role" tooltip-placement="left" ng-click="vm.searchRole()" class="collapse-link"><i class="fa fa-search"></i></a>
@@ -24,6 +24,12 @@
                     <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
+                    <!--<div class="alert alert-dismissible fade in" ng-class="'alert-' + (alert.type || 'warning')" ng-repeat="alert in alerts" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        {{alert.msg}}
+                    </div>-->
                     <br />
                     <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
                         <div class="form-group">
@@ -71,6 +77,39 @@
                         </div>
                     </form>
                 </div>
+                <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel2">Delete Roles</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Following Roles have been selected for Deletion!</h4>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in vm.selectedRoles" >
+                                            <th scope="row">{{item}}</th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="vm.deleteRoles()">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>

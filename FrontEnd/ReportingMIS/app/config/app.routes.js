@@ -6,8 +6,8 @@
         .config(config)
         .run(run);
 
-    config.$inject = ['$stateProvider', '$urlRouterProvider'];
-    function config($stateProvider, $urlRouterProvider) {
+    config.$inject = ['$stateProvider', '$urlRouterProvider','$locationProvider'];
+    function config($stateProvider, $urlRouterProvider, $locationProvider) {
         //$urlRouterProvider.otherwise('/home');
         $urlRouterProvider.otherwise('/');
 
@@ -43,13 +43,13 @@
              controllerAs: 'vm'
          })
         .state('index.Role', {
-            url: '/Role',
+            url: '^/Role',
             templateUrl: 'views/searchRole.html',
             controller: 'searchRoleController',
             controllerAs: 'vm'
         })
         .state('index.ActionRole', {
-            url: '/Role/:roleId/:permissionName',
+            url: '^/Role/:roleId/:permissionName',
             templateUrl: 'views/actionRole.html',
             controller: 'actionRoleController',
             controllerAs: 'vm'
@@ -59,30 +59,8 @@
              templateUrl: 'views/report1.html',
              controller: 'reportController',
              controllerAs: 'vm'
-         });
-
-
-
-        //.state('index.report1', {
-        //    url: '/report1',
-        //    views: {
-                
-        //        'content': {
-        //            templateUrl: 'views/report1.html',
-        //            controller: 'reportController',
-        //            controllerAs: 'vm'
-        //        }
-        //    }
-        //})
-
-
-        //.state('app.home', {
-        //    url: '/home',
-        //    templateUrl: 'views/homeView.html',
-        //    controller: 'homeController',
-        //    controllerAs: 'vm'
-        //});
-
+        });
+        $locationProvider.html5Mode(true);
     }
 
     run.$inject = ['$rootScope', '$location', '$state','$cookieStore', '$http'];

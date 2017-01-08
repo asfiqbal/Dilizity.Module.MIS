@@ -6,8 +6,8 @@
         .module('ReportingMIS')
         .controller('searchRoleController', searchRoleController);
 
-    searchRoleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'AlertService', 'FlashService'];
-    function searchRoleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, AlertService, FlashService) {
+    searchRoleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'AlertService', 'Notification'];
+    function searchRoleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, AlertService, Notification) {
         var vm = this;
 
         var permissionName = '';
@@ -16,11 +16,14 @@
         vm.addRole = addRole;
         vm.loadScreenPermissionsAndInfo = loadScreenPermissionsAndInfo;
         vm.load = load;
+        vm.deleteRoles = deleteRoles;
+
         vm.roleId = '';
         vm.roleName = '';
         vm.userPermission = {};
         vm.permissionList = [];
         vm.selectedRolePermission = -1;
+        vm.selectedRoles = [];
         
         $scope.sort = { fieldName: "Role Id", order: "asc" };
 
@@ -91,16 +94,33 @@
                     load();
                     console.log("sortChanged End");
 
-                });
+            });
+            $scope.gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+                var msg = 'row selected ' + row.isSelected;
+                if (row.isSelected){
+                    vm.selectedRoles.push(row.entity.RoleId);
+                }
+                else {
+                    var pos = vm.selectedRoles.indexOf(row.entity.RoleId);
+                    vm.selectedRoles.splice(pos, 1);
+                    //console.log(row.entity.RoleId);
+                }
+            });
+
+            $scope.gridApi.selection.on.rowSelectionChangedBatch($scope, function (rows) {
+                var msg = 'rows changed ' + rows.length;
+                console.log(msg);
+            });
             }
         };
 
         //$scope.gridOptions.multiSelect = true;
 
-        $scope.editClickHandler = function (val) {
-            console.log(val);
-            alert('Name: ' + val);
-        };
+        //$scope.editClickHandler = function (val) {
+        //    console.log(val);
+        //    alert('Name: ' + val);
+        //};
+
 
         function load() {
             console.log("load Begin");
@@ -118,7 +138,7 @@
                 console.log("data", data);
                 console.log("vm.userPermission.Add", vm.userPermission.Add);
             }, function (response) {
-                AlertService.Add("Error", "You don't have permission");
+                Notification.error({message: "You don't have permission", positionY: 'bottom', positionX: 'right'});
             });
             console.log("loadScreenPermissionsAndInfo End");
         };
@@ -147,17 +167,15 @@
         };
 
         function searchRole() {
-            //vm.dataLoading = true;
             console.log("searchRole Begin");
-            vm.slide = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
             vm.permissionName = "Dilizity.Backoffice.Role.Search";
-            console.log("permissionName", vm.permissionName);
-            console.log("roleId", vm.roleId);
-            console.log("roleName", vm.roleName);
-            console.log("selectedRolePermission", vm.selectedRolePermission);
-            console.log("$scope.pagination.pageSize", $scope.pagination.pageSize);
-            console.log("$scope.pagination.pageNumber", $scope.pagination.pageNumber);
+            //console.log("permissionName", vm.permissionName);
+            //console.log("roleId", vm.roleId);
+            //console.log("roleName", vm.roleName);
+            //console.log("selectedRolePermission", vm.selectedRolePermission);
+            //console.log("$scope.pagination.pageSize", $scope.pagination.pageSize);
+            //console.log("$scope.pagination.pageNumber", $scope.pagination.pageNumber);
 
             RoleService.SearchRole(vm.permissionName, tmpUserName, vm.roleId, vm.roleName, vm.selectedRolePermission, $scope.pagination.pageSize, $scope.pagination.pageNumber, $scope.sort,
                 function (response) {
@@ -168,15 +186,42 @@
                 function (response) {
                     console.log("response!", response);
                     if (response.status == -1) {
-                        AlertService.Add("error", "Service Not Available.");
+                        Notification.error({message: "Service Not Available.", positionY: 'bottom', positionX: 'right' });
+
                     }
                     else {
-                        AlertService.Add("error", response.statusText);
+                        Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
                     }
                 }
             );
-            //vm.dataLoading = false;
             console.log("searchRole End");
+        };
+
+        function deleteRoles() {
+            console.log("deleteRoles Begin");
+            angular.element('#modal').modal('hide');
+            var tmpUserName = $rootScope.globals.currentUser.username;
+            //Notification.error({ message: 'Error Bottom Right', positionY: 'bottom', positionX: 'right' });
+            var deletePermission = "Dilizity.Backoffice.Role.Delete";
+            console.log("permissionName", vm.permissionName);
+            console.log("vm.selectedRoles", vm.selectedRoles);
+
+            RoleService.DeleteRoles(deletePermission, tmpUserName, vm.selectedRoles,
+                function (response) {
+                    console.log("Success!");
+                    Notification.success({ message: "Deleted Successfully.", positionY: 'bottom', positionX: 'right' });
+                },
+                function (response) {
+                    console.log("response!", response);
+                    if (response.status == -1) {
+                        Notification.error({ message: "Service Not Available.", positionY: 'bottom', positionX: 'right' });
+                    }
+                    else {
+                        Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+                    }
+                }
+            );
+            console.log("deleteRoles End");
 
         };
 

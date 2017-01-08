@@ -13,7 +13,7 @@
         service.AddRole = AddRole;
         service.GetRoleScreenInfo = GetRoleScreenInfo;
         service.GetActionRoleScreenInfo = GetActionRoleScreenInfo;
-
+        service.DeleteRoles = DeleteRoles;
 
         return service;
 
@@ -200,6 +200,20 @@
             );
             console.log("GetActionRoleScreenInfo Begin");
         }
+
+        function DeleteRoles(permissionId, userName, rolesToBeleted, successCallback, errorCallback) {
+            console.log("RoleService.DeleteRoles Begin");
+
+            $http.post(AppSettings.baseUrl + 'Role/DeleteRoles', { PermissionId: permissionId, LoginId: userName, Roles: rolesToBeleted })
+                .then(function (response) {
+                    successCallback(response);
+                }, function (response) {
+                    errorCallback(response);
+                }
+            );
+            console.log("RoleService.DeleteRoles Begin");
+        }
+
          
     }
 

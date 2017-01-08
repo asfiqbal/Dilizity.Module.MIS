@@ -162,6 +162,15 @@
     <Content Include="bower_components\angular-tree-control\images\node-opened.png" />
     <Content Include="bower_components\angular-tree-control\images\sample.png" />
     <Content Include="bower_components\angular-tree-control\index.html" />
+    <Content Include="bower_components\angular-ui-notification\dist\angular-ui-notification.css" />
+    <Content Include="bower_components\angular-ui-notification\dist\angular-ui-notification.js" />
+    <Content Include="bower_components\angular-ui-notification\dist\angular-ui-notification.min.css" />
+    <Content Include="bower_components\angular-ui-notification\dist\angular-ui-notification.min.js" />
+    <Content Include="bower_components\angular-ui-notification\gulpfile.js" />
+    <Content Include="bower_components\angular-ui-notification\index.js" />
+    <Content Include="bower_components\angular-ui-notification\protractor_conf.js" />
+    <Content Include="bower_components\angular-ui-notification\src\angular-ui-notification.html" />
+    <Content Include="bower_components\angular-ui-notification\src\angular-ui-notification.js" />
     <Content Include="bower_components\angular-ui-router\release\angular-ui-router.js" />
     <Content Include="bower_components\angular-ui-router\release\angular-ui-router.min.js" />
     <Content Include="bower_components\angular-ui-router\src\common.js" />
@@ -1139,6 +1148,13 @@
     <Content Include="bower_components\angular-tree-control\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="bower_components\angular-tree-control\LICENSE" />
     <Content Include="bower_components\angular-tree-control\README.md" />
+    <Content Include="bower_components\angular-ui-notification\.bower.json" />
+    <Content Include="bower_components\angular-ui-notification\bower.json" />
+    <Content Include="bower_components\angular-ui-notification\LICENSE" />
+    <Content Include="bower_components\angular-ui-notification\package.json" />
+    <Content Include="bower_components\angular-ui-notification\README.md" />
+    <Content Include="bower_components\angular-ui-notification\src\angular-ui-notification.less" />
+    <Content Include="bower_components\angular-ui-notification\src\build.less" />
     <None Include="scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="scripts\angular.treeview.js" />
     <Content Include="scripts\api-check.js" />
@@ -1203,6 +1219,7 @@
     <Content Include="login.html" />
     <Content Include="DemiLayout.html" />
     <Content Include="TestLayout.html" />
+    <Content Include="views\alertTemplate.html" />
     <Content Include="views\layout.html" />
     <Content Include="views\actionRole.html" />
     <Content Include="views\searchRole.html" />

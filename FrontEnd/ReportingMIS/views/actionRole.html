@@ -31,28 +31,11 @@
                                 <input type="text" ng-model="vm.roleName" id="roleName" required="required" class="form-control col-md-7 col-xs-12">
                             </div>
                         </div>
-                        <!--<div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">
-                                Permissions <span class="required">*</span>
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <ui-select class="form-control" multiple  ng-model="vm.selectedRolePermissions">
-                                    <ui-select-match class="ui-select-match">
-                                        {{$item.PermissionName}}
-                                    </ui-select-match>
-                                    <ui-select-choices repeat="item in (vm.permissionList | filter: $select.search) track by item.PermissionId" class="ui-select-choices">
-                                        <div ng-bind-html="item.PermissionName | highlight: $select.search"></div>
-                                    </ui-select-choices>
-                                </ui-select>
-
-                                {{vm.selectedRolePermissions}}
-                            </div>
-                        </div>-->
                         <div class="form-group">
                             <label class="control-label col-md-2 col-sm-2 col-xs-12" for="last-name">
                                 Permissions <span class="required">*</span>
                             </label>
-                            <div class="col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-control col-md-4 col-sm-4 col-xs-12">
                                 <div data-angular-treeview="true"
                                      data-tree-id="allPermissionsTree"
                                      data-tree-model="vm.availablePermissions"

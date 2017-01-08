@@ -1,0 +1,6 @@
+﻿<div class="alert alert-dismissible fade in" ng-class="'alert-' + (alert.type || 'warning')" ng-repeat="alert in alerts" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    {{alert.msg}}
+</div>
