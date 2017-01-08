@@ -27,5 +27,8 @@ namespace Dilizity.API.Security.Models
 
         [JsonProperty]
         public List<PermissionTree> children { get; set; }
+
+        [JsonProperty]
+        public bool collapsed { get; set; }
     }
 }

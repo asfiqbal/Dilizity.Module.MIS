@@ -137,6 +137,7 @@
     </Compile>
     <Compile Include="Managers\ReportExecutionBusinessManager.cs" />
     <Compile Include="Managers\ActionRoleScreenManager.cs" />
+    <Compile Include="Managers\DeleteRoleBusinessManager.cs" />
     <Compile Include="Managers\RoleSearchBusinessManager.cs" />
     <Compile Include="Managers\ReportMetaDataBusinessManager.cs" />
     <Compile Include="Managers\RoleScreenManager.cs" />

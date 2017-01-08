@@ -441,5 +441,14 @@
             WHERE   ROLE_ID = @RoleId
             ]]>
         <Param Name="RoleId" Type="System.String"  Size="200"/>
-      </Query>    </Schema>
+      </Query>
+      <Query ID="DeleteRole">
+        <![CDATA[
+              UPDATE SEC_ROLE
+              SET IS_DELETED = 1
+              WHERE ROLE_ID = @RoleId;
+            ]]>
+        <Param Name="RoleId" Type="System.Int32"  Size="0"/>
+      </Query>
+  </Schema>
 </root>

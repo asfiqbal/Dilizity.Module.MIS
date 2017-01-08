@@ -80,21 +80,22 @@ namespace Dilizity.API.Security.Managers
         {
             using (FnTraceWrap tracer = new FnTraceWrap())
             {
-                Dictionary<int, PermissionTree> dict = tree.ToDictionary(menu => menu.Id);
+                Dictionary<int, PermissionTree> dict = tree.ToDictionary(permission => permission.Id);
 
-                foreach (PermissionTree menu in dict.Values)
+                foreach (PermissionTree permission in dict.Values)
                 {
-                    if (menu.ParentId != menu.Id)
+                    if (permission.ParentId != permission.Id)
                     {
-                        if (menu.ParentId != 0)
+                        if (permission.ParentId != 0)
                         {
-                            PermissionTree parent = dict[menu.ParentId];
+                            PermissionTree parent = dict[permission.ParentId];
                             if (parent.children == null)
                             {
                                 parent.children = new List<PermissionTree>();
                             }
-                            parent.children.Add(menu);
-                            tree.Remove(menu);
+                            parent.children.Add(permission);
+                            parent.collapsed = true;
+                            tree.Remove(permission);
                         }
                     }
                 }
