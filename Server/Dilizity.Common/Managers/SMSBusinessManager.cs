@@ -17,12 +17,13 @@ namespace Dilizity.Business.Common.Managers
 
         public void Do(BusService parameterBusService)
         {
+            Operation childOperation = null;
             try
             {
                 using (FnTraceWrap tracer = new FnTraceWrap())
                 {
-                    Operation childOperation = new Operation(parameterBusService);
-                    childOperation.PermissionClass = typeof(EmailBusinessManager).ToString();
+                    childOperation = new Operation(parameterBusService);
+                    childOperation.PermissionClass = typeof(SMSBusinessManager).ToString();
                     childOperation.saveToDB();
 
                     string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
@@ -54,6 +55,8 @@ namespace Dilizity.Business.Common.Managers
             catch(Exception ex)
             {
                 Log.Error(this.GetType(), ex.Message, ex);
+                childOperation.Status = GlobalConstants.FAILURE;
+                childOperation.saveToDB();
             }
         }
     }

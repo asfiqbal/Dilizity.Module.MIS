@@ -452,20 +452,21 @@
       </Query>
       <Query ID="InsertOperation">
         <![CDATA[
-                INSERT INTO OF_OPERATION(PARENT_OPERATION_ID,PERMISSION_ID,PERMISSION_CLASS, INPUT_PARAMS,STATUS,CREATED_BY,UPDATED_BY)
-                VALUES (@ParentOperationId, (Select PERMISSION_NAME FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionName), @PermissionClass, @InputParams, @Status, @CreatedBy, @CreatedBy)
-              ]]>
+                INSERT INTO OF_OPERATIONS(PARENT_OPERATION_ID,PERMISSION_ID,PERMISSION_CLASS, INPUT_PARAMS,STATUS,CREATED_BY,UPDATED_BY)
+                VALUES (@ParentOperationId, (Select PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionName), @PermissionClass, @InputParams, @Status, @UpdatedBy, @UpdatedBy);
+                SELECT SCOPE_IDENTITY(); 
+              ]]>    
         <Param Name="ParentOperationId" Type="System.Int32"  Size="0"/>
         <Param Name="PermissionName" Type="System.String"  Size="200"/>
         <Param Name="PermissionClass" Type="System.String"  Size="1024"/>
         <Param Name="Status" Type="System.String"  Size="20"/>
         <Param Name="InputParams" Type="System.String"  Size="-1"/>
-        <Param Name="CreatedBy" Type="System.String"  Size="200"/>
+        <Param Name="UpdatedBy" Type="System.String"  Size="200"/>
       </Query>
       <Query ID="UpdateOperation">
         <![CDATA[
-                  UPDATE OF_OPERATION
-                  SET   STATUS = @Status
+                  UPDATE OF_OPERATIONS
+                  SET   STATUS = @Status,
                         UPDATED_ON = Getdate()
                   WHERE OPERATION_ID = @OperationId
                 ]]>

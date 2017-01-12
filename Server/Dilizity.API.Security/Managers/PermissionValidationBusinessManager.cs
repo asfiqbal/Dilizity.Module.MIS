@@ -3,6 +3,7 @@ using Dilizity.Business.Common;
 using Dilizity.Business.Common.Services;
 using Dilizity.Core.DAL;
 using Dilizity.Core.Util;
+using ilizity.Business.Common.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,10 @@ namespace Dilizity.API.Security.Managers
         {
             using (FnTraceWrap tracer = new FnTraceWrap())
             {
-                //InitiateOperation
+                Operation childOperation = new Operation(parameterBusService);
+                childOperation.PermissionClass = typeof(PermissionValidationBusinessManager).ToString();
+                childOperation.saveToDB();
+
                 using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                 {
                     string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
@@ -32,7 +36,8 @@ namespace Dilizity.API.Security.Managers
                             throw new AccessViolationException("User:" + loginId + " do not have Permission");
                     }
                 }
-                //UpdateOperation
+                childOperation.Status = GlobalConstants.SUCCESS;
+                childOperation.saveToDB();
             }
         }
 

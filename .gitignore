@@ -3,3 +3,20 @@
 ################################################################################
 
 /FrontEnd/packages
+/FrontEnd/ReportingMIS/bower_components
+/FrontEnd/ReportingMIS/obj/Debug
+/Server/DALTest/bin/Debug
+/Server/DALTest/obj/x86/Debug
+/Server/Dilizity.API.Security/bin
+/Server/Dilizity.API.Security/obj/Debug
+/Server/Dilizity.Common/bin/Debug
+/Server/Dilizity.Common/obj/Debug
+/Server/Dilizity.Core.DAL/bin/Debug
+/Server/Dilizity.Core.Util/bin/Debug
+/Server/Dilizity.Core.Util/obj/Debug
+/Server/Dilizity.Messaging/bin/Debug
+/Server/packages
+/Server/PasswordUtility/bin/Debug
+/Server/PasswordUtility/obj/Debug
+/Server/Dilizity.Messaging/obj/Debug
+/Server/Dilizity.Core.DAL/obj/Debug

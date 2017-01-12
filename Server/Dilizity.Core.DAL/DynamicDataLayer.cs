@@ -511,7 +511,11 @@ namespace Dilizity.Core.DAL
                             var p = command.CreateParameter();
                             p.ParameterName = sqlParamDt.Name;
                             p.DbType = sqlParamDt.DBType;
-                            p.Value = tmpParams[sqlParamDt.Name];
+                            if (tmpParams[sqlParamDt.Name] == null)
+                                p.Value = DBNull.Value;
+                            else
+                                p.Value = tmpParams[sqlParamDt.Name];
+
                             command.Parameters.Add(p);
                         }
 

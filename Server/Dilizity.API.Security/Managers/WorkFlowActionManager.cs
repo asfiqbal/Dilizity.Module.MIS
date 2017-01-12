@@ -26,6 +26,7 @@ namespace Dilizity.API.Security.Managers
                 Operation op = new Operation(parameterBusService);
                 op.PermissionClass = typeof(WorkFlowActionManager).ToString();
                 op.saveToDB();
+                parameterBusService.Add(GlobalConstants.OPERATION_ID, op);
                 DoOnSuccess(parameterBusService);
                 DoBoth(parameterBusService, ExecutionBehavior.OnFailure);
                 DoBoth(parameterBusService, ExecutionBehavior.OnBoth);
