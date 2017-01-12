@@ -22,16 +22,14 @@ namespace Dilizity.Business.Common.Managers
             {
                 using (FnTraceWrap tracer = new FnTraceWrap())
                 {
-                    if (parameterBusService.IsKeyPresent(GlobalConstants.PERMISSIONS))
+                    if (parameterBusService.IsKeyPresent(GlobalConstants.PERMISSION))
                     {
-                        List<string> permissions = (List<string>)parameterBusService.Get(GlobalConstants.PERMISSIONS);
-                        string permission = permissions[0];
-                        string comaSeparatedPermission = Utility.AppendStringInStringList(permissions, AUDIT_PERMISSION);
+                        string permission = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
                         string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
 
                         using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                         {
-                            int haveAuditPermission = (int)dataLayer.ExecuteScalarUsingKey(CHECK_PERMISSION, "LoginId", loginId, "Permission", comaSeparatedPermission);
+                            int haveAuditPermission = (int)dataLayer.ExecuteScalarUsingKey(CHECK_PERMISSION, "LoginId", loginId, "Permission", permission);
                             if (haveAuditPermission == 1)
                             {
                                 string success = (string)parameterBusService.Get(GlobalConstants.OUT_FUNCTION_STATUS);

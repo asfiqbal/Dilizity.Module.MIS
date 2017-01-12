@@ -19,19 +19,20 @@ namespace Dilizity.API.Security.Managers
         {
             using (FnTraceWrap tracer = new FnTraceWrap())
             {
+                //InitiateOperation
                 using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                 {
                     string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
-                    if (parameterBusService.IsKeyPresent(GlobalConstants.PERMISSIONS))
+                    if (parameterBusService.IsKeyPresent(GlobalConstants.PERMISSION))
                     {
-                        List<string> permissions = (List<string>)parameterBusService.Get(GlobalConstants.PERMISSIONS);
-                        string comaSeparatedPermission = Utility.List2ComaSeparatedQuoteString(permissions);
+                        string permission = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
 
-                        int isSuccess = (int)dataLayer.ExecuteScalarUsingKey(CHECK_PERMISSION, "LoginId", loginId, "Permission", comaSeparatedPermission);
+                        int isSuccess = (int)dataLayer.ExecuteScalarUsingKey(CHECK_PERMISSION, "LoginId", loginId, "Permission", permission);
                         if (isSuccess != 1)
                             throw new AccessViolationException("User:" + loginId + " do not have Permission");
                     }
                 }
+                //UpdateOperation
             }
         }
 

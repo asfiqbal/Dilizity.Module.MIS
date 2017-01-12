@@ -52,6 +52,7 @@
     <Compile Include="Managers\EmailBusinessManager.cs" />
     <Compile Include="MessagingTemplateHelper.cs" />
     <Compile Include="Model\ExecutionBehavior.cs" />
+    <Compile Include="Model\Operation.cs" />
     <Compile Include="Services\BusService.cs" />
     <Compile Include="SMSManager.cs" />
     <Compile Include="EmailManager.cs" />

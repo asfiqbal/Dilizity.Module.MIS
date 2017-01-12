@@ -137,10 +137,10 @@
 		            INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION DUP ON MAT.PERMISSION_ID = DUP.PERMISSION_ID
           WHERE MT.TEMPLATE_TYPE = 1
           AND		DUP.LOGIN_ID = @LoginId
-          AND	  MAT.PERMISSION_ID in (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME in ( @Permissions))
+          AND	  MAT.PERMISSION_ID in (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME in ( @Permission))
         ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
-        <Param Name="Permissions" Type="System.String"  Size="200"/>
+        <Param Name="Permission" Type="System.String"  Size="200"/>
       </Query>
       <Query ID="GetWorkFlowActions" DataSource="">
         <![CDATA[
@@ -330,7 +330,7 @@
 		                  INNER JOIN SEC_USER_ROLE SUR ON SU.USER_ID = SUR.USER_ID
 		                  INNER JOIN SEC_ROLE_PERMISSION SRP ON SUR.ROLE_ID = SRP.ROLE_ID
 		                  INNER JOIN SEC_PERMISSION SP ON SRP.PERMISSION_ID = SP.PERMISSION_ID
-              WHERE   SP.PERMISSION_NAME IN (@Permission)
+              WHERE   SP.PERMISSION_NAME = @Permission
               AND     SU.LOGIN_ID = @LoginId
             ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
@@ -449,6 +449,28 @@
               WHERE ROLE_ID = @RoleId;
             ]]>
         <Param Name="RoleId" Type="System.Int32"  Size="0"/>
+      </Query>
+      <Query ID="InsertOperation">
+        <![CDATA[
+                INSERT INTO OF_OPERATION(PARENT_OPERATION_ID,PERMISSION_ID,PERMISSION_CLASS, INPUT_PARAMS,STATUS,CREATED_BY,UPDATED_BY)
+                VALUES (@ParentOperationId, (Select PERMISSION_NAME FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionName), @PermissionClass, @InputParams, @Status, @CreatedBy, @CreatedBy)
+              ]]>
+        <Param Name="ParentOperationId" Type="System.Int32"  Size="0"/>
+        <Param Name="PermissionName" Type="System.String"  Size="200"/>
+        <Param Name="PermissionClass" Type="System.String"  Size="1024"/>
+        <Param Name="Status" Type="System.String"  Size="20"/>
+        <Param Name="InputParams" Type="System.String"  Size="-1"/>
+        <Param Name="CreatedBy" Type="System.String"  Size="200"/>
+      </Query>
+      <Query ID="UpdateOperation">
+        <![CDATA[
+                  UPDATE OF_OPERATION
+                  SET   STATUS = @Status
+                        UPDATED_ON = Getdate()
+                  WHERE OPERATION_ID = @OperationId
+                ]]>
+        <Param Name="OperationId" Type="System.Int32"  Size="0"/>
+        <Param Name="Status" Type="System.String"  Size="20"/>
       </Query>
   </Schema>
 </root>

@@ -33,7 +33,7 @@ namespace Dilizity.API.Security.Controllers
 
                     dataBasService.Add(GlobalConstants.IN_PARAM, reportMetaDataObject);
                     dataBasService.Add(GlobalConstants.LOGIN_ID, reportMetaDataObject.LoginId);
-                    dataBasService.Add(GlobalConstants.PERMISSIONS, Utility.Param2List(reportMetaDataObject.PermissionId));
+                    dataBasService.Add(GlobalConstants.PERMISSION, reportMetaDataObject.PermissionId);
 
                     IAbstractBusiness menuManager = new ReportMetaDataBusinessManager();
                     menuManager.Do(dataBasService);
@@ -69,7 +69,7 @@ namespace Dilizity.API.Security.Controllers
                     dataBasService.Add(GlobalConstants.IN_PARAM, metaReportExecutionRequestObject);
                     dataBasService.Add(GlobalConstants.LOGIN_ID, metaReportExecutionRequestObject["LoginId"].ToString());
                     string permissionId = metaReportExecutionRequestObject["PermissionId"].ToString();
-                    dataBasService.Add(GlobalConstants.PERMISSIONS, Utility.Param2List(permissionId));
+                    dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
 
                     WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
                     workFlowManager.Do(dataBasService);

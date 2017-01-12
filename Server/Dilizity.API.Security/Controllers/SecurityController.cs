@@ -70,7 +70,7 @@ namespace Security.Controllers
 
                     dataBasService.Add(GlobalConstants.IN_PARAM, userCredentials);
                     dataBasService.Add(GlobalConstants.LOGIN_ID, userCredentials.LoginId);
-                    dataBasService.Add(GlobalConstants.PERMISSIONS, Utility.Param2List(userCredentials.PermissionId));
+                    dataBasService.Add(GlobalConstants.PERMISSION, userCredentials.PermissionId);
 
                     WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
                     workFlowManager.Do(dataBasService);
@@ -109,7 +109,7 @@ namespace Security.Controllers
                     BusService dataBasService = new BusService();
                     dataBasService.Add(GlobalConstants.IN_PARAM, modelChangePassword);
                     dataBasService.Add(GlobalConstants.LOGIN_ID, modelChangePassword.LoginId);
-                    dataBasService.Add(GlobalConstants.PERMISSIONS, Utility.Param2List(modelChangePassword.PermissionId));
+                    dataBasService.Add(GlobalConstants.PERMISSION, modelChangePassword.PermissionId);
 
                     WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
                     workFlowManager.Do(dataBasService);
@@ -157,6 +157,7 @@ namespace Security.Controllers
                 Log.Debug(typeof(SecurityController), "{0}", e.Message);
                 return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
             }
+
         }
 
 

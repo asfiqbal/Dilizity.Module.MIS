@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CacheManager.cs" />
+    <Compile Include="DynamicExtensions.cs" />
     <Compile Include="FnTraceWrap.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="ParamEncoder.cs" />

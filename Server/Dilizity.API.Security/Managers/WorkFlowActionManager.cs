@@ -1,8 +1,10 @@
-﻿using Dilizity.Business.Common;
+﻿using Dilizity.API.Security.Models;
+using Dilizity.Business.Common;
 using Dilizity.Business.Common.Model;
 using Dilizity.Business.Common.Services;
 using Dilizity.Core.DAL;
 using Dilizity.Core.Util;
+using ilizity.Business.Common.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +22,15 @@ namespace Dilizity.API.Security.Managers
         {
             using (FnTraceWrap tracer = new FnTraceWrap())
             {
+                //InitiateOperation
+                Operation op = new Operation(parameterBusService);
+                op.PermissionClass = typeof(WorkFlowActionManager).ToString();
+                op.saveToDB();
                 DoOnSuccess(parameterBusService);
                 DoBoth(parameterBusService, ExecutionBehavior.OnFailure);
                 DoBoth(parameterBusService, ExecutionBehavior.OnBoth);
+                op.Status = (string)parameterBusService.Get(GlobalConstants.OUT_FUNCTION_STATUS);
+                op.saveToDB();
             }
         }
 
@@ -34,8 +42,7 @@ namespace Dilizity.API.Security.Managers
                 {
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                     {
-                        List<string> permissions = (List<string>)parameterBusService.Get(GlobalConstants.PERMISSIONS);
-                        string permission = permissions[0];
+                        string permission = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
                         foreach (dynamic businessAction in dataLayer.ExecuteUsingKey(GET_WORKFLOW_ACTIONS, "Permission", permission, "ExecutionBehavior", ExecutionBehavior.OnSuccess))
                         {
                             string binPath = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "bin"); // note: don't use CurrentEntryAssembly or anything like that.
@@ -80,8 +87,7 @@ namespace Dilizity.API.Security.Managers
                 {
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                     {
-                        List<string> permissions = (List<string>)parameterBusService.Get(GlobalConstants.PERMISSIONS);
-                        string permission = permissions[0];
+                        string permission = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
                         foreach (dynamic businessAction in dataLayer.ExecuteUsingKey(GET_WORKFLOW_ACTIONS, "Permission", permission, "ExecutionBehavior", behavior))
                         {
                             string binPath = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "bin"); // note: don't use CurrentEntryAssembly or anything like that.

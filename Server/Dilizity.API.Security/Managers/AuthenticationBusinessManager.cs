@@ -12,6 +12,7 @@ using Newtonsoft.Json.Serialization;
 using System.IO;
 using Dilizity.Business.Common;
 using Dilizity.Business.Common.Services;
+using ilizity.Business.Common.Model;
 
 namespace Dilizity.API.Security.Managers
 {
@@ -25,6 +26,10 @@ namespace Dilizity.API.Security.Managers
         {
             using (FnTraceWrap tracer = new FnTraceWrap())
             {
+                Operation childOperation = new Operation(parameterBusService);
+                childOperation.PermissionClass = typeof(AuthenticationBusinessManager).ToString();
+                childOperation.saveToDB();
+
                 using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                 {
                     string success = GlobalConstants.FAILURE;
@@ -77,6 +82,8 @@ namespace Dilizity.API.Security.Managers
                     //AuditHelper.Register(parameterBusService, userCredentials.LoginId, userCredentials.PermissionId, success, userCredentials.ToString());
                     parameterBusService.Add(GlobalConstants.OUT_RESULT, success);
                     parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, success);
+                    childOperation.Status = success;
+                    childOperation.saveToDB();
                 }
             }
         }
