@@ -2,20 +2,4 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/Server/DALTest
-/Server/Dilizity.API.Security/bin
-/Server/Dilizity.API.Security/obj/Debug
-/Server/Dilizity.Common/bin/Debug
-/Server/Dilizity.Common/obj/Debug
-/Server/Dilizity.Core.DAL/bin/Debug
-/Server/Dilizity.Core.DAL/obj/Debug
-/Server/Dilizity.Core.Util/bin/Debug
-/Server/Dilizity.Core.Util/obj/Debug
-/Server/Dilizity.Messaging/bin/Debug
-/Server/packages
-/Server/PasswordUtility/bin/Debug
-/Server/PasswordUtility/obj/Debug
-/Server/Dilizity.Messaging/obj/Debug
-/FrontEnd/ReportingMIS/bower_components
-/FrontEnd/ReportingMIS/obj/Debug
 /FrontEnd/packages
