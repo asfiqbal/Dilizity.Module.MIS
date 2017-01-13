@@ -12,7 +12,7 @@ GO
 
 CREATE FUNCTION [dbo].[FN_MSG_GET_USER_LOGIN_DATE]
 (
-	@LoginId as nvarchar(200)
+	@OperationId as INT
 )
 RETURNS nvarchar(200)
 AS
@@ -20,8 +20,9 @@ BEGIN
 	DECLARE @Result as nvarchar(200)
 	
 	select @Result = cast(DATENAME(dw, LAST_LOGIN_DATETIME) as varchar(3)) + ', ' +  CONVERT(VARCHAR(11),LAST_LOGIN_DATETIME,106)
-	from	SEC_USER
-	WHERE  LOGIN_ID = @LoginId
+	from	OF_OPERATIONS O
+			INNER JOIN SEC_USER U ON O.CREATED_BY = U.LOGIN_ID
+	WHERE	O.OPERATION_ID = @OperationId
 	RETURN @Result
 END
 

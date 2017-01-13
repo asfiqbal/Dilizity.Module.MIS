@@ -24,10 +24,10 @@ namespace Dilizity.API.Security.Managers
 
         public void Do(BusService parameterBusService)
         {
-            Operation childOperation = null;
-            try
+            using (FnTraceWrap tracer = new FnTraceWrap())
             {
-                using (FnTraceWrap tracer = new FnTraceWrap())
+                Operation childOperation = null;
+                try
                 {
                     childOperation = new Operation(parameterBusService);
                     childOperation.PermissionClass = typeof(AuthenticationBusinessManager).ToString();
@@ -89,15 +89,15 @@ namespace Dilizity.API.Security.Managers
                         childOperation.saveToDB();
                     }
                 }
+                catch (Exception ex)
+                {
+                    Log.Error(this.GetType(), ex.Message, ex);
+                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                    childOperation.Status = GlobalConstants.FAILURE;
+                    childOperation.saveToDB();
+                    throw;
+                }
             }
-            catch (Exception ex)
-            {
-                Log.Error(this.GetType(), ex.Message, ex);
-                parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
-                childOperation.Status = GlobalConstants.FAILURE;
-                childOperation.saveToDB();
-            }
-
         }
 
         private bool CheckPasswordExpiry(int expiryRule, DateTime lastPasswordChangeDate)

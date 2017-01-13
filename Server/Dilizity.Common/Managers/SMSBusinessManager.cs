@@ -14,50 +14,55 @@ namespace Dilizity.Business.Common.Managers
         private const string GET_TEMPLATE = "GetTemplate";
         private const string SMS_PERMISSION = ".SMS";
         private const string GET_USER = "GetUser";
+        private const string INSERT_NOTIFICATION = "InsertNotification";
+        private const string MOBILE_FROM_NUMBER = "MOBILE_FROM_NUMBER";
+        private const int SMS_TEMPLATE_TYPE = 2;
 
         public void Do(BusService parameterBusService)
         {
-            Operation childOperation = null;
-            try
+            using (FnTraceWrap tracer = new FnTraceWrap())
             {
-                using (FnTraceWrap tracer = new FnTraceWrap())
+                Operation childOperation = null;
+                try
                 {
                     childOperation = new Operation(parameterBusService);
                     childOperation.PermissionClass = typeof(SMSBusinessManager).ToString();
                     childOperation.saveToDB();
 
+                    Operation op = (Operation)parameterBusService.Get(GlobalConstants.OPERATION_ID);
+
+                    string permissionName = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
+                    string SMSPermissionName = permissionName + SMS_PERMISSION;
                     string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
+                    string fromMobileNo = SystemConfigurationManager.Instance.Get(MOBILE_FROM_NUMBER);
 
-                    using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA))
+                    using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA, false, true))
                     {
-                        if (parameterBusService.IsKeyPresent(GlobalConstants.PERMISSION))
+                        dynamic secUser = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_USER, "LoginId", loginId);
+
+                        foreach (dynamic templateObject in dataLayer.ExecuteUsingKey(GET_TEMPLATE, "LoginId", loginId, "PermissionName", SMSPermissionName, "TemplateType", SMS_TEMPLATE_TYPE))
                         {
-                            string permission = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
-                            dynamic secUser = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_USER, "LoginId", loginId);
-
-                            foreach (dynamic templateObject in dataLayer.ExecuteUsingKey(GET_TEMPLATE, "LoginId", loginId, "Permission", permission))
-                            {
-                                string permissionName = templateObject.PermissionName;
-                                string templateBody = templateObject.Template;
-                                string subject = templateObject.Subject;
-                                MessagingTemplateHelper mtHelper = new MessagingTemplateHelper();
-                                templateBody = mtHelper.Resolve(templateBody, childOperation.ParentOperationId.ToString());
-                                //EmailManager.Instance.Send(secUser.Email, subject, templateBody);
-                                //AuditHelper.Register(parameterBusService, loginId, permissionName, GlobalConstants.SUCCESS, templateBody);
-                            }
-
+                            string templateBody = templateObject.Template;
+                            string subject = templateObject.Subject;
+                            MessagingTemplateHelper mtHelper = new MessagingTemplateHelper();
+                            templateBody = mtHelper.Resolve(templateBody, childOperation.ParentOperationId.ToString());
+                            string encryptBody = Utility.Encrypt(templateBody, true);
+                            dataLayer.DelayExecuteNonQueryUsingKey(INSERT_NOTIFICATION, "OperationId", op.OperationId, "NotificationType", "SMS", "From", fromMobileNo, "To", secUser.MobileNumber, "CC", "", "Subject", subject, "Body", encryptBody, "Status", "Pending", "CreatedBy", loginId);
                         }
-                        childOperation.Status = GlobalConstants.SUCCESS;
-                        childOperation.saveToDB();
+                        dataLayer.DelayExecuteBulk();
                     }
+                    childOperation.Status = GlobalConstants.SUCCESS;
+                    childOperation.saveToDB();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(this.GetType(), ex.Message, ex);
+                    childOperation.Status = GlobalConstants.FAILURE;
+                    childOperation.saveToDB();
+                    throw;
                 }
             }
-            catch(Exception ex)
-            {
-                Log.Error(this.GetType(), ex.Message, ex);
-                childOperation.Status = GlobalConstants.FAILURE;
-                childOperation.saveToDB();
-            }
+
         }
     }
 }

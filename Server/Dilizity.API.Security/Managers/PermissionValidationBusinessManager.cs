@@ -18,26 +18,38 @@ namespace Dilizity.API.Security.Managers
 
         public void Do(BusService parameterBusService)
         {
-            using (FnTraceWrap tracer = new FnTraceWrap())
+            Operation childOperation = null;
+            try
             {
-                Operation childOperation = new Operation(parameterBusService);
-                childOperation.PermissionClass = typeof(PermissionValidationBusinessManager).ToString();
-                childOperation.saveToDB();
-
-                using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
+                using (FnTraceWrap tracer = new FnTraceWrap())
                 {
-                    string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
-                    if (parameterBusService.IsKeyPresent(GlobalConstants.PERMISSION))
-                    {
-                        string permission = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
+                    childOperation = new Operation(parameterBusService);
+                    childOperation.PermissionClass = typeof(PermissionValidationBusinessManager).ToString();
+                    childOperation.saveToDB();
 
-                        int isSuccess = (int)dataLayer.ExecuteScalarUsingKey(CHECK_PERMISSION, "LoginId", loginId, "Permission", permission);
-                        if (isSuccess != 1)
-                            throw new AccessViolationException("User:" + loginId + " do not have Permission");
+                    using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
+                    {
+                        string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
+                        if (parameterBusService.IsKeyPresent(GlobalConstants.PERMISSION))
+                        {
+                            string permission = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
+
+                            int isSuccess = (int)dataLayer.ExecuteScalarUsingKey(CHECK_PERMISSION, "LoginId", loginId, "Permission", permission);
+                            if (isSuccess != 1)
+                                throw new AccessViolationException("User:" + loginId + " do not have Permission");
+                        }
                     }
+                    childOperation.Status = GlobalConstants.SUCCESS;
+                    childOperation.saveToDB();
                 }
-                childOperation.Status = GlobalConstants.SUCCESS;
+            }
+            catch(Exception ex)
+            {
+                Log.Error(this.GetType(), ex.Message, ex);
+                parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                childOperation.Status = GlobalConstants.FAILURE;
                 childOperation.saveToDB();
+                throw;
             }
         }
 

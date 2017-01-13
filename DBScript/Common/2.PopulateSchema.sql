@@ -95,6 +95,9 @@ UNION ALL
 SELECT 6, 'SMTP_SERVER_ENABLE_SSL', 'True', 'SMTP Server SSL', '0.1', 'System', 'System'
 UNION ALL
 SELECT 7, 'SMS_SERVER_URL', 'http://localhost/SMSGateWay/Send/{MOBILE_NUMBER}/{MESSAGE}', 'SMS Gatewat URL for Sending SMS', '0.1', 'System', 'System'
+UNION ALL
+SELECT 8, 'MOBILE_FROM_NUMBER', '88888', 'SMS Gatewat From Number', '0.1', 'System', 'System'
 GO
+
 
 --delete from SYSTEM_CONFIGURATION

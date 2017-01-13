@@ -12,7 +12,7 @@ GO
 
 CREATE FUNCTION [dbo].[FN_MSG_GET_USER_EMAIL]
 (
-	@LoginId as nvarchar(200)
+	@OperationId as INT
 )
 RETURNS nvarchar(400)
 AS
@@ -20,8 +20,9 @@ BEGIN
 	DECLARE @Result as nvarchar(400)
 	
 	select @Result = EMAIL 
-	from	SEC_USER
-	WHERE  LOGIN_ID = @LoginId
+	from	OF_OPERATIONS O
+			INNER JOIN SEC_USER U ON O.CREATED_BY = U.LOGIN_ID
+	WHERE	O.OPERATION_ID = @OperationId
 	RETURN @Result
 END
 

@@ -131,16 +131,17 @@
       </Query>
       <Query ID="GetTemplate" DataSource="">
         <![CDATA[
-          SELECT  MT.NAME Name, MT.TEMPLATE Template, MT.SUBJECT Subject, DUP.PERMISSION_NAME PermissionName
+          SELECT  MT.NAME Name, MT.TEMPLATE Template, MT.SUBJECT Subject
           FROM	[DBO].[MSG_ASSIGNED_TEMPLATES] MAT
 		            INNER JOIN [MSG_TEMPLATES] MT ON MAT.TEMPLATE_ID = MT.TEMPLATE_ID AND MT.IS_DELETED = 0
 		            INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION DUP ON MAT.PERMISSION_ID = DUP.PERMISSION_ID
-          WHERE MT.TEMPLATE_TYPE = 1
+          WHERE MT.TEMPLATE_TYPE = @TemplateType
           AND		DUP.LOGIN_ID = @LoginId
-          AND	  MAT.PERMISSION_ID in (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME in ( @Permission))
+          AND		DUP.PERMISSION_NAME = @PermissionName
         ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
-        <Param Name="Permission" Type="System.String"  Size="200"/>
+        <Param Name="PermissionName" Type="System.String"  Size="200"/>
+        <Param Name="TemplateType" Type="System.Int32"  Size="0"/>
       </Query>
       <Query ID="GetWorkFlowActions" DataSource="">
         <![CDATA[
@@ -245,6 +246,13 @@
       </Query>
   </Schema>
   <Schema Name="Security" DataSource="Server=.;Database=ReportMIS;User Id=sa;Password=Avanza123;Connection Timeout=10;" Provider="System.Data.SqlClient">
+      <Query ID="GetSystemConfiguration" DataSource="">
+        <![CDATA[
+          select  NAME Name,
+		              VALUE Value
+          from	  [SYSTEM_CONFIGURATION]
+        ]]>
+      </Query>
       <Query ID="GetAllUsers" DataSource="">
         <![CDATA[
           SELECT USER_ID UserId, LOGIN_ID LoginId, PASSWORD Password, PASSWORD_POLICY_ID PasswordPolicyId, PASSWORD_ATTEMPTS PasswordAttempts, ACCOUNT_LOCKED AccountLocked, IS_SYSTEM IsSystem, IS_DELETED IsDeleted, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
@@ -472,6 +480,21 @@
                 ]]>
         <Param Name="OperationId" Type="System.Int32"  Size="0"/>
         <Param Name="Status" Type="System.String"  Size="20"/>
+      </Query>
+        <Query ID="InsertNotification">
+        <![CDATA[
+          INSERT INTO MSG_NOTIFICATIONS(OPERATION_ID,NOTIFICATION_TYPE,[FROM],[TO],CC,SUBJECT,BODY,STATUS,CREATED_BY,UPDATED_BY)
+          VALUES (@OperationId, @NotificationType, @From, @To, @CC, @Subject, @Body, @Status,@CreatedBy, @CreatedBy)
+        ]]>    
+        <Param Name="OperationId" Type="System.Int32"  Size="0"/>
+        <Param Name="NotificationType" Type="System.String"  Size="10"/>
+        <Param Name="From" Type="System.String"  Size="400"/>
+        <Param Name="To" Type="System.String"  Size="400"/>
+        <Param Name="CC" Type="System.String"  Size="400"/>
+        <Param Name="Subject" Type="System.String"  Size="-1"/>
+        <Param Name="Body" Type="System.String"  Size="400"/>
+        <Param Name="Status" Type="System.String"  Size="20"/>
+        <Param Name="CreatedBy" Type="System.String"  Size="400"/>
       </Query>
   </Schema>
 </root>

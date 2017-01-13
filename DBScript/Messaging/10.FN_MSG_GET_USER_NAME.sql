@@ -12,16 +12,17 @@ GO
 
 CREATE FUNCTION [dbo].[FN_MSG_GET_USER_NAME]
 (
-	@LoginId as nvarchar(200)
+	@OperationId as INT
 )
 RETURNS nvarchar(200)
 AS
 BEGIN
 	DECLARE @Result as nvarchar(200)
 	
-	select @Result = NAME 
-	from	SEC_USER
-	WHERE  LOGIN_ID = @LoginId
+	select	@Result = NAME 
+	from	OF_OPERATIONS O
+			INNER JOIN SEC_USER U ON O.CREATED_BY = U.LOGIN_ID
+	WHERE	O.OPERATION_ID = @OperationId
 	RETURN @Result
 END
 

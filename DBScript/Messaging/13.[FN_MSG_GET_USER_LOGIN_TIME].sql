@@ -15,7 +15,7 @@ GO
 
 CREATE FUNCTION [dbo].[FN_MSG_GET_USER_LOGIN_TIME]
 (
-	@LoginId as nvarchar(200)
+	@OperationId as INT
 )
 RETURNS nvarchar(200)
 AS
@@ -26,8 +26,9 @@ BEGIN
     (CASE WHEN DATEPART(HOUR, GETDATE()) > 12 THEN ' PM'
         ELSE ' AM'
     END)
-	from	SEC_USER
-	WHERE  LOGIN_ID = @LoginId
+	from	OF_OPERATIONS O
+			INNER JOIN SEC_USER U ON O.CREATED_BY = U.LOGIN_ID
+	WHERE	O.OPERATION_ID = @OperationId
 	RETURN @Result
 END
 GO

@@ -22,16 +22,28 @@ namespace Dilizity.API.Security.Managers
         {
             using (FnTraceWrap tracer = new FnTraceWrap())
             {
-                //InitiateOperation
-                Operation op = new Operation(parameterBusService);
-                op.PermissionClass = typeof(WorkFlowActionManager).ToString();
-                op.saveToDB();
-                parameterBusService.Add(GlobalConstants.OPERATION_ID, op);
-                DoOnSuccess(parameterBusService);
-                DoBoth(parameterBusService, ExecutionBehavior.OnFailure);
-                DoBoth(parameterBusService, ExecutionBehavior.OnBoth);
-                op.Status = (string)parameterBusService.Get(GlobalConstants.OUT_FUNCTION_STATUS);
-                op.saveToDB();
+                Operation op = null;
+                try
+                {
+                    op = new Operation(parameterBusService);
+                    op.PermissionClass = typeof(WorkFlowActionManager).ToString();
+                    op.saveToDB();
+                    parameterBusService.Add(GlobalConstants.OPERATION_ID, op);
+                    DoOnSuccess(parameterBusService);
+                    op.Status = GlobalConstants.SUCCESS;
+                    op.saveToDB();
+                }
+                catch(Exception ex)
+                {
+                    Log.Error(this.GetType(), ex.Message, ex);
+                    op.Status = GlobalConstants.FAILURE;
+                    op.saveToDB();
+                    DoBoth(parameterBusService, ExecutionBehavior.OnFailure);
+                }
+                finally
+                {
+                    DoBoth(parameterBusService, ExecutionBehavior.OnBoth);
+                }
             }
         }
 
@@ -76,7 +88,7 @@ namespace Dilizity.API.Security.Managers
             {
                 Log.Error(this.GetType(), ex.Message, ex);
                 parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
-                //throw ex;
+                throw ex;
             }
         }
 
@@ -112,7 +124,7 @@ namespace Dilizity.API.Security.Managers
             catch (Exception ex)
             {
                 Log.Error(this.GetType(), ex.Message, ex);
-                throw ex;
+                throw;
             }
         }
 

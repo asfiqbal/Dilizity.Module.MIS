@@ -406,24 +406,26 @@ namespace Dilizity.Core.DAL
         {
             using (FnTraceWrap tracer = new FnTraceWrap())
             {
+                int result = -1;
                 string sql = sqlCollection.ToString();
-                Contract.Requires(!string.IsNullOrWhiteSpace(sql));
-
-                Log.Debug(this.GetType(), "sql={0}", sql);
-
-
-                //lock (this)
-                //{
-                using (var command = connection.CreateCommand())
+                //Contract.Requires(!string.IsNullOrWhiteSpace(sql));
+                if (!string.IsNullOrWhiteSpace(sql))
                 {
-                    if (this.transaction != null)
-                        command.Transaction = this.transaction;
-                    command.CommandText = sql;
+                    Log.Debug(this.GetType(), "sql={0}", sql);
 
-                    int result = command.ExecuteNonQuery();
-                    return result;
+                    //lock (this)
+                    //{
+                    using (var command = connection.CreateCommand())
+                    {
+                        if (this.transaction != null)
+                            command.Transaction = this.transaction;
+                        command.CommandText = sql;
+
+                        result = command.ExecuteNonQuery();
+                    }
+                    // }
                 }
-                // }
+                return result;
             }
         }
 
