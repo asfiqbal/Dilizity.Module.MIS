@@ -31,12 +31,24 @@ namespace Dilizity.API.Security.Managers
                     parameterBusService.Add(GlobalConstants.OPERATION_ID, op);
                     DoOnSuccess(parameterBusService);
                     op.Status = GlobalConstants.SUCCESS;
+                    op.ErrorCode = GlobalErrorCodes.Success;
                     op.saveToDB();
                 }
-                catch(Exception ex)
+                catch (ApplicationBusinessException ex)
                 {
                     Log.Error(this.GetType(), ex.Message, ex);
+                    parameterBusService.Add(GlobalConstants.OUT_RESULT, GlobalConstants.FAILURE);
                     op.Status = GlobalConstants.FAILURE;
+                    op.ErrorCode = ex.ErrorCode;
+                    op.saveToDB();
+                    DoBoth(parameterBusService, ExecutionBehavior.OnFailure);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(this.GetType(), ex.Message, ex);
+                    parameterBusService.Add(GlobalConstants.OUT_RESULT, GlobalConstants.FAILURE);
+                    op.Status = GlobalConstants.FAILURE;
+                    op.ErrorCode = GlobalErrorCodes.SystemError;
                     op.saveToDB();
                     DoBoth(parameterBusService, ExecutionBehavior.OnFailure);
                 }

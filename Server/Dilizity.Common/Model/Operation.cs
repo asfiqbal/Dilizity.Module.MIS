@@ -18,12 +18,13 @@ namespace ilizity.Business.Common.Model
     }
     public class Operation
     {
-        public Operation(int? parentOperationId, string permissionName, string permissionClass, string status, string inputParams,string updatedBy)
+        public Operation(int? parentOperationId, string permissionName, string permissionClass, string status, int errorCode, string inputParams,string updatedBy)
         {
             ParentOperationId = parentOperationId;
             PermissionName = permissionName;
             PermissionClass = permissionClass;
             Status = status;
+            ErrorCode = errorCode;
             InputParams = inputParams;
             UpdatedBy = updatedBy;
         }
@@ -41,6 +42,7 @@ namespace ilizity.Business.Common.Model
             InputParams = parameterBusService.Get(GlobalConstants.IN_PARAM).ToString();
 
             Status = OperationStatus.INITIATED;
+            ErrorCode = -1;
         }
 
         private const string INSERT_OPERATION = "InsertOperation";
@@ -55,6 +57,8 @@ namespace ilizity.Business.Common.Model
 
         public string Status { get; set; }
 
+        public int ErrorCode { get; set; }
+
         public string UpdatedBy { get; set; }
 
         internal void Insert()
@@ -66,7 +70,7 @@ namespace ilizity.Business.Common.Model
                     //var _t = DynamicExtensions.ToDynamic<Operation>(this);
 
 
-                    Object _t =  dataLayer.ExecuteScalarUsingKey(INSERT_OPERATION, "ParentOperationId", ParentOperationId, "PermissionName", PermissionName, "PermissionClass", PermissionClass, "InputParams", InputParams, "Status", Status, "UpdatedBy", UpdatedBy);
+                    Object _t =  dataLayer.ExecuteScalarUsingKey(INSERT_OPERATION, "ParentOperationId", ParentOperationId, "PermissionName", PermissionName, "PermissionClass", PermissionClass, "InputParams", InputParams, "Status", Status, "ErrorCode", ErrorCode, "UpdatedBy", UpdatedBy);
                     OperationId = Convert.ToInt32(_t);
                 }
 
@@ -79,7 +83,7 @@ namespace ilizity.Business.Common.Model
             {
                 using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                 {
-                    dataLayer.ExecuteScalarUsingKey(UPDATE_OPERATION, "OperationId", OperationId, "Status", Status);
+                    dataLayer.ExecuteScalarUsingKey(UPDATE_OPERATION, "OperationId", OperationId, "Status", Status, "ErrorCode", ErrorCode, "InputParams", InputParams);
                 }
             }
         }

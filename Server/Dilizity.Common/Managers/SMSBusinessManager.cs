@@ -51,12 +51,14 @@ namespace Dilizity.Business.Common.Managers
                         }
                         dataLayer.DelayExecuteBulk();
                     }
+                    childOperation.ErrorCode = GlobalErrorCodes.Success;
                     childOperation.Status = GlobalConstants.SUCCESS;
                     childOperation.saveToDB();
                 }
                 catch (Exception ex)
                 {
                     Log.Error(this.GetType(), ex.Message, ex);
+                    childOperation.ErrorCode = GlobalErrorCodes.SystemError;
                     childOperation.Status = GlobalConstants.FAILURE;
                     childOperation.saveToDB();
                     throw;

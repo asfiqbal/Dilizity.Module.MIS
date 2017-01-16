@@ -13,6 +13,7 @@ using System.IO;
 using Dilizity.Business.Common;
 using Dilizity.Business.Common.Services;
 using ilizity.Business.Common.Model;
+using Dilizity.Business.Common.Model;
 
 namespace Dilizity.API.Security.Managers
 {
@@ -21,6 +22,11 @@ namespace Dilizity.API.Security.Managers
     {
         private const string USER_CREDENTIAL = "USER_CREDENTIAL";
         private const string GET_USER = "GetUser";
+        private const string GET_USER_PASSWORD_POLICY = "GetUserPasswordPolicy";
+        private const string PASSOWRD_MATCHED = "Passowrd Matched";
+        private const string UPDATE_USER_PASSWORD_ATTEMPT = "UpdateUserPasswordAttempt";
+        
+
 
         public void Do(BusService parameterBusService)
         {
@@ -30,69 +36,90 @@ namespace Dilizity.API.Security.Managers
                 try
                 {
                     childOperation = new Operation(parameterBusService);
-                    childOperation.PermissionClass = typeof(AuthenticationBusinessManager).ToString();
+                    childOperation.PermissionClass = this.GetType().ToString();
                     childOperation.saveToDB();
+                    string success = GlobalConstants.FAILURE;
+                    UserCredential userCredentials = (UserCredential)parameterBusService.Get(GlobalConstants.IN_PARAM);
+                    dynamic secUser = null;
+                    dynamic passwordPolicy = null;
+
 
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                     {
-                        string success = GlobalConstants.FAILURE;
+                        passwordPolicy = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_USER_PASSWORD_POLICY, GlobalConstants.LOGIN_PARAM, userCredentials.LoginId);
 
-                        UserCredential userCredentials = (UserCredential)parameterBusService.Get(GlobalConstants.IN_PARAM);
-                        dynamic passwordPolicy = dataLayer.ExecuteAndGetSingleRowUsingKey("GetUserPasswordPolicy", "LoginId", userCredentials.LoginId);
+                        secUser = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_USER, GlobalConstants.LOGIN_PARAM, userCredentials.LoginId);
+                    }
 
-                        dynamic secUser = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_USER, "LoginId", userCredentials.LoginId);
+                    CheckIsAccountLocked(passwordPolicy.AccountLockOnFailedAttempts, secUser.AccountLocked);
 
-                        CheckIsAccountLocked(passwordPolicy.AccountLockOnFailedAttempts, secUser.AccountLocked);
+                    string dbPassword = secUser.Password;
+                    string encryptedPassword = Utility.Encrypt(userCredentials.Password, false);
+                    if (dbPassword == encryptedPassword)
+                    {
+                        success = GlobalConstants.SUCCESS;
+                        Log.Info(typeof(AuthenticationBusinessManager), PASSOWRD_MATCHED);
 
-                        string dbPassword = secUser.Password;
-                        string encryptedPassword = Utility.Encrypt(userCredentials.Password, false);
-                        if (dbPassword == encryptedPassword)
+                        using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                         {
-                            success = GlobalConstants.SUCCESS;
-                            Log.Info(typeof(AuthenticationBusinessManager), "Passowrd Matched");
-                            dataLayer.ExecuteNonQueryUsingKey("UpdateUserPasswordAttempt", "LoginId", userCredentials.LoginId, "PasswordAttempt", passwordPolicy.DefaultPasswordAttempts, "AccountLocked", secUser.AccountLocked);
+                            dataLayer.ExecuteNonQueryUsingKey(UPDATE_USER_PASSWORD_ATTEMPT, GlobalConstants.LOGIN_PARAM, userCredentials.LoginId, "PasswordAttempt", passwordPolicy.DefaultPasswordAttempts, "AccountLocked", secUser.AccountLocked);
+                        }
 
-                            if (passwordPolicy.FirstLoginChangePassword > 0)
+                        if (passwordPolicy.FirstLoginChangePassword > 0)
+                        {
+                            Log.Info(typeof(AuthenticationBusinessManager), "Checking Password Policy for First Time login");
+                            if (secUser.ChangePasswordOnLogon > 0)
                             {
-                                Log.Info(typeof(AuthenticationBusinessManager), "Checking Password Policy for First Time login");
-                                if (secUser.ChangePasswordOnLogon > 0)
-                                {
-                                    Log.Info(typeof(AuthenticationBusinessManager), "User has logged in for the first time");
-                                    success = "ChangePassword";
-                                }
-                            }
-
-                            if (CheckPasswordExpiry(passwordPolicy.ExpiryRule, secUser.LastPasswordChangeDateTime))
-                            {
-                                Log.Info(typeof(AuthenticationBusinessManager), "User Password Expired");
+                                Log.Info(typeof(AuthenticationBusinessManager), "User has logged in for the first time");
                                 success = "ChangePassword";
                             }
                         }
-                        else
-                        {
-                            Log.Debug(typeof(AuthenticationBusinessManager), "Login Failed");
-                            success = GlobalConstants.FAILURE;
-                            if (passwordPolicy.AccountLockOnFailedAttempts > 0)
-                            {
-                                int passwordAttempts = secUser.PasswordAttempts;
-                                int accountLock = (passwordAttempts > 0) ? 0 : 1;
-                                passwordAttempts--;
 
-                                dataLayer.ExecuteNonQueryUsingKey("UpdateUserPasswordAttempt", "LoginId", userCredentials.LoginId, "PasswordAttempt", passwordAttempts, "AccountLocked", accountLock);
-                            }
-                            throw new Exception("Login Failed");
+                        if (CheckPasswordExpiry(passwordPolicy.ExpiryRule, secUser.LastPasswordChangeDateTime))
+                        {
+                            Log.Info(typeof(AuthenticationBusinessManager), "User Password Expired");
+                            success = "ChangePassword";
                         }
-                        //AuditHelper.Register(parameterBusService, userCredentials.LoginId, userCredentials.PermissionId, success, userCredentials.ToString());
-                        parameterBusService.Add(GlobalConstants.OUT_RESULT, success);
-                        parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, success);
-                        childOperation.Status = success;
-                        childOperation.saveToDB();
                     }
+                    else
+                    {
+                        Log.Debug(typeof(AuthenticationBusinessManager), "Password Mismatched!");
+                        success = GlobalConstants.FAILURE;
+                        if (passwordPolicy.AccountLockOnFailedAttempts > 0)
+                        {
+                            int passwordAttempts = secUser.PasswordAttempts;
+                            int accountLock = (passwordAttempts > 0) ? 0 : 1;
+                            passwordAttempts--;
+
+                            using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
+                            {
+                                dataLayer.ExecuteNonQueryUsingKey(UPDATE_USER_PASSWORD_ATTEMPT, GlobalConstants.LOGIN_PARAM, userCredentials.LoginId, "PasswordAttempt", passwordAttempts, "AccountLocked", accountLock);
+                            }
+                        }
+                        throw new ApplicationBusinessException(GlobalErrorCodes.IncorrectPassword);
+                    }
+                        //AuditHelper.Register(parameterBusService, userCredentials.LoginId, userCredentials.PermissionId, success, userCredentials.ToString());
+                    parameterBusService.Add(GlobalConstants.OUT_RESULT, success);
+                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, success);
+                    childOperation.ErrorCode = GlobalErrorCodes.Success;
+                    childOperation.Status = success;
+                    childOperation.saveToDB();
+                   // }
+                }
+                catch (ApplicationBusinessException ex)
+                {
+                    Log.Error(this.GetType(), ex.Message, ex);
+                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                    childOperation.ErrorCode = ex.ErrorCode;
+                    childOperation.Status = GlobalConstants.FAILURE;
+                    childOperation.saveToDB();
+                    throw;
                 }
                 catch (Exception ex)
                 {
                     Log.Error(this.GetType(), ex.Message, ex);
                     parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                    childOperation.ErrorCode = GlobalErrorCodes.SystemError;
                     childOperation.Status = GlobalConstants.FAILURE;
                     childOperation.saveToDB();
                     throw;
@@ -121,7 +148,7 @@ namespace Dilizity.API.Security.Managers
                     if (userAccountLocked > 0)
                     {
                         Log.Debug(typeof(AuthenticationBusinessManager), "Account is Locked!");
-                        throw new AccessViolationException("Account is Locked!");
+                        throw new ApplicationBusinessException(GlobalErrorCodes.AccountIsLocked);
                     }
                 }
             }

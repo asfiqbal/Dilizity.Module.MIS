@@ -35,7 +35,7 @@ namespace Dilizity.Messaging
                         outString = nodeData[0];
                     else
                     {
-                        outString = ResolveRecursive(nodeData, 0, contextList[0], dataAgent, reader);
+                        outString = ResolveRecursive(nodeData, 0, contextList[1], dataAgent, reader);
                     }
                 }
             }

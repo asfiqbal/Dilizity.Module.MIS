@@ -340,6 +340,8 @@
 		                  INNER JOIN SEC_PERMISSION SP ON SRP.PERMISSION_ID = SP.PERMISSION_ID
               WHERE   SP.PERMISSION_NAME = @Permission
               AND     SU.LOGIN_ID = @LoginId
+              ANd		  SU.ACCOUNT_LOCKED = 0
+              AND		  SU.IS_DELETED = 0
             ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="Permission" Type="System.String"  Size="8000"/>
@@ -454,20 +456,22 @@
         <![CDATA[
               UPDATE SEC_ROLE
               SET IS_DELETED = 1
-              WHERE ROLE_ID = @RoleId;
+              WHERE ROLE_ID = @RoleId
+              AND   IS_DELETED = 0;
             ]]>
         <Param Name="RoleId" Type="System.Int32"  Size="0"/>
       </Query>
       <Query ID="InsertOperation">
         <![CDATA[
-                INSERT INTO OF_OPERATIONS(PARENT_OPERATION_ID,PERMISSION_ID,PERMISSION_CLASS, INPUT_PARAMS,STATUS,CREATED_BY,UPDATED_BY)
-                VALUES (@ParentOperationId, (Select PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionName), @PermissionClass, @InputParams, @Status, @UpdatedBy, @UpdatedBy);
+                INSERT INTO OF_OPERATIONS(PARENT_OPERATION_ID,PERMISSION_ID,PERMISSION_CLASS, INPUT_PARAMS,STATUS, ERROR_CODE,CREATED_BY,UPDATED_BY)
+                VALUES (@ParentOperationId, (Select PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionName), @PermissionClass, @InputParams, @Status, @ErrorCode, @UpdatedBy, @UpdatedBy);
                 SELECT SCOPE_IDENTITY(); 
               ]]>    
         <Param Name="ParentOperationId" Type="System.Int32"  Size="0"/>
         <Param Name="PermissionName" Type="System.String"  Size="200"/>
         <Param Name="PermissionClass" Type="System.String"  Size="1024"/>
         <Param Name="Status" Type="System.String"  Size="20"/>
+        <Param Name="ErrorCode" Type="System.Int32"  Size="0"/>
         <Param Name="InputParams" Type="System.String"  Size="-1"/>
         <Param Name="UpdatedBy" Type="System.String"  Size="200"/>
       </Query>
@@ -475,11 +479,15 @@
         <![CDATA[
                   UPDATE OF_OPERATIONS
                   SET   STATUS = @Status,
+                        INPUT_PARAMS = @InputParams,
+                        ERROR_CODE = @ErrorCode,
                         UPDATED_ON = Getdate()
                   WHERE OPERATION_ID = @OperationId
                 ]]>
         <Param Name="OperationId" Type="System.Int32"  Size="0"/>
+        <Param Name="InputParams" Type="System.String"  Size="-1"/>
         <Param Name="Status" Type="System.String"  Size="20"/>
+        <Param Name="ErrorCode" Type="System.Int32"  Size="0"/>
       </Query>
         <Query ID="InsertNotification">
         <![CDATA[

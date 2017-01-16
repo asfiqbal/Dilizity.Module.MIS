@@ -13,6 +13,8 @@ using System.IO;
 using Dilizity.Business.Common;
 using Dilizity.Business.Common.Services;
 using Newtonsoft.Json.Linq;
+using ilizity.Business.Common.Model;
+using Dilizity.Business.Common.Model;
 
 namespace Dilizity.API.Security.Managers
 {
@@ -26,25 +28,63 @@ namespace Dilizity.API.Security.Managers
         {
             using (FnTraceWrap tracer = new FnTraceWrap())
             {
-                int Success = -1;
+                Operation childOperation = null;
 
-                JArray tmpRoleList = (JArray)parameterBusService.Get("Roles");
-                List<dynamic> dynamicObject = new List<dynamic>();
-
-                foreach (int role in tmpRoleList)
+                try
                 {
-                    dynamic tmpObject = new ExpandoObject();
-                    tmpObject.RoleId = role;
-                    dynamicObject.Add(tmpObject);
-                }
+                    int Success = -1;
 
-                using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
+                    childOperation = new Operation(parameterBusService);
+                    childOperation.PermissionClass = this.GetType().ToString();
+                    childOperation.saveToDB();
+
+
+                    JArray tmpRoleList = (JArray)parameterBusService.Get("Roles");
+
+                    childOperation.InputParams = tmpRoleList.ToString();
+                    childOperation.saveToDB();
+
+                    List<dynamic> dynamicObject = new List<dynamic>();
+
+                    foreach (int role in tmpRoleList)
+                    {
+                        dynamic tmpObject = new ExpandoObject();
+                        tmpObject.RoleId = role;
+                        dynamicObject.Add(tmpObject);
+                    }
+
+                    using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
+                    {
+                        Success = dataLayer.ExecuteBulkNonQueryUsingKey(DELETE_ROLE, dynamicObject);
+                        if (Success <= 0)
+                            throw new ApplicationBusinessException(GlobalErrorCodes.SQLError);
+                    }
+
+                    parameterBusService.Add(GlobalConstants.OUT_RESULT, Success);
+                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.SUCCESS);
+
+                    childOperation.ErrorCode = GlobalErrorCodes.Success;
+                    childOperation.Status = GlobalConstants.SUCCESS;
+                    childOperation.saveToDB();
+                }
+                catch (ApplicationBusinessException ex)
                 {
-                    Success = dataLayer.ExecuteBulkNonQueryUsingKey(DELETE_ROLE, dynamicObject);
+                    Log.Error(this.GetType(), ex.Message, ex);
+                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                    childOperation.ErrorCode = ex.ErrorCode;
+                    childOperation.Status = GlobalConstants.FAILURE;
+                    childOperation.saveToDB();
+                    throw;
                 }
-
-                parameterBusService.Add(GlobalConstants.OUT_RESULT, Success);
-                parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.SUCCESS);
+                catch (Exception ex)
+                {
+                    Log.Error(this.GetType(), ex.Message, ex);
+                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                    childOperation.ErrorCode = GlobalErrorCodes.SystemError;
+                    childOperation.Status = GlobalConstants.FAILURE;
+                    childOperation.saveToDB();
+                    throw;
+                }
             }
         }
 

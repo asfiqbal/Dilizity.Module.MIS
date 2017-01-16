@@ -26,7 +26,7 @@ namespace Dilizity.Business.Common
         public const string PERMISSION_PARAM = "PermissionId";
         public const string ROLE_ID_PARAM = "RoleId";
         public const string OPERATION_ID = "OperationId";
-
-
+        public const int SUCCESS_CODE = 0;
+        public const int ERROR_CODE_INITIALIZER = -1;
     }
 }

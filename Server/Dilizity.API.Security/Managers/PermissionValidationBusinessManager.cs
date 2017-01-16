@@ -1,5 +1,6 @@
 ﻿
 using Dilizity.Business.Common;
+using Dilizity.Business.Common.Model;
 using Dilizity.Business.Common.Services;
 using Dilizity.Core.DAL;
 using Dilizity.Core.Util;
@@ -27,26 +28,39 @@ namespace Dilizity.API.Security.Managers
                     childOperation.PermissionClass = typeof(PermissionValidationBusinessManager).ToString();
                     childOperation.saveToDB();
 
+                    string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
+
+
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                     {
-                        string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
                         if (parameterBusService.IsKeyPresent(GlobalConstants.PERMISSION))
                         {
                             string permission = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
 
-                            int isSuccess = (int)dataLayer.ExecuteScalarUsingKey(CHECK_PERMISSION, "LoginId", loginId, "Permission", permission);
+                            int? isSuccess = (int?)dataLayer.ExecuteScalarUsingKey(CHECK_PERMISSION, GlobalConstants.LOGIN_PARAM, loginId, "Permission", permission);
                             if (isSuccess != 1)
-                                throw new AccessViolationException("User:" + loginId + " do not have Permission");
+                                throw new ApplicationBusinessException(GlobalErrorCodes.UserDoNothavePermission);
                         }
                     }
+                    childOperation.ErrorCode = GlobalErrorCodes.Success;
                     childOperation.Status = GlobalConstants.SUCCESS;
                     childOperation.saveToDB();
                 }
             }
-            catch(Exception ex)
+            catch (ApplicationBusinessException ex)
             {
                 Log.Error(this.GetType(), ex.Message, ex);
                 parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                childOperation.ErrorCode = ex.ErrorCode;
+                childOperation.Status = GlobalConstants.FAILURE;
+                childOperation.saveToDB();
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(this.GetType(), ex.Message, ex);
+                parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                childOperation.ErrorCode = GlobalErrorCodes.SystemError;
                 childOperation.Status = GlobalConstants.FAILURE;
                 childOperation.saveToDB();
                 throw;

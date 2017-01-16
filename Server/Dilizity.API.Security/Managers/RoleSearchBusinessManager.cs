@@ -13,6 +13,7 @@ using System.IO;
 using Dilizity.Business.Common;
 using Dilizity.Business.Common.Services;
 using Newtonsoft.Json.Linq;
+using ilizity.Business.Common.Model;
 
 namespace Dilizity.API.Security.Managers
 {
@@ -26,12 +27,18 @@ namespace Dilizity.API.Security.Managers
         {
             using (FnTraceWrap tracer = new FnTraceWrap())
             {
-                IEnumerable<dynamic> outList = null;
-                using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA))
+                Operation childOperation = null;
+
+                try
                 {
-                    
+                    IEnumerable<dynamic> outList = null;
+
+                    childOperation = new Operation(parameterBusService);
+                    childOperation.PermissionClass = this.GetType().ToString();
+                    childOperation.saveToDB();
                     int roleId = Utility.ConvertStringToInt(parameterBusService.Get("RoleId").ToString());
                     string roleName = (string)parameterBusService.Get("RoleName");
+
                     int rolePermissionId = Utility.ConvertStringToInt(parameterBusService.Get("RolePermissionId").ToString());
                     int pageSize = Utility.ConvertStringToInt(parameterBusService.Get("PageSize").ToString());
                     int pageNumber = Utility.ConvertStringToInt(parameterBusService.Get("PageNumber").ToString());
@@ -44,10 +51,27 @@ namespace Dilizity.API.Security.Managers
                         sortDirection = sortInfo["order"].ToString();
                     }
 
-                    outList = dataLayer.ExecuteUsingKey(SEARCH_ROLE, "RoleId", roleId, "RoleName", roleName, "RolePermissionId", rolePermissionId, "PageSize", pageSize, "PageNumber", pageNumber, "SortOrder", sortOrder, "SortDirection", sortDirection);
+                    using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA))
+                    {
+                        outList = dataLayer.ExecuteUsingKey(SEARCH_ROLE, "RoleId", roleId, "RoleName", roleName, "RolePermissionId", rolePermissionId, "PageSize", pageSize, "PageNumber", pageNumber, "SortOrder", sortOrder, "SortDirection", sortDirection);
+                    }
+
                     parameterBusService.Add(GlobalConstants.OUT_RESULT, outList.ToList<dynamic>());
+                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.SUCCESS);
+
+                    childOperation.ErrorCode = GlobalErrorCodes.Success;
+                    childOperation.Status = GlobalConstants.SUCCESS;
+                    childOperation.saveToDB();
                 }
-                parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.SUCCESS);
+                catch (Exception ex)
+                {
+                    Log.Error(this.GetType(), ex.Message, ex);
+                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                    childOperation.ErrorCode = GlobalErrorCodes.SystemError;
+                    childOperation.Status = GlobalConstants.FAILURE;
+                    childOperation.saveToDB();
+                    throw;
+                }
             }
         }
 

@@ -103,9 +103,9 @@ namespace Dilizity.API.Security.Controllers
                     dataBasService.Add("PageSize", jobject["PageSize"].ToString());
                     dataBasService.Add("PageNumber", jobject["PageNumber"].ToString());
 
-                    IAbstractBusiness businessManager = new RoleSearchBusinessManager();
+                    WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
+                    workFlowManager.Do(dataBasService);
 
-                    businessManager.Do(dataBasService);
                     dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);
                     return Ok(outObject);
                 }
@@ -133,11 +133,11 @@ namespace Dilizity.API.Security.Controllers
                     dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
                     dataBasService.Add("Roles", jobject["Roles"]);
 
-                    IAbstractBusiness businessManager = new DeleteRoleBusinessManager();
-                    businessManager.Do(dataBasService);
+                    //IAbstractBusiness businessManager = new DeleteRoleBusinessManager();
+                    //businessManager.Do(dataBasService);
 
-                    //WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
-                    //workFlowManager.Do(dataBasService);
+                    WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
+                    workFlowManager.Do(dataBasService);
 
 
                     dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);

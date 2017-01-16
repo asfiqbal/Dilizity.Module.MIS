@@ -89,10 +89,11 @@ namespace Dilizity.Messaging
                 {
                     string codeName = XNode.Name;
                     ITagAgent tagAgent = new DBTagAgent();
-                    if (contextData.Length != 0)
-                        dataContext.Push(contextData);
                     if (XNode.InnerXml.Length != 0)
                         dataContext.Push(XNode.InnerXml);
+                    if (contextData.Length != 0)
+                        dataContext.Push(contextData);
+
                     string resolvedTagValue = tagAgent.Resolve(XNode.Name, dataContext, dataAgent, metaDataReader);
                     //outMessage = outMessage.Replace(codeName, resolvedTagValue);
                     outMessage = Helper.Instance.ReplaceTag(codeName, outMessage, resolvedTagValue);

@@ -23,7 +23,8 @@ namespace DALTest
             //StringMessagingAgentTest();
             //TestEmail();
             //TestSMS();
-            TestExecuteUsingKeyAndModel();
+            //TestExecuteUsingKeyAndModel();
+            StringMessagingDeleteRoleTest();
         }
 
         //static void Test1()
@@ -185,6 +186,25 @@ namespace DALTest
             {
                 IMessagingAgent stringAgent = new TextMessagingAgent(reader);
                 string outMessage = stringAgent.Resolve(message, dataAgent, "Admin");
+            }
+        }
+
+        static void StringMessagingDeleteRoleTest()
+        {
+            string message = @"Dear <USER_NAME/>, " + Environment.NewLine +
+                              "Following Roles have successfully deleted. " + Environment.NewLine + Environment.NewLine +
+                              "Role Id, Role Name, Deleted DateTime" + Environment.NewLine +
+                              "<DELETED_ROLES>" + Environment.NewLine +
+                              "<DELETED_ROLE_ID/>, <DELETED_ROLE_NAME/>, <OPERATION_DATETIME/>" + Environment.NewLine +
+                              "</DELETED_ROLES>." + Environment.NewLine +
+                              "For any query please call Support at 111-DILIZITY or send an email to customer.services@dilizity.com." + Environment.NewLine +
+                              "Thank you," + Environment.NewLine + "Dilizity Team";
+            IMessagingDataAgent dataAgent = new DBDataAgent();
+            IMetaDataReader reader = MetaDataAgent.Instance;
+            if (dataAgent.Load("Report"))
+            {
+                IMessagingAgent stringAgent = new TextMessagingAgent(reader);
+                string outMessage = stringAgent.Resolve(message, dataAgent, "72");
             }
         }
         static void TestEmail()
