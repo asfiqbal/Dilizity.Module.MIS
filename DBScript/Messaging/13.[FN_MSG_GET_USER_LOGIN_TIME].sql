@@ -1,6 +1,3 @@
-USE [ReportMIS]
-GO
-
 /****** Object:  UserDefinedFunction [dbo].[[FN_MSG_GET_USER_LOGIN_TIME]]    Script Date: 12/8/2016 4:40:59 PM ******/
 DROP FUNCTION [dbo].[FN_MSG_GET_USER_LOGIN_TIME]
 GO
