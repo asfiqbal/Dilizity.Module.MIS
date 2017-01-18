@@ -152,5 +152,39 @@ namespace Dilizity.API.Security.Controllers
         }
 
 
+        [ActionName("AddRole")]
+        [HttpPost]
+        public IHttpActionResult AddRole(JObject jobject)
+        {
+            try
+            {
+                using (FnTraceWrap tracer = new FnTraceWrap(jobject))
+                {
+                    BusService dataBasService = new BusService();
+
+                    dataBasService.Add(GlobalConstants.IN_PARAM, jobject);
+                    dataBasService.Add(GlobalConstants.LOGIN_ID, jobject[GlobalConstants.LOGIN_PARAM].ToString());
+                    string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
+                    dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
+                    dataBasService.Add("Roles", jobject["Roles"]);
+
+                    //IAbstractBusiness businessManager = new DeleteRoleBusinessManager();
+                    //businessManager.Do(dataBasService);
+
+                    WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
+                    workFlowManager.Do(dataBasService);
+
+
+                    dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);
+                    return Ok(outObject);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Debug(typeof(RoleController), "{0}", e.Message);
+                return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
+            }
+        }
+
     }
 }

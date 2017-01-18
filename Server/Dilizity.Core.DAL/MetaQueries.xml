@@ -504,5 +504,29 @@
         <Param Name="Status" Type="System.String"  Size="20"/>
         <Param Name="CreatedBy" Type="System.String"  Size="400"/>
       </Query>
+      <Query ID="InsertMaker">
+        <![CDATA[
+          INSERT INTO MAKER_LIST(PERMISSION_ID,DATA, STATUS, CREATED_BY,UPDATED_BY)
+          VALUES((Select PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionName),@Data, @Status,@CreatedBy,@CreatedBy);
+          SELECT SCOPE_IDENTITY(); 
+                ]]>
+        <Param Name="PermissionName" Type="System.String"  Size="200"/>
+        <Param Name="Data" Type="System.String"  Size="-1"/>
+        <Param Name="Status" Type="System.String"  Size="20"/>
+        <Param Name="CreatedBy" Type="System.String"  Size="200"/>
+      </Query>
+      <Query ID="UpdateMaker">
+        <![CDATA[
+          UPDATE MAKER_LIST
+          SET		DATA = @Data,
+		            Status = @Status,
+		            UPDATED_BY = @UpdatedBy
+          WHERE MAKER_ID = @MakerId 
+              ]]>
+        <Param Name="Data" Type="System.String"  Size="-1"/>
+        <Param Name="Status" Type="System.String"  Size="20"/>
+        <Param Name="UpdatedBy" Type="System.String"  Size="200"/>
+        <Param Name="MakerId" Type="System.Int32"  Size="0"/>
+      </Query>
   </Schema>
 </root>
