@@ -37,18 +37,19 @@ namespace Dilizity.API.Security.Managers
                     childOperation.PermissionClass = this.GetType().ToString();
                     childOperation.saveToDB();
 
-                    JArray data = (JArray)parameterBusService.Get("model");
+                    JObject model = (JObject)parameterBusService.Get("Model");
+                    string data = model.ToString();
                     string loginId= (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
                     string permissionName = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
-                    string status = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
+                    string status = (string)parameterBusService.Get("Status");
 
 
-                    childOperation.InputParams = data.ToString();
+                    childOperation.InputParams = data;
                     childOperation.saveToDB();
 
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                     {
-                        Object _t = dataLayer.ExecuteScalarUsingKey(INSERT_MAKER_LIST, "PermissionName", permissionName, "Data", data, "Status", "SaveAsDraft", "CreatedBy", loginId);
+                        Object _t = dataLayer.ExecuteScalarUsingKey(INSERT_MAKER_LIST, "PermissionName", permissionName, "Data", data, "Status", status, "CreatedBy", loginId);
                         Success = Convert.ToInt32(_t);
                         if (Success <= 0)
                             throw new ApplicationBusinessException(GlobalErrorCodes.SQLError);

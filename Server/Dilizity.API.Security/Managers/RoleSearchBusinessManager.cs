@@ -54,9 +54,9 @@ namespace Dilizity.API.Security.Managers
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA))
                     {
                         outList = dataLayer.ExecuteUsingKey(SEARCH_ROLE, "RoleId", roleId, "RoleName", roleName, "RolePermissionId", rolePermissionId, "PageSize", pageSize, "PageNumber", pageNumber, "SortOrder", sortOrder, "SortDirection", sortDirection);
+                        parameterBusService.Add(GlobalConstants.OUT_RESULT, outList.ToList<dynamic>());
                     }
 
-                    parameterBusService.Add(GlobalConstants.OUT_RESULT, outList.ToList<dynamic>());
                     parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.SUCCESS);
 
                     childOperation.ErrorCode = GlobalErrorCodes.Success;

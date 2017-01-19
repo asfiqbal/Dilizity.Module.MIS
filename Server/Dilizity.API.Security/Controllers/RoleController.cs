@@ -152,9 +152,9 @@ namespace Dilizity.API.Security.Controllers
         }
 
 
-        [ActionName("AddRole")]
+        [ActionName("Add")]
         [HttpPost]
-        public IHttpActionResult AddRole(JObject jobject)
+        public IHttpActionResult Add(JObject jobject)
         {
             try
             {
@@ -166,13 +166,16 @@ namespace Dilizity.API.Security.Controllers
                     dataBasService.Add(GlobalConstants.LOGIN_ID, jobject[GlobalConstants.LOGIN_PARAM].ToString());
                     string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
                     dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
-                    dataBasService.Add("Roles", jobject["Roles"]);
+                    string Status = jobject["Status"].ToString();
+                    dataBasService.Add("Status", Status);
+                    JObject model = (JObject)jobject["Model"];
+                    dataBasService.Add("Model", model);
 
-                    //IAbstractBusiness businessManager = new DeleteRoleBusinessManager();
-                    //businessManager.Do(dataBasService);
+                    IAbstractBusiness businessManager = new MakerRoleBusinessManager();
+                    businessManager.Do(dataBasService);
 
-                    WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
-                    workFlowManager.Do(dataBasService);
+                    //WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
+                    //workFlowManager.Do(dataBasService);
 
 
                     dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);

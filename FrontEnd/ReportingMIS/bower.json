@@ -1,0 +1,40 @@
+{
+  "name": "ReportingMIS",
+  "homepage": "https://github.com/asfiqbal/Dilizity.Module.MIS",
+  "description": "Reporting MIS",
+  "main": "login.html",
+  "keywords": [
+    "MIS"
+  ],
+  "authors": [
+    "Syed Asif Iqbal"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-animate": "1.5.11",
+    "angular-resource": "1.5.11",
+    "angular-cookies": "1.5.11",
+    "angular-route": "1.5.11",
+    "angular-sanitize": "1.5.11",
+    "angular-touch": "1.5.11",
+    "angular-ui-grid": "3.1.1",
+    "angular-ui-notification": "^0.3.5",
+    "angular-ui-router": "^0.3.2",
+    "angular-ui": "^0.4.0",
+    "bootstrap": "^3.3.7",
+    "font-awesome": "^4.7.0",
+    "angular": "1.5.11",
+    "iCheck": "^1.0.2",
+    "moment": "^2.17.1",
+    "ngstorage": "ng-storage#^0.4.2",
+    "ui-router-states-tree": "^0.0.2"
+  }
+}
