@@ -48,7 +48,10 @@ namespace Dilizity.API.Security.Managers
                     
                     foreach (dynamic permission in dataLayer.ExecuteUsingKey(ROLE_SCREEN_USER_PERMISSION, GlobalConstants.LOGIN_PARAM, LoginId, GlobalConstants.PERMISSION_PARAM, permissionId))
                     {
-                        recordMembers[permission.FieldKey] = permission.PermissionName;
+                        if (permission.FieldKey == "Maker")
+                            ResolvePermission(permission.PermissionName, recordMembers);
+                        else
+                            recordMembers[permission.FieldKey] = permission.PermissionName;
                     }
                     outObject.UserPermission = tObject;
                     List<dynamic> PermissionList = new List<dynamic>();
@@ -63,5 +66,11 @@ namespace Dilizity.API.Security.Managers
             }
         }
 
+        private void ResolvePermission(string permissionName, IDictionary<string, object> recordMembers)
+        {
+            string[] tmp = permissionName.Split('.');
+            string operation = tmp[tmp.Length - 2];
+            recordMembers[operation] = permissionName;
+        }
     }
 }

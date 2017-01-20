@@ -19,7 +19,6 @@
         vm.roleName = '';
         vm.availablePermissions = {};
         vm.assignedPermissions = [];
-        vm.selectedRolePermissions = [];
         vm.permissionName = '';
 
 
@@ -99,7 +98,7 @@
                 vm.assignedPermissions = data.AssignedPermissions;
                 console.log("data", data);
             }, function (response) {
-                AlertService.Add("Error", "You don't have permission");
+                Notification.error({ message: "You don't have permission", positionY: 'bottom', positionX: 'right' });
             });
             console.log("loadScreenPermissionsAndInfo End");
         };
@@ -126,14 +125,17 @@
             console.log("addRole Begin");
             //vm.dataLoading = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
-            RoleService.AddRole(permissionName, tmpUserName, 1, function (response) {
-                vm.MetaReport = response.data;
-                vm.reportId = vm.MetaReport.ReportId;
-                vm.permissionName = vm.MetaReport.PermissionName;
-                console.log("response.data", response.data);
-                console.log("vm.MetaReport.DisplayName", vm.MetaReport.DisplayName);
-                console.log("loadReport Called");
-                vm.fields = vm.MetaReport.fieldCollection;
+            var model =
+                     {
+                         "Id": roleId,
+                         "Name": vm.roleName,
+                         "AssignedPermissions": vm.assignedPermissions
+                     };
+            RoleService.AddRole(permissionName, tmpUserName, model, "SaveAsDraft", function (response) {
+                console.log("Success!");
+                Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+            }, function (response) {
+                Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
             });
             console.log("addRole End");
         };

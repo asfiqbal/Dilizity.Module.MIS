@@ -73,7 +73,8 @@
 	                                                '</li>'+
 	                                                '<li>'+
 		                                                '<a ng-show="vm.userPermission.Edit==Dilizity.Backoffice.Role.Edit" uib-tooltip="Edit Role" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, permissionName: \'Dilizity.Backoffice.Role.Edit\' })" class="pull-right"><i class="fa fa-pencil-square"></i></a>' +
-	                                                '<li>'+
+		                                                '<a ng-show="vm.userPermission.Edit==Dilizity.Backoffice.Role.Edit.Maker" uib-tooltip="Edit Role [Maker]" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, permissionName: \'Dilizity.Backoffice.Role.Edit.Maker\' })" class="pull-right"><i class="fa fa-pencil-square"></i></a>' +
+	                                                '<li>' +
                                                 '</ul>'+
                                                '</div>' }
             ],

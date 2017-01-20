@@ -358,16 +358,24 @@
       </Query>
         <Query ID="RoleScreenUserPermission" DataSource="">
         <![CDATA[
-            SELECT	REVERSE(SUBSTRING(REVERSE(P.PERMISSION_NAME),0,CHARINDEX('.',REVERSE(P.PERMISSION_NAME)))) FieldKey, P.PERMISSION_NAME PermissionName
-            FROM	  SEC_PERMISSION P
-		                INNER JOIN
-		                (
-			                SELECT PERMISSION_ID
-			                FROM	SEC_PERMISSION
-			                WHERE  PERMISSION_NAME = @PermissionId
-		                ) T ON P.PARENT_PERMISSION_ID = T.PERMISSION_ID
-		                INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION V ON T.PERMISSION_ID = V.PERMISSION_ID
+            WITH WF ( Permission_id, PARENT_PERMISSION_ID)
+            AS
+            (
+            SELECT	Permission_id, PARENT_PERMISSION_ID
+            from	SEC_PERMISSION P
+            WHERE   P.PERMISSION_NAME = @PermissionId
+            UNION ALL
+            SELECT	P.Permission_id, P.PARENT_PERMISSION_ID
+            from	SEC_PERMISSION P
+		            INNER JOIN WF ON P.PARENT_PERMISSION_ID  = WF.Permission_id
+            WHERE	UPPER(P.PERMISSION_NAME) NOT LIKE '%.EMAIL%'
+            AND		UPPER(P.PERMISSION_NAME) NOT LIKE '%.CHECKER%'
+            )
+            select	[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.PERMISSION_NAME) FieldKey, V.PERMISSION_NAME PermissionName
+            from	WF
+		            INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION V ON WF.PERMISSION_ID = V.PERMISSION_ID
             WHERE   V.LOGIN_ID = @LoginId
+            AND		[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.PERMISSION_NAME) in ('Search','Add','Edit','Delete','View','Maker')
             ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="PermissionId" Type="System.String"  Size="200"/>
@@ -423,7 +431,7 @@
         <![CDATA[
               SELECT  P.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID ParentPermissionId, P.PERMISSION_NAME PermissionName
               FROM    SEC_PERMISSION P
-              WHERE	P.PERMISSION_ID = 1
+              WHERE	  P.PARENT_PERMISSION_ID is null
               UNION
               SELECT	PERMISSION_ID, PARENT_PERMISSION_ID, USER_FRIENDLY_NAME
               FROM
@@ -443,7 +451,7 @@
         <![CDATA[
             SELECT  P.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID ParentPermissionId, P.PERMISSION_NAME PermissionName
             FROM    SEC_PERMISSION P
-            WHERE	P.PERMISSION_ID = 1
+            WHERE	  P.PARENT_PERMISSION_ID is null
             UNION         
             SELECT	RP.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID ParentPermissionId, dbo.FN_GET_FRIENDLY_PERMISSION_NAME(P.PERMISSION_NAME)  PermissionName
             FROM	  SEC_ROLE_PERMISSION RP
