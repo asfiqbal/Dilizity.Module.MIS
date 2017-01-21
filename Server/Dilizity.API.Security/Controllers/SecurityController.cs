@@ -160,6 +160,31 @@ namespace Security.Controllers
 
         }
 
+        public IHttpActionResult GetSideMenus(string Id)
+        {
+            try
+            {
+                using (FnTraceWrap tracer = new FnTraceWrap(Id))
+                {
+                    BusService dataBasService = new BusService();
+
+                    dataBasService.Add(GlobalConstants.LOGIN_ID, Id);
+
+                    IAbstractBusiness menuManager = new SideMenuManager();
+
+                    menuManager.Do(dataBasService);
+                    List<SideMenuTree> menuStructure = (List<SideMenuTree>)dataBasService.Get(GlobalConstants.OUT_RESULT);
+                    return Ok(menuStructure);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Debug(typeof(SecurityController), "{0}", e.Message);
+                return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
+            }
+
+        }
+
 
     }
 }

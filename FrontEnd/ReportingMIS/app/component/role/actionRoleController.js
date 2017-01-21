@@ -1,4 +1,5 @@
-﻿
+﻿/// <reference path="../maker/dilizityBackofficeMakerService.js" />
+
 (function () {
     'use strict';
 
@@ -6,15 +7,17 @@
         .module('ReportingMIS')
         .controller('actionRoleController', actionRoleController);
 
-    actionRoleController.$inject = ['$scope', '$filter', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'AlertService', 'HelperService'];
-    function actionRoleController($scope, $filter, $stateParams, $rootScope, AuthenticationService, RoleService, AlertService, HelperService) {
+    actionRoleController.$inject = ['$scope', '$filter', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'Notification', 'HelperService', 'dilizityBackofficeMakerService'];
+    function actionRoleController($scope, $filter, $stateParams, $rootScope, AuthenticationService, RoleService, Notification, HelperService, dilizityBackofficeMakerService) {
         var vm = this;
 
         var roleId = -1;
+        var makerId = -1;
 
         vm.title = '';
 
-        vm.addRole = addRole;
+        vm.submit = submit;
+
         vm.loadScreenPermissionsAndInfo = loadScreenPermissionsAndInfo;
         vm.roleName = '';
         vm.availablePermissions = {};
@@ -92,17 +95,31 @@
         function loadScreenPermissionsAndInfo() {
             console.log("loadScreenPermissionsAndInfo Begin");
             var tmpUserName = $rootScope.globals.currentUser.username;
-            RoleService.GetActionRoleScreenInfo(vm.permissionName, tmpUserName, roleId, function (response) {
-                var data = angular.fromJson(response.data);
-                vm.availablePermissions = data.AvailablePermissions;
-                vm.assignedPermissions = data.AssignedPermissions;
-                console.log("data", data);
-            }, function (response) {
-                Notification.error({ message: "You don't have permission", positionY: 'bottom', positionX: 'right' });
-            });
+            if (angular.isNumber(makerId))
+            {
+                dilizityBackofficeMakerService.GetActionRoleScreenInfo(vm.permissionName, tmpUserName, roleId, function (response) {
+                    var data = angular.fromJson(response.data);
+                    vm.availablePermissions = data.AvailablePermissions;
+                    vm.assignedPermissions = data.AssignedPermissions;
+                    console.log("data", data);
+                }, function (response) {
+                    Notification.error({ message: "You don't have permission", positionY: 'bottom', positionX: 'right' });
+                });
+            }
+            else
+            {
+                RoleService.GetActionRoleScreenInfo(vm.permissionName, tmpUserName, roleId, function (response) {
+                    var data = angular.fromJson(response.data);
+                    vm.availablePermissions = data.AvailablePermissions;
+                    vm.assignedPermissions = data.AssignedPermissions;
+                    console.log("data", data);
+                }, function (response) {
+                    Notification.error({ message: "You don't have permission", positionY: 'bottom', positionX: 'right' });
+                });
+            }
+
             console.log("loadScreenPermissionsAndInfo End");
         };
-
 
         (function initController() {
             console.log("actionRoleController.initController -> Begin");
@@ -111,6 +128,10 @@
 
             roleId = $stateParams.roleId;
             vm.permissionName = $stateParams.permissionName;
+            makerId = $stateParams.makerId;
+            console.log("makerId", makerId);
+
+
             var arr = vm.permissionName.split(".");
             vm.title = arr[arr.length - 1] + ' Role';
             console.log("vm.title", vm.title);
@@ -121,24 +142,29 @@
             console.log("actionRoleController.initController -> End");
         })();
 
-        function addRole() {
-            console.log("addRole Begin");
+        function submit() {
+            console.log("submit Begin");
             //vm.dataLoading = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
-            var model =
-                     {
+            var model = {
                          "Id": roleId,
+                         "MakerId": makerId,
                          "Name": vm.roleName,
+                         "Status": "SaveAsDraft",
                          "AssignedPermissions": vm.assignedPermissions
                      };
-            RoleService.AddRole(permissionName, tmpUserName, model, "SaveAsDraft", function (response) {
+
+            console.log(model);
+
+            RoleService.Add(vm.permissionName, tmpUserName, model, function (response) {
                 console.log("Success!");
                 Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
             }, function (response) {
                 Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
             });
-            console.log("addRole End");
+            console.log("submit End");
         };
+
     }
 
 })();

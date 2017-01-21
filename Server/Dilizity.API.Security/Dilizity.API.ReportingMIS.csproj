@@ -130,18 +130,21 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\MakerController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Managers\MakerRoleBusinessManager.cs" />
+    <Compile Include="Managers\MakerBusinessManager.cs" />
+    <Compile Include="Managers\MakerSearchBusinessManager.cs" />
+    <Compile Include="Managers\SideMenuManager.cs" />
     <Compile Include="Managers\ReportExecutionBusinessManager.cs" />
     <Compile Include="Managers\ActionRoleScreenManager.cs" />
     <Compile Include="Managers\DeleteRoleBusinessManager.cs" />
     <Compile Include="Managers\RoleSearchBusinessManager.cs" />
     <Compile Include="Managers\ReportMetaDataBusinessManager.cs" />
-    <Compile Include="Managers\RoleScreenManager.cs" />
+    <Compile Include="Managers\CommonScreenManager.cs" />
     <Compile Include="Managers\WorkFlowActionManager.cs" />
     <Compile Include="Managers\ChangePasswordBusinessManager.cs" />
     <Compile Include="Managers\AuthenticationBusinessManager.cs" />
@@ -152,6 +155,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MessageResource.resx</DependentUpon>
     </Compile>
+    <Compile Include="Models\SideMenuTree.cs" />
     <Compile Include="Models\PermissionTree.cs" />
     <Compile Include="Models\MenuTree.cs" />
     <Compile Include="Models\ChangePasswordModel.cs" />

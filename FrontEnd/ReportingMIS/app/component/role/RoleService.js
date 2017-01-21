@@ -9,15 +9,16 @@
     function RoleService($http, $cookieStore, $rootScope, $timeout, UserService, AppSettings) {
         var service = {};
 
-        service.SearchRole = SearchRole;
-        service.AddRole = AddRole;
-        service.GetRoleScreenInfo = GetRoleScreenInfo;
+        service.Search = Search;
+        service.Add = Add;
+        service.LoadSearchScreen = LoadSearchScreen;
         service.GetActionRoleScreenInfo = GetActionRoleScreenInfo;
-        service.DeleteRoles = DeleteRoles;
+        service.Delete = Delete;
 
         return service;
 
-        function SearchRole(permissionName, userName, roleId, roleName, rolePermissionId, pageSize, pageNumber, sort, successCallBack, errorCallBack) {
+        function Search(permissionName, userName, roleId, roleName, rolePermissionId, pageSize, pageNumber, sort, successCallBack, errorCallBack) {
+            console.log("SearchRole Begin");
 
             /* Dummy authentication for testing, uses $timeout to simulate api call
              ----------------------------------------------*/
@@ -138,54 +139,43 @@
 
             /* Use this for real execution
              ----------------------------------------------*/
-            $http.post(AppSettings.baseUrl + 'Role/SearchRole', { PermissionId: permissionName, LoginId: userName, RoleId: roleId, RoleName: roleName, RolePermissionId: rolePermissionId, PageSize: pageSize, PageNumber:pageNumber, Sort:sort})
+            $http.post(AppSettings.baseUrl + 'Role/Search', { PermissionId: permissionName, LoginId: userName, RoleId: roleId, RoleName: roleName, RolePermissionId: rolePermissionId, PageSize: pageSize, PageNumber: pageNumber, Sort: sort })
                 .then(function (response) {
                     successCallBack(response);
                 }, function (response) {
                     errorCallBack(response);
                 }
             );
+            console.log("SearchRole End");
 
         }
 
-        function AddRole(permissionId, userName, reportId, callback) {
+        function Add(permissionName, userName, model, successCallback, errorCallback) {
 
-            /* Dummy authentication for testing, uses $timeout to simulate api call
-             ----------------------------------------------*/
-            //$timeout(function () {
-            //    var response;
-            //    var user = UserService.GetByUsername(username);
-            //    if (user !== null && user.password === password) {
-            //        response = { success: true };
-            //    } else {
-            //        response = { success: false, message: 'Username or password is incorrect' };
-            //    }
-            //    callback(response);
-            //}, 1000);
+            console.log("AddRole Begin");
 
-            /* Use this for real execution
-             ----------------------------------------------*/
-            //$http.post(AppSettings.baseUrl + 'Report/GetReportMetaData', { PermissionId: permissionId, LoginId: userName, ReportId: reportId })
-            //    .then(function (response) {
-            //        callback(response);
-            //    }, function (response) {
-            //        callback(response);
-            //    }
-            //);
-
-        }
-
-        function GetRoleScreenInfo(permissionName, userName, successCallback, errorCallback) {
-            console.log("GetScreenPermissions Begin");
-
-            $http.post(AppSettings.baseUrl + 'Role/GetRoleScreenInfo', { PermissionId: permissionName, LoginId: userName })
+            $http.post(AppSettings.baseUrl + 'Role/Add', { PermissionId: permissionName, LoginId: userName, Model: model })
                 .then(function (response) {
                     successCallback(response);
                 }, function (response) {
                     errorCallback(response);
                 }
             );
+            console.log("AddRole End");
+
+        }
+
+        function LoadSearchScreen(permissionName, userName, successCallback, errorCallback) {
             console.log("GetScreenPermissions Begin");
+
+            $http.post(AppSettings.baseUrl + 'Role/LoadSearchScreen', { PermissionId: permissionName, LoginId: userName })
+                .then(function (response) {
+                    successCallback(response);
+                }, function (response) {
+                    errorCallback(response);
+                }
+            );
+            console.log("GetScreenPermissions End");
         }
 
         function GetActionRoleScreenInfo(permissionName, userName, roleId, successCallback, errorCallback) {
@@ -198,20 +188,20 @@
                     errorCallback(response);
                 }
             );
-            console.log("GetActionRoleScreenInfo Begin");
+            console.log("GetActionRoleScreenInfo End");
         }
 
-        function DeleteRoles(permissionId, userName, rolesToBeleted, successCallback, errorCallback) {
-            console.log("RoleService.DeleteRoles Begin");
+        function Delete(permissionId, userName, rolesToBeleted, successCallback, errorCallback) {
+            console.log("RoleService.Delete Begin");
 
-            $http.post(AppSettings.baseUrl + 'Role/DeleteRoles', { PermissionId: permissionId, LoginId: userName, Roles: rolesToBeleted })
+            $http.post(AppSettings.baseUrl + 'Role/Delete', { PermissionId: permissionId, LoginId: userName, Roles: rolesToBeleted })
                 .then(function (response) {
                     successCallback(response);
                 }, function (response) {
                     errorCallback(response);
                 }
             );
-            console.log("RoleService.DeleteRoles Begin");
+            console.log("RoleService.Delete End");
         }
 
          

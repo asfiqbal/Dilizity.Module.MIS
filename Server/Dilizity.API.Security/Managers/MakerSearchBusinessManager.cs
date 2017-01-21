@@ -18,9 +18,9 @@ using ilizity.Business.Common.Model;
 namespace Dilizity.API.Security.Managers
 {
 
-    public class RoleSearchBusinessManager : IAbstractBusiness
+    public class MakerSearchBusinessManager : IAbstractBusiness
     {
-        private const string SEARCH_ROLE = "SearchRole";
+        private const string SEARCH_MAKER = "SearchMaker";
 
         public void Do(BusService parameterBusService)
         {
@@ -35,14 +35,13 @@ namespace Dilizity.API.Security.Managers
                     childOperation = new Operation(parameterBusService);
                     childOperation.PermissionClass = this.GetType().ToString();
                     childOperation.saveToDB();
-                    int roleId = Utility.ConvertStringToInt(parameterBusService.Get("RoleId").ToString());
-                    string roleName = (string)parameterBusService.Get("RoleName");
+                    int makerId = Utility.ConvertStringToInt(parameterBusService.Get("MakerId").ToString());
 
-                    int rolePermissionId = Utility.ConvertStringToInt(parameterBusService.Get("RolePermissionId").ToString());
+                    int selectedPermissionId = Utility.ConvertStringToInt(parameterBusService.Get("SelectedPermissionId").ToString());
                     int pageSize = Utility.ConvertStringToInt(parameterBusService.Get("PageSize").ToString());
                     int pageNumber = Utility.ConvertStringToInt(parameterBusService.Get("PageNumber").ToString());
                     JObject sortInfo = (JObject)parameterBusService.Get("Sort");
-                    string sortOrder = "Role Id";
+                    string sortOrder = "Maker Id";
                     string sortDirection = "asc";
                     if (sortInfo.HasValues)
                     {
@@ -52,7 +51,7 @@ namespace Dilizity.API.Security.Managers
 
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA))
                     {
-                        outList = dataLayer.ExecuteUsingKey(SEARCH_ROLE, "RoleId", roleId, "RoleName", roleName, "RolePermissionId", rolePermissionId, "PageSize", pageSize, "PageNumber", pageNumber, "SortOrder", sortOrder, "SortDirection", sortDirection);
+                        outList = dataLayer.ExecuteUsingKey(SEARCH_MAKER, "MakerId", makerId, "SelectedPermissionId", selectedPermissionId, "PageSize", pageSize, "PageNumber", pageNumber, "SortOrder", sortOrder, "SortDirection", sortDirection);
                         parameterBusService.Add(GlobalConstants.OUT_RESULT, outList.ToList<dynamic>());
                     }
 

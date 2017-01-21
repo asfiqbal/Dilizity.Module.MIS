@@ -16,9 +16,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Dilizity.API.Security.Managers
 {
-    class RoleScreenManager : IAbstractBusiness
+    class CommonScreenManager : IAbstractBusiness
     {
-        private const string ROLE_SCREEN_USER_PERMISSION = "RoleScreenUserPermission";
+        private const string COMMON_SCREEN_USER_PERMISSION = "CommonScreenUserPermission";
         private const string USER_SPECFIC_PERMISSIONS = "UserSpecficPermissions";
         private const string GET_USER = "GetUser";
 
@@ -46,7 +46,7 @@ namespace Dilizity.API.Security.Managers
                     dynamic tObject = new ExpandoObject();
                     var recordMembers = (IDictionary<string, object>)tObject;
                     
-                    foreach (dynamic permission in dataLayer.ExecuteUsingKey(ROLE_SCREEN_USER_PERMISSION, GlobalConstants.LOGIN_PARAM, LoginId, GlobalConstants.PERMISSION_PARAM, permissionId))
+                    foreach (dynamic permission in dataLayer.ExecuteUsingKey(COMMON_SCREEN_USER_PERMISSION, GlobalConstants.LOGIN_PARAM, LoginId, GlobalConstants.PERMISSION_PARAM, permissionId))
                     {
                         if (permission.FieldKey == "Maker")
                             ResolvePermission(permission.PermissionName, recordMembers);

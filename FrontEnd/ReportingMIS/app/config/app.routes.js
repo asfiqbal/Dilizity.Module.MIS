@@ -25,7 +25,7 @@
                     controllerAs: 'vm'
                 },
                 'sidebar@index': {
-                    templateUrl: 'views/sidebar.html',
+                    templateUrl: 'app/component/shared/sidebar/sidebar.html',
                     controller: 'sidebarController',
                     controllerAs: 'vm'
                 },
@@ -43,14 +43,26 @@
              controllerAs: 'vm'
          })
         .state('index.Role', {
-            url: '^/Role',
-            templateUrl: 'views/searchRole.html',
+            url: '^/Role/:permissionId',
+            templateUrl: 'app/component/role/searchRole.html',
             controller: 'searchRoleController',
             controllerAs: 'vm'
         })
+        .state('index.Maker', {
+            url: '^/Maker/:permissionId',
+            templateUrl: 'app/component/maker/dilizityBackofficeMaker.html',
+            controller: 'dilizityBackofficeMakerController',
+            controllerAs: 'vm'
+        })
+        .state('index.Checker', {
+            url: '^/Checker/:permissionId',
+            templateUrl: 'views/searchChecker.html',
+            controller: 'searchCheckerController',
+            controllerAs: 'vm'
+        })
         .state('index.ActionRole', {
-            url: '^/Role/:roleId/:permissionName',
-            templateUrl: 'views/actionRole.html',
+            url: '^/Role/:roleId/:makerId/:permissionName',
+            templateUrl: 'app/component/role/actionRole.html',
             controller: 'actionRoleController',
             controllerAs: 'vm'
         })

@@ -19,7 +19,7 @@ using Dilizity.Business.Common.Model;
 namespace Dilizity.API.Security.Managers
 {
 
-    public class MakerRoleBusinessManager : IAbstractBusiness
+    public class MakerBusinessManager : IAbstractBusiness
     {
         private const string INSERT_MAKER_LIST = "InsertMaker";
 
@@ -41,7 +41,7 @@ namespace Dilizity.API.Security.Managers
                     string data = model.ToString();
                     string loginId= (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
                     string permissionName = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
-                    string status = (string)parameterBusService.Get("Status");
+                    string status = model["Status"].ToString();
 
 
                     childOperation.InputParams = data;

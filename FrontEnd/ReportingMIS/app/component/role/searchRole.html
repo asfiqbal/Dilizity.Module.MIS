@@ -12,8 +12,8 @@
                     <h2>Search Role</h2>
                     <ul class="nav navbar-right panel_toolbox">
                         <li>
-                            <a ng-show="vm.userPermission.Add=='Dilizity.Backoffice.Role.Add'" uib-tooltip="Add Role" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: 0, permissionName: 'Dilizity.Backoffice.Role.Add' })" class="collapse-link"><i class="fa fa-plus"></i></a>
-                            <a ng-show="vm.userPermission.Add=='Dilizity.Backoffice.Role.Add.Maker'" uib-tooltip="Add Role [Maker]" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: 0, permissionName: 'Dilizity.Backoffice.Role.Add.Maker' })" class="collapse-link"><i class="fa fa-plus"></i></a>
+                            <a ng-show="vm.userPermission.Add=='Dilizity.Backoffice.Role.Add'" uib-tooltip="Add Role" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: 0, makerId:0, permissionName: 'Dilizity.Backoffice.Role.Add' })" class="collapse-link"><i class="fa fa-plus"></i></a>
+                            <a ng-show="vm.userPermission.Add=='Dilizity.Backoffice.Role.Add.Maker'" uib-tooltip="Add Role [Maker]" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: 0, makerId:0, permissionName: 'Dilizity.Backoffice.Role.Add.Maker' })" class="collapse-link"><i class="fa fa-plus"></i></a>
                         </li>
                         <li class="dropdown">
                             <a ng-show="vm.userPermission.Delete=='Dilizity.Backoffice.Role.Delete'" data-toggle="modal" data-target=".bs-example-modal-sm" uib-tooltip="Delete Role" tooltip-placement="left" class="collapse-link"><i class="fa fa-trash"></i></a>

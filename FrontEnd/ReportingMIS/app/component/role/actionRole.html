@@ -15,7 +15,7 @@
                             <a uib-tooltip="Go Back" tooltip-placement="left" onclick="history.back()" class="collapse-link"><i class="glyphicon glyphicon-backward"></i></a>
                         </li>                        
                         <li>
-                            <a ng-show="vm.permissionName!='Dilizity.Backoffice.Role.View'" uib-tooltip="Add Role" tooltip-placement="left" ui-sref='index.AddRole' class="collapse-link"><i class="glyphicon glyphicon-floppy-save"></i></a>
+                            <a ng-show="vm.permissionName!='Dilizity.Backoffice.Role.View'" uib-tooltip="Add Role" tooltip-placement="left" ng-click="vm.submit()" class="collapse-link"><i class="glyphicon glyphicon-floppy-save"></i></a>
                         </li>
                     </ul>
                     <div class="clearfix"></div>
@@ -27,7 +27,7 @@
                             <label class="control-label col-md-2 col-sm-2 col-xs-12" for="first-name">
                                 Role Name <span class="required">*</span>
                             </label>
-                            <div class="col-md-2 col-sm-2 col-xs-12">
+                            <div class="col-md-3 col-sm-3 col-xs-12">
                                 <input type="text" ng-model="vm.roleName" id="roleName" required="required" class="form-control col-md-7 col-xs-12">
                             </div>
                         </div>

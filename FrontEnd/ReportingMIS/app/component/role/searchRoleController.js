@@ -69,11 +69,11 @@
               { name: 'Action', cellTemplate: '<div>'+
                                                 '<ul class="nav navbar-right panel_toolbox">'+
 	                                                '<li>'+
-                                                		'<a ng-show="vm.userPermission.View==Dilizity.Backoffice.Role.View" uib-tooltip="View Role" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, permissionName: \'Dilizity.Backoffice.Role.View\' })" class="pull-right"><i class="fa fa-eye"></i></a>' +
+                                                		'<a ng-show="vm.userPermission.View==Dilizity.Backoffice.Role.View" uib-tooltip="View Role" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, makerId: 0, permissionName: \'Dilizity.Backoffice.Role.View\' })" class="pull-right"><i class="fa fa-eye"></i></a>' +
 	                                                '</li>'+
 	                                                '<li>'+
-		                                                '<a ng-show="vm.userPermission.Edit==Dilizity.Backoffice.Role.Edit" uib-tooltip="Edit Role" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, permissionName: \'Dilizity.Backoffice.Role.Edit\' })" class="pull-right"><i class="fa fa-pencil-square"></i></a>' +
-		                                                '<a ng-show="vm.userPermission.Edit==Dilizity.Backoffice.Role.Edit.Maker" uib-tooltip="Edit Role [Maker]" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, permissionName: \'Dilizity.Backoffice.Role.Edit.Maker\' })" class="pull-right"><i class="fa fa-pencil-square"></i></a>' +
+		                                                '<a ng-show="vm.userPermission.Edit==Dilizity.Backoffice.Role.Edit" uib-tooltip="Edit Role" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, makerId: 0, permissionName: \'Dilizity.Backoffice.Role.Edit\' })" class="pull-right"><i class="fa fa-pencil-square"></i></a>' +
+		                                                '<a ng-show="vm.userPermission.Edit==Dilizity.Backoffice.Role.Edit.Maker" uib-tooltip="Edit Role [Maker]" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, makerId: 0, permissionName: \'Dilizity.Backoffice.Role.Edit.Maker\' })" class="pull-right"><i class="fa fa-pencil-square"></i></a>' +
 	                                                '<li>' +
                                                 '</ul>'+
                                                '</div>' }
@@ -132,7 +132,7 @@
         function loadScreenPermissionsAndInfo() {
             console.log("loadScreenPermissionsAndInfo Begin");
             var tmpUserName = $rootScope.globals.currentUser.username;
-            RoleService.GetRoleScreenInfo('Dilizity.Backoffice.Role', tmpUserName, function (response) {
+            RoleService.LoadSearchScreen('Dilizity.Backoffice.Role', tmpUserName, function (response) {
                 var data = angular.fromJson(response.data);
                 vm.userPermission = data.UserPermission;
                 vm.permissionList = data.PermissionList;
@@ -155,15 +155,21 @@
             console.log("addRole Begin");
             //vm.dataLoading = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
-            RoleService.AddRole(permissionName, tmpUserName, 1, function (response) {
-                vm.MetaReport = response.data;
-                vm.reportId = vm.MetaReport.ReportId;
-                vm.permissionName = vm.MetaReport.PermissionName;
+            RoleService.Add(permissionName, tmpUserName, 1, function (response) {
                 console.log("response.data", response.data);
-                console.log("vm.MetaReport.DisplayName", vm.MetaReport.DisplayName);
-                console.log("loadReport Called");
-                vm.fields = vm.MetaReport.fieldCollection;
-            });
+                Notification.success({ message: "Role Added for Approval", positionY: 'bottom', positionX: 'right' });
+
+            },
+            function (response) {
+                console.log("response!", response);
+                if (response.status == -1) {
+                    Notification.error({ message: "Service Not Available.", positionY: 'bottom', positionX: 'right' });
+                }
+                else {
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+                }
+            }
+            );
             console.log("addRole End");
         };
 
@@ -178,7 +184,7 @@
             //console.log("$scope.pagination.pageSize", $scope.pagination.pageSize);
             //console.log("$scope.pagination.pageNumber", $scope.pagination.pageNumber);
 
-            RoleService.SearchRole(vm.permissionName, tmpUserName, vm.roleId, vm.roleName, vm.selectedRolePermission, $scope.pagination.pageSize, $scope.pagination.pageNumber, $scope.sort,
+            RoleService.Search(vm.permissionName, tmpUserName, vm.roleId, vm.roleName, vm.selectedRolePermission, $scope.pagination.pageSize, $scope.pagination.pageNumber, $scope.sort,
                 function (response) {
                     console.log("Success!");
                     $scope.gridOptions.data = response.data;
@@ -207,7 +213,7 @@
             console.log("permissionName", vm.permissionName);
             console.log("vm.selectedRoles", vm.selectedRoles);
 
-            RoleService.DeleteRoles(deletePermission, tmpUserName, vm.selectedRoles,
+            RoleService.Delete(deletePermission, tmpUserName, vm.selectedRoles,
                 function (response) {
                     console.log("Success!");
                     Notification.success({ message: "Deleted Successfully.", positionY: 'bottom', positionX: 'right' });
