@@ -15,7 +15,22 @@
                             <a uib-tooltip="Go Back" tooltip-placement="left" onclick="history.back()" class="collapse-link"><i class="glyphicon glyphicon-backward"></i></a>
                         </li>                        
                         <li>
-                            <a ng-show="vm.permissionName!='Dilizity.Backoffice.Role.View'" uib-tooltip="Add Role" tooltip-placement="left" ng-click="vm.submit()" class="collapse-link"><i class="glyphicon glyphicon-floppy-save"></i></a>
+                            <a ng-show="vm.permissionName=='Dilizity.Backoffice.Role.Add.Maker'" uib-tooltip="Save As Draft" tooltip-placement="left" ng-click="vm.addUpdateMaker('SaveAsDraft')" class="collapse-link"><i class="glyphicon glyphicon-saved"></i></a>
+                        </li>
+                        <li>
+                            <a ng-show="vm.permissionName=='Dilizity.Backoffice.Role.Add.Maker'" uib-tooltip="Ready for Checker Approval" tooltip-placement="left" ng-click="vm.addUpdateMaker('PendingApproval')" class="collapse-link"><i class="glyphicon glyphicon-floppy-save"></i></a>
+                        </li>
+                        <li>
+                            <a ng-show="vm.permissionName=='Dilizity.Backoffice.Role.Update.Maker'" uib-tooltip="Save As Draft" tooltip-placement="left" ng-click="vm.addUpdateMaker('SaveAsDraft')" class="collapse-link"><i class="glyphicon glyphicon-saved"></i></a>
+                        </li>
+                        <li>
+                            <a ng-show="vm.permissionName=='Dilizity.Backoffice.Role.Update.Maker'" uib-tooltip="Ready for Checker Approval" tooltip-placement="left" ng-click="vm.addUpdateMaker('PendingApproval')" class="collapse-link"><i class="glyphicon glyphicon-floppy-save"></i></a>
+                        </li>
+                        <li>
+                            <a ng-show="vm.permissionName=='Dilizity.Backoffice.Role.Add'" uib-tooltip="Ready for Checker Approval" tooltip-placement="left" ng-click="vm.add()" class="collapse-link"><i class="glyphicon glyphicon-saved"></i></a>
+                        </li>
+                        <li>
+                            <a ng-show="vm.permissionName=='Dilizity.Backoffice.Role.Update'" uib-tooltip="Ready for Checker Approval" tooltip-placement="left" ng-click="vm.update()" class="collapse-link"><i class="glyphicon glyphicon-floppy-save"></i></a>
                         </li>
                     </ul>
                     <div class="clearfix"></div>

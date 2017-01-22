@@ -28,5 +28,7 @@ namespace Dilizity.Business.Common
         public const string OPERATION_ID = "OperationId";
         public const int SUCCESS_CODE = 0;
         public const int ERROR_CODE_INITIALIZER = -1;
+        public const string MAKER_ID_PARAM = "MakerId";
+
     }
 }

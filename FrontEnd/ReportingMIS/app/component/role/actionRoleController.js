@@ -16,14 +16,15 @@
 
         vm.title = '';
 
-        vm.submit = submit;
+        vm.addUpdateMaker = addUpdateMaker;
+        vm.add = add;
+        vm.update = update;
 
         vm.loadScreenPermissionsAndInfo = loadScreenPermissionsAndInfo;
         vm.roleName = '';
         vm.availablePermissions = {};
         vm.assignedPermissions = [];
         vm.permissionName = '';
-
 
         vm.deleteTreeItem = function (tree, id) {
             for (var i = 0; i < tree.length; i++) {
@@ -95,28 +96,16 @@
         function loadScreenPermissionsAndInfo() {
             console.log("loadScreenPermissionsAndInfo Begin");
             var tmpUserName = $rootScope.globals.currentUser.username;
-            if (angular.isNumber(makerId))
-            {
-                dilizityBackofficeMakerService.GetActionRoleScreenInfo(vm.permissionName, tmpUserName, roleId, function (response) {
-                    var data = angular.fromJson(response.data);
-                    vm.availablePermissions = data.AvailablePermissions;
-                    vm.assignedPermissions = data.AssignedPermissions;
-                    console.log("data", data);
-                }, function (response) {
-                    Notification.error({ message: "You don't have permission", positionY: 'bottom', positionX: 'right' });
-                });
-            }
-            else
-            {
-                RoleService.GetActionRoleScreenInfo(vm.permissionName, tmpUserName, roleId, function (response) {
-                    var data = angular.fromJson(response.data);
-                    vm.availablePermissions = data.AvailablePermissions;
-                    vm.assignedPermissions = data.AssignedPermissions;
-                    console.log("data", data);
-                }, function (response) {
-                    Notification.error({ message: "You don't have permission", positionY: 'bottom', positionX: 'right' });
-                });
-            }
+            RoleService.GetActionRoleScreenInfo(vm.permissionName, tmpUserName, roleId, makerId, function (response) {
+                var data = angular.fromJson(response.data);
+                vm.roleId = data.Id;
+                vm.roleName = data.Name;
+                vm.availablePermissions = data.AvailablePermissions;
+                vm.assignedPermissions = data.AssignedPermissions;
+                console.log("data", data);
+            }, function (response) {
+                Notification.error({ message: "You don't have permission", positionY: 'bottom', positionX: 'right' });
+            });
 
             console.log("loadScreenPermissionsAndInfo End");
         };
@@ -126,9 +115,18 @@
             console.log("$stateParams.roleId", $stateParams.roleId);
             console.log("$stateParams.permissionName", $stateParams.permissionName);
 
-            roleId = $stateParams.roleId;
+            roleId = parseInt($stateParams.roleId);
+            if (!HelperService.IsNumber(roleId)) {
+                roleId = 0;
+            }
+            console.log("roleId", roleId);
+
             vm.permissionName = $stateParams.permissionName;
-            makerId = $stateParams.makerId;
+            makerId = parseInt($stateParams.makerId);
+            console.log("makerId", makerId);
+            if (!HelperService.IsNumber(makerId)) {
+                makerId = 0;
+            }
             console.log("makerId", makerId);
 
 
@@ -142,17 +140,61 @@
             console.log("actionRoleController.initController -> End");
         })();
 
-        function submit() {
-            console.log("submit Begin");
+        function addUpdateMaker(makerStatus) {
+            console.log("addAsDraft Begin");
             //vm.dataLoading = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
-            var model = {
-                         "Id": roleId,
-                         "MakerId": makerId,
-                         "Name": vm.roleName,
-                         "Status": "SaveAsDraft",
-                         "AssignedPermissions": vm.assignedPermissions
-                     };
+            var model = CreateModel(makerStatus);
+
+            if (makerId > 0) {
+                dilizityBackofficeMakerService.Update(vm.permissionName, tmpUserName, model, function (response) {
+                    console.log("Success!");
+                    Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+                }, function (response) {
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+                });
+            }
+            else {
+                dilizityBackofficeMakerService.Add(vm.permissionName, tmpUserName, model, function (response) {
+                    console.log("Success!");
+                    Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+                }, function (response) {
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+                });
+            }
+            console.log("addAsDraft End");
+        };
+
+        function updateAsDraft() {
+            console.log("updateAsDraft Begin");
+            //vm.dataLoading = true;
+            var tmpUserName = $rootScope.globals.currentUser.username;
+            var model = CreateModel('SaveAsDraft');
+
+            if (makerId > 0) {
+                dilizityBackofficeMakerService.Update(vm.permissionName, tmpUserName, model, function (response) {
+                    console.log("Success!");
+                    Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+                }, function (response) {
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+                });
+            }
+            else {
+                dilizityBackofficeMakerService.Add(vm.permissionName, tmpUserName, model, function (response) {
+                    console.log("Success!");
+                    Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+                }, function (response) {
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+                });
+            }
+            console.log("updateAsDraft End");
+        };
+
+        function add() {
+            console.log("add Begin");
+            //vm.dataLoading = true;
+            var tmpUserName = $rootScope.globals.currentUser.username;
+            model = CreateModel(null);
 
             console.log(model);
 
@@ -162,8 +204,58 @@
             }, function (response) {
                 Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
             });
-            console.log("submit End");
+
+            console.log("add End");
         };
+
+        function update() {
+            console.log("update Begin");
+            //vm.dataLoading = true;
+            var tmpUserName = $rootScope.globals.currentUser.username;
+            model = CreateModel(null);
+
+            console.log(model);
+
+            RoleService.Update(vm.permissionName, tmpUserName, model, function (response) {
+                console.log("Success!");
+                Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+            }, function (response) {
+                Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+            });
+
+            console.log("update End");
+        };
+
+        function CreateModel(makerStatus) {
+            console.log("CreateModel Begin");
+            //vm.dataLoading = true;
+            var tmpUserName = $rootScope.globals.currentUser.username;
+            var model = {};
+
+            if (vm.permissionName.indexOf(".Maker") != -1) {
+                model = {
+                    "Id": roleId,
+                    "MakerId": makerId,
+                    "Name": vm.roleName,
+                    "Status": makerStatus,
+                    "AvailablePermissions": vm.availablePermissions,
+                    "AssignedPermissions": vm.assignedPermissions
+                };
+            }
+            else {
+
+                model = {
+                    "Id": roleId,
+                    "Name": vm.roleName,
+                    "AvailablePermissions": vm.availablePermissions,
+                    "AssignedPermissions": vm.assignedPermissions
+                };
+            }
+
+            return model;
+            console.log("CreateModel End");
+        };
+
 
     }
 

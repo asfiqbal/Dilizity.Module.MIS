@@ -129,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\CheckerController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\MakerController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
@@ -136,6 +137,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Managers\CheckerSearchBusinessManager.cs" />
+    <Compile Include="Managers\CheckerScreenManager.cs" />
+    <Compile Include="Managers\MakerUpdateBusinessManager.cs" />
     <Compile Include="Managers\MakerBusinessManager.cs" />
     <Compile Include="Managers\MakerSearchBusinessManager.cs" />
     <Compile Include="Managers\SideMenuManager.cs" />

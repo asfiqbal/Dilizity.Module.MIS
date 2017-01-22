@@ -63,6 +63,7 @@ namespace Dilizity.API.Security.Controllers
                     dataBasService.Add(GlobalConstants.IN_PARAM, jobject);
                     dataBasService.Add(GlobalConstants.LOGIN_ID, jobject[GlobalConstants.LOGIN_PARAM].ToString());
                     dataBasService.Add(GlobalConstants.ROLE_ID_PARAM, (int)jobject[GlobalConstants.ROLE_ID_PARAM]);
+                    dataBasService.Add(GlobalConstants.MAKER_ID_PARAM, (int)jobject[GlobalConstants.MAKER_ID_PARAM]);
 
                     string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
                     dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
@@ -155,6 +156,43 @@ namespace Dilizity.API.Security.Controllers
         [ActionName("Add")]
         [HttpPost]
         public IHttpActionResult Add(JObject jobject)
+        {
+            try
+            {
+                using (FnTraceWrap tracer = new FnTraceWrap(jobject))
+                {
+                    BusService dataBasService = new BusService();
+
+                    dataBasService.Add(GlobalConstants.IN_PARAM, jobject);
+                    dataBasService.Add(GlobalConstants.LOGIN_ID, jobject[GlobalConstants.LOGIN_PARAM].ToString());
+                    string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
+                    dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
+                    //string Status = jobject["Status"].ToString();
+                    //dataBasService.Add("Status", Status);
+                    JObject model = (JObject)jobject["Model"];
+                    dataBasService.Add("Model", model);
+
+                    IAbstractBusiness businessManager = new MakerBusinessManager();
+                    businessManager.Do(dataBasService);
+
+                    //WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
+                    //workFlowManager.Do(dataBasService);
+
+
+                    dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);
+                    return Ok(outObject);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Debug(typeof(RoleController), "{0}", e.Message);
+                return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
+            }
+        }
+
+        [ActionName("Update")]
+        [HttpPost]
+        public IHttpActionResult Update(JObject jobject)
         {
             try
             {

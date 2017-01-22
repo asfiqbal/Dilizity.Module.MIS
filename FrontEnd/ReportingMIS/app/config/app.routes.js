@@ -1,4 +1,12 @@
-﻿(function () {
+﻿/// <reference path="../component/checker/dilizityBackofficeCheckerController.js" />
+/// <reference path="../component/checker/dilizityBackofficeCheckerController.js" />
+/// <reference path="../component/checker/dilizityBackofficeCheckerController.js" />
+/// <reference path="../component/checker/dilizityBackofficeCheckerController.js" />
+/// <reference path="../component/checker/dilizityBackofficeCheckerController.js" />
+/// <reference path="../component/checker/dilizityBackofficeCheckerController.js" />
+/// <reference path="../component/checker/dilizityBackofficeCheckerController.js" />
+/// <reference path="../component/checker/dilizityBackofficeCheckerController.js" />
+(function () {
     'use strict';
 
     angular
@@ -56,8 +64,8 @@
         })
         .state('index.Checker', {
             url: '^/Checker/:permissionId',
-            templateUrl: 'views/searchChecker.html',
-            controller: 'searchCheckerController',
+            templateUrl: 'app/component/checker/dilizityBackofficeChecker.html',
+            controller: 'dilizityBackofficeCheckerController',
             controllerAs: 'vm'
         })
         .state('index.ActionRole', {

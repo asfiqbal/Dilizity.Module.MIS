@@ -20,6 +20,7 @@ namespace Dilizity.API.Security.Managers
     {
         private const string GET_ROLE_AVAILABLE_PERMISSIONS = "GetRoleAvailablePermissions";
         private const string GET_ROLE_ASSIGNED_PERMISSIONS = "GetRoleAssignedPermissions";
+        private const string GET_MAKER = "GetMaker";
 
         /// <summary>
         /// OutObject {
@@ -39,40 +40,67 @@ namespace Dilizity.API.Security.Managers
                 string LoginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
                 string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
                 int roleId = (int)parameterBusService.Get(GlobalConstants.ROLE_ID_PARAM);
+                int makerId = -1;
+                if (parameterBusService.IsKeyPresent(GlobalConstants.MAKER_ID_PARAM))
+                {
+                    makerId = (int)parameterBusService.Get(GlobalConstants.MAKER_ID_PARAM);
+                    Log.Debug(this.GetType(), "Maker Id Present", makerId);
+                }
 
                 dynamic outObject = new ExpandoObject();
-                using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
+
+                if (makerId > 0)
                 {
-                    dynamic tObject = new ExpandoObject();
-                    List<PermissionTree> permissionTreeList = new List<PermissionTree>();
-
-                    foreach (dynamic permission in dataLayer.ExecuteUsingKey(GET_ROLE_AVAILABLE_PERMISSIONS, GlobalConstants.ROLE_ID_PARAM, roleId))
+                    outObject = ReadMakerObject(makerId);
+                }
+                else
+                {
+                    using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                     {
-                        PermissionTree permissionTree = new PermissionTree();
-                        permissionTree.Id = permission.PermissionId;
-                        permissionTree.ParentId = permission.ParentPermissionId;
-                        permissionTree.label = permission.PermissionName;
-                        permissionTreeList.Add(permissionTree);
+                        dynamic tObject = new ExpandoObject();
+                        List<PermissionTree> permissionTreeList = new List<PermissionTree>();
+
+                        foreach (dynamic permission in dataLayer.ExecuteUsingKey(GET_ROLE_AVAILABLE_PERMISSIONS, GlobalConstants.ROLE_ID_PARAM, roleId))
+                        {
+                            PermissionTree permissionTree = new PermissionTree();
+                            permissionTree.Id = permission.PermissionId;
+                            permissionTree.ParentId = permission.ParentPermissionId;
+                            permissionTree.label = permission.PermissionName;
+                            permissionTreeList.Add(permissionTree);
+                        }
+
+                        Generate(permissionTreeList);
+                        outObject.AvailablePermissions = permissionTreeList;
+                        List<PermissionTree> PermissionList = new List<PermissionTree>();
+                        foreach (dynamic permission in dataLayer.ExecuteUsingKey(GET_ROLE_ASSIGNED_PERMISSIONS, GlobalConstants.ROLE_ID_PARAM, roleId))
+                        {
+                            PermissionTree permissionTree = new PermissionTree();
+                            permissionTree.Id = permission.PermissionId;
+                            permissionTree.ParentId = permission.ParentPermissionId;
+                            permissionTree.label = permission.PermissionName;
+                            PermissionList.Add(permissionTree);
+                        }
+
+                        Generate(PermissionList);
+
+                        outObject.AssignedPermissions = PermissionList;
                     }
-
-                    Generate(permissionTreeList);
-                    outObject.AvailablePermissions = permissionTreeList;
-                    List<PermissionTree> PermissionList = new List<PermissionTree>();
-                    foreach (dynamic permission in dataLayer.ExecuteUsingKey(GET_ROLE_ASSIGNED_PERMISSIONS, GlobalConstants.ROLE_ID_PARAM, roleId))
-                    {
-                        PermissionTree permissionTree = new PermissionTree();
-                        permissionTree.Id = permission.PermissionId;
-                        permissionTree.ParentId = permission.ParentPermissionId;
-                        permissionTree.label = permission.PermissionName;
-                        PermissionList.Add(permissionTree);
-                    }
-
-                    Generate(PermissionList);
-
-                    outObject.AssignedPermissions = PermissionList;
                 }
                 parameterBusService.Add(GlobalConstants.OUT_RESULT, outObject);
                 parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.SUCCESS);
+            }
+        }
+
+        private dynamic ReadMakerObject(int makerId)
+        {
+            using (FnTraceWrap tracer = new FnTraceWrap())
+            { 
+                using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
+                {
+                    dynamic _t = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_MAKER, GlobalConstants.MAKER_ID_PARAM, makerId);
+                    JObject tObject = JObject.Parse(_t.Data);
+                    return tObject;
+                }
             }
         }
 

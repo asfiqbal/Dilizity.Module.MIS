@@ -11,6 +11,7 @@
 
         service.Search = Search;
         service.Add = Add;
+        service.Update = Update;
         service.LoadSearchScreen = LoadSearchScreen;
         service.GetActionRoleScreenInfo = GetActionRoleScreenInfo;
         service.Delete = Delete;
@@ -165,6 +166,21 @@
 
         }
 
+        function Update(permissionName, userName, model, successCallback, errorCallback) {
+
+            console.log("AddRole Begin");
+
+            $http.post(AppSettings.baseUrl + 'Role/Update', { PermissionId: permissionName, LoginId: userName, Model: model })
+                .then(function (response) {
+                    successCallback(response);
+                }, function (response) {
+                    errorCallback(response);
+                }
+            );
+            console.log("AddRole End");
+
+        }
+
         function LoadSearchScreen(permissionName, userName, successCallback, errorCallback) {
             console.log("GetScreenPermissions Begin");
 
@@ -178,10 +194,10 @@
             console.log("GetScreenPermissions End");
         }
 
-        function GetActionRoleScreenInfo(permissionName, userName, roleId, successCallback, errorCallback) {
+        function GetActionRoleScreenInfo(permissionName, userName, roleId, makerId, successCallback, errorCallback) {
             console.log("GetActionRoleScreenInfo Begin");
 
-            $http.post(AppSettings.baseUrl + 'Role/GetActionRoleScreenInfo', { PermissionId: permissionName, LoginId: userName, RoleId: roleId })
+            $http.post(AppSettings.baseUrl + 'Role/GetActionRoleScreenInfo', { PermissionId: permissionName, LoginId: userName, RoleId: roleId, MakerId: makerId })
                 .then(function (response) {
                     successCallback(response);
                 }, function (response) {

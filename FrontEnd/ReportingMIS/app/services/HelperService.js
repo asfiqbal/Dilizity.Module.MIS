@@ -38,7 +38,10 @@
                     }
                 }
                 return result;
+            },
+            IsNumber: function IsNumber(theObject) {
+                return !(theObject === null || !angular.isDefined(theObject) || (angular.isNumber(theObject) && !isFinite(theObject)));
             }
-        };
+        }
     };
 })();

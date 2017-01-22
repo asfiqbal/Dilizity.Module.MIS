@@ -537,13 +537,88 @@
           UPDATE MAKER_LIST
           SET		DATA = @Data,
 		            Status = @Status,
-		            UPDATED_BY = @UpdatedBy
-          WHERE MAKER_ID = @MakerId 
-              ]]>
+		            UPDATED_BY = @UpdatedBy,
+                UPDATED_ON = Getdate()
+          WHERE MAKER_ID = @MakerId;
+          SELECT @@ROWCOUNT;
+        ]]>
         <Param Name="Data" Type="System.String"  Size="-1"/>
         <Param Name="Status" Type="System.String"  Size="20"/>
         <Param Name="UpdatedBy" Type="System.String"  Size="200"/>
         <Param Name="MakerId" Type="System.Int32"  Size="0"/>
       </Query>
+      <Query ID="GetMaker">
+        <![CDATA[
+          select  MAKER_ID MakerId, PERMISSION_ID PermissionId, DATA Data, STATUS Status
+          from	MAKER_LIST
+          WHERE MAKER_ID = @MakerId 
+        ]]>
+        <Param Name="MakerId" Type="System.Int32"  Size="0"/>
+      </Query>
+      <Query ID="SearchChecker" DataSource="">
+        <![CDATA[
+              WITH SQLPaging
+                  AS
+                  (
+                  SELECT TOP(@PageSize * @PageNumber) ResultNum = ROW_NUMBER() OVER (ORDER BY 
+					                  CASE WHEN @SortOrder = 'Maker Id' AND @SortDirection = 'asc' THEN MAKER_ID END ASC,
+					                  CASE WHEN @SortOrder = 'Maker Id' AND @SortDirection = 'desc' THEN MAKER_ID END DESC,
+					                  CASE WHEN @SortOrder = 'Permission Name' AND @SortDirection = 'asc' THEN PERMISSION_NAME END ASC,
+					                  CASE WHEN @SortOrder = 'Permission Name' AND @SortDirection = 'desc' THEN PERMISSION_NAME END DESC,
+					                  CASE WHEN @SortOrder = 'Status' AND @SortDirection = 'asc' THEN Status END ASC,
+					                  CASE WHEN @SortOrder = 'Status' AND @SortDirection = 'desc' THEN Status END DESC,
+					                  CASE WHEN @SortOrder = 'Created By' AND @SortDirection = 'asc' THEN M.CREATED_BY END ASC,
+					                  CASE WHEN @SortOrder = 'Created By' AND @SortDirection = 'desc' THEN M.CREATED_BY END DESC,
+					                  CASE WHEN @SortOrder = 'Created On' AND @SortDirection = 'asc' THEN M.CREATED_ON END ASC,
+					                  CASE WHEN @SortOrder = 'Created On' AND @SortDirection = 'desc' THEN M.CREATED_ON END DESC,
+					                  CASE WHEN @SortOrder = 'Updated By' AND @SortDirection = 'asc' THEN M.UPDATED_BY END ASC,
+					                  CASE WHEN @SortOrder = 'Updated By' AND @SortDirection = 'desc' THEN M.UPDATED_BY END DESC,
+					                  CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'asc' THEN M.UPDATED_ON END ASC,
+					                  CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'desc' THEN M.UPDATED_ON END DESC
+			                  )
+				              , M.MAKER_ID, P.PERMISSION_NAME, M.STATUS, P.ACTION_URL, M.CREATED_ON, M.CREATED_BY, M.UPDATED_ON, M.UPDATED_BY
+                  FROM MAKER_LIST M
+		               INNER JOIN SEC_PERMISSION P ON M.PERMISSION_ID = P.PERMISSION_ID
+                  WHERE   IS_DELETED = 0
+                  AND	(MAKER_ID = @MakerId OR @MakerId = 0)
+                  AND	((M.PERMISSION_ID = @SelectedPermissionId) OR @SelectedPermissionId = -1)
+	              AND	M.STATUS in ('PendingApproval')
+              )
+              SELECT MAKER_ID MakerId, Permission_Name PermissionName, Status, REPLACE(ACTION_URL,'{0}', Maker_ID) ActionUrl, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+              FROM SQLPaging
+              WHERE ResultNum > ((@PageNumber - 1) * @PageSize)
+              order by ResultNum
+              ]]>
+        <Param Name="MakerId" Type="System.Int32"  Size="0"/>
+        <Param Name="SelectedPermissionId" Type="System.Int32"  Size="0"/>
+        <Param Name="PageSize" Type="System.Int32"  Size="0"/>
+        <Param Name="PageNumber" Type="System.Int32"  Size="0"/>
+        <Param Name="SortOrder" Type="System.String"  Size="200"/>
+        <Param Name="SortDirection" Type="System.String"  Size="200"/>
+      </Query>
+      <Query ID="CheckerScreenUserPermission" DataSource="">
+        <![CDATA[
+              WITH WF ( Permission_id, PARENT_PERMISSION_ID)
+              AS
+              (
+              SELECT	Permission_id, PARENT_PERMISSION_ID
+              from	SEC_PERMISSION P
+              WHERE   P.PERMISSION_NAME = @PermissionId
+              UNION ALL
+              SELECT	P.Permission_id, P.PARENT_PERMISSION_ID
+              from	SEC_PERMISSION P
+		              INNER JOIN WF ON P.PARENT_PERMISSION_ID  = WF.Permission_id
+              WHERE	UPPER(P.PERMISSION_NAME) NOT LIKE '%.EMAIL%'
+              )
+              select	[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.PERMISSION_NAME) FieldKey, V.PERMISSION_NAME PermissionName
+              from	WF
+		              INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION V ON WF.PERMISSION_ID = V.PERMISSION_ID
+              WHERE   V.LOGIN_ID = @LoginId
+              AND		[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.PERMISSION_NAME) in ('Search','Add','Edit','Delete','View','Checker')
+              ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="PermissionId" Type="System.String"  Size="200"/>
+      </Query>
+
   </Schema>
 </root>

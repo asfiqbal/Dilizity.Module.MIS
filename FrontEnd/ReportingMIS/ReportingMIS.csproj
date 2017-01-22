@@ -96,6 +96,9 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="app\component\checker\dilizityBackofficeChecker.html" />
+    <Content Include="app\component\checker\dilizityBackofficeCheckerController.js" />
+    <Content Include="app\component\checker\dilizityBackofficeCheckerService.js" />
     <Content Include="app\config\app.routes - Copy.js" />
     <Content Include="app\config\formly.config.js" />
     <Content Include="app\controllers\homeController.js" />

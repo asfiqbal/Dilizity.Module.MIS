@@ -19,7 +19,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Dilizity.API.Security.Controllers
 {
-    public class MakerController : ApiController
+    public class CheckerController : ApiController
     {
         [ActionName("LoadSearchScreen")]
         [HttpPost]
@@ -36,9 +36,9 @@ namespace Dilizity.API.Security.Controllers
                     string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
                     dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
 
-                    IAbstractBusiness businessManager = new CommonScreenManager();
-
+                    IAbstractBusiness businessManager = new CheckerScreenManager();
                     businessManager.Do(dataBasService);
+
                     dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);
                     return Ok(outObject);
                 }
@@ -84,43 +84,9 @@ namespace Dilizity.API.Security.Controllers
             }
         }
 
-        [ActionName("Delete")]
+        [ActionName("Approve")]
         [HttpPost]
-        public IHttpActionResult Delete(JObject jobject)
-        {
-            try
-            {
-                using (FnTraceWrap tracer = new FnTraceWrap(jobject))
-                {
-                    BusService dataBasService = new BusService();
-
-                    dataBasService.Add(GlobalConstants.IN_PARAM, jobject);
-                    dataBasService.Add(GlobalConstants.LOGIN_ID, jobject[GlobalConstants.LOGIN_PARAM].ToString());
-                    string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
-                    dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
-                    dataBasService.Add("Roles", jobject["Roles"]);
-
-                    //IAbstractBusiness businessManager = new DeleteRoleBusinessManager();
-                    //businessManager.Do(dataBasService);
-
-                    WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
-                    workFlowManager.Do(dataBasService);
-
-
-                    dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);
-                    return Ok(outObject);
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Debug(typeof(RoleController), "{0}", e.Message);
-                return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
-            }
-        }
-
-        [ActionName("Update")]
-        [HttpPost]
-        public IHttpActionResult Update(JObject jobject)
+        public IHttpActionResult Approve(JObject jobject)
         {
             try
             {
@@ -152,9 +118,9 @@ namespace Dilizity.API.Security.Controllers
             }
         }
 
-        [ActionName("Add")]
+        [ActionName("Reject")]
         [HttpPost]
-        public IHttpActionResult Add(JObject jobject)
+        public IHttpActionResult Reject(JObject jobject)
         {
             try
             {
@@ -166,12 +132,43 @@ namespace Dilizity.API.Security.Controllers
                     dataBasService.Add(GlobalConstants.LOGIN_ID, jobject[GlobalConstants.LOGIN_PARAM].ToString());
                     string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
                     dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
-                    //string Status = jobject["Status"].ToString();
-                    //dataBasService.Add("Status", Status);
-                    JObject model = (JObject)jobject["Model"];
-                    dataBasService.Add("Model", model);
+                    dataBasService.Add("Model", jobject["Model"]);
 
-                    IAbstractBusiness businessManager = new MakerBusinessManager();
+                    IAbstractBusiness businessManager = new MakerUpdateBusinessManager();
+                    businessManager.Do(dataBasService);
+
+                    //WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
+                    //workFlowManager.Do(dataBasService);
+
+
+                    dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);
+                    return Ok(outObject);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Debug(typeof(RoleController), "{0}", e.Message);
+                return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
+            }
+        }
+
+        [ActionName("CorrectionRequired")]
+        [HttpPost]
+        public IHttpActionResult CorrectionRequired(JObject jobject)
+        {
+            try
+            {
+                using (FnTraceWrap tracer = new FnTraceWrap(jobject))
+                {
+                    BusService dataBasService = new BusService();
+
+                    dataBasService.Add(GlobalConstants.IN_PARAM, jobject);
+                    dataBasService.Add(GlobalConstants.LOGIN_ID, jobject[GlobalConstants.LOGIN_PARAM].ToString());
+                    string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
+                    dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
+                    dataBasService.Add("Model", jobject["Model"]);
+
+                    IAbstractBusiness businessManager = new MakerUpdateBusinessManager();
                     businessManager.Do(dataBasService);
 
                     //WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
