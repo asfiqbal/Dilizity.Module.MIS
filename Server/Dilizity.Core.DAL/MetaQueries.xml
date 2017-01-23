@@ -424,7 +424,7 @@
                 AND	((M.PERMISSION_ID = @SelectedPermissionId) OR @SelectedPermissionId = -1)
 	            AND	M.STATUS in ('SaveAsDraft', 'CorrectionRequired')
             )
-            SELECT MAKER_ID MakerId, Permission_Name PermissionName, Status, REPLACE(ACTION_URL,'{0}', Maker_ID) ActionUrl, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+            SELECT MAKER_ID MakerId, Permission_Name PermissionName, Status, REPLACE(REPLACE(ACTION_URL,'{0}', Maker_ID),'{1}', PERMISSION_NAME) ActionUrl, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
             FROM SQLPaging
             WHERE ResultNum > ((@PageNumber - 1) * @PageSize)
             order by ResultNum
@@ -584,7 +584,7 @@
                   AND	((M.PERMISSION_ID = @SelectedPermissionId) OR @SelectedPermissionId = -1)
 	              AND	M.STATUS in ('PendingApproval')
               )
-              SELECT MAKER_ID MakerId, Permission_Name PermissionName, Status, REPLACE(ACTION_URL,'{0}', Maker_ID) ActionUrl, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+              SELECT MAKER_ID MakerId, Permission_Name PermissionName, Status, REPLACE(REPLACE(ACTION_URL,'{0}', Maker_ID),'{1}', PERMISSION_NAME) ActionUrl, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
               FROM SQLPaging
               WHERE ResultNum > ((@PageNumber - 1) * @PageSize)
               order by ResultNum

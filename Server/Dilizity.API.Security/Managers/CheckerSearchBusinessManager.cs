@@ -40,6 +40,8 @@ namespace Dilizity.API.Security.Managers
                     int selectedPermissionId = Utility.ConvertStringToInt(parameterBusService.Get("SelectedPermissionId").ToString());
                     int pageSize = Utility.ConvertStringToInt(parameterBusService.Get("PageSize").ToString());
                     int pageNumber = Utility.ConvertStringToInt(parameterBusService.Get("PageNumber").ToString());
+                    string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
+
                     JObject sortInfo = (JObject)parameterBusService.Get("Sort");
                     string sortOrder = "Maker Id";
                     string sortDirection = "asc";
