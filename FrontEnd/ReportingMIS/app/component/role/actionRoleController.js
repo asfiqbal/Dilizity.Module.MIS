@@ -7,8 +7,8 @@
         .module('ReportingMIS')
         .controller('actionRoleController', actionRoleController);
 
-    actionRoleController.$inject = ['$scope', '$filter', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'Notification', 'HelperService', 'dilizityBackofficeMakerService'];
-    function actionRoleController($scope, $filter, $stateParams, $rootScope, AuthenticationService, RoleService, Notification, HelperService, dilizityBackofficeMakerService) {
+    actionRoleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'Notification', 'HelperService', 'dilizityBackofficeMakerService', 'dilizityBackofficeCheckerService'];
+    function actionRoleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, Notification, HelperService, dilizityBackofficeMakerService, dilizityBackofficeCheckerService) {
         var vm = this;
 
         var roleId = -1;
@@ -19,6 +19,9 @@
         vm.addUpdateMaker = addUpdateMaker;
         vm.add = add;
         vm.update = update;
+        vm.approve = approve;
+        vm.correctionRequired = correctionRequired;
+        vm.reject = reject;
 
         vm.loadScreenPermissionsAndInfo = loadScreenPermissionsAndInfo;
         vm.roleName = '';
@@ -141,7 +144,7 @@
         })();
 
         function addUpdateMaker(makerStatus) {
-            console.log("addAsDraft Begin");
+            console.log("addUpdateMaker Begin");
             //vm.dataLoading = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
             var model = CreateModel(makerStatus);
@@ -162,32 +165,54 @@
                     Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
                 });
             }
-            console.log("addAsDraft End");
+            console.log("addUpdateMaker End");
         };
 
-        function updateAsDraft() {
-            console.log("updateAsDraft Begin");
+        function correctionRequired(makerStatus) {
+            console.log("correctionRequired Begin");
             //vm.dataLoading = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
-            var model = CreateModel('SaveAsDraft');
+            var model = CreateModel(makerStatus);
 
-            if (makerId > 0) {
-                dilizityBackofficeMakerService.Update(vm.permissionName, tmpUserName, model, function (response) {
-                    console.log("Success!");
-                    Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
-                }, function (response) {
-                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
-                });
-            }
-            else {
-                dilizityBackofficeMakerService.Add(vm.permissionName, tmpUserName, model, function (response) {
-                    console.log("Success!");
-                    Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
-                }, function (response) {
-                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
-                });
-            }
-            console.log("updateAsDraft End");
+            dilizityBackofficeCheckerService.CorrectionRequired(vm.permissionName, tmpUserName, model, function (response) {
+                console.log("Success!");
+                Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+            }, function (response) {
+                Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+            });
+            
+            console.log("correctionRequired End");
+        };
+
+        function reject() {
+            console.log("reject Begin");
+            //vm.dataLoading = true;
+            var tmpUserName = $rootScope.globals.currentUser.username;
+            var model = CreateModel("Rejected");
+
+            dilizityBackofficeCheckerService.Reject(vm.permissionName, tmpUserName, model, function (response) {
+                console.log("Success!");
+                Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+            }, function (response) {
+                Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+            });
+
+            console.log("reject End");
+        };
+
+        function approve() {
+            console.log("approve Begin");
+            //vm.dataLoading = true;
+            var tmpUserName = $rootScope.globals.currentUser.username;
+            var model = CreateModel('Approved');
+            dilizityBackofficeCheckerService.Approve(vm.permissionName, tmpUserName, model, function (response) {
+                console.log("Success!");
+                Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+            }, function (response) {
+                Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+            });
+
+            console.log("approve End");
         };
 
         function add() {
