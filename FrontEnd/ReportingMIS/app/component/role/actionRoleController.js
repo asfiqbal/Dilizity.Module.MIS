@@ -22,6 +22,9 @@
         vm.approve = approve;
         vm.correctionRequired = correctionRequired;
         vm.reject = reject;
+        vm.isMakerCheckerMode = isMakerCheckerMode;
+        vm.isMakerMode = isMakerMode;
+        vm.isCheckerMode = isCheckerMode;
 
         vm.loadScreenPermissionsAndInfo = loadScreenPermissionsAndInfo;
         vm.roleName = '';
@@ -136,7 +139,8 @@
             var arr = vm.permissionName.split(".");
             vm.title = arr[arr.length - 1] + ' Role';
             console.log("vm.title", vm.title);
-            //console.log("permissionName", vm.permissionName);
+
+
 
             loadScreenPermissionsAndInfo();
    
@@ -280,6 +284,19 @@
             return model;
             console.log("CreateModel End");
         };
+
+        function isMakerCheckerMode() {
+            return HelperService.containsAny(vm.permissionName, ['Maker', 'Checker'])
+        };
+
+        function isMakerMode() {
+            return HelperService.containsAny(vm.permissionName, ['Maker'])
+        };
+
+        function isCheckerMode() {
+            return HelperService.containsAny(vm.permissionName, ['Checker'])
+        };
+
 
 
     }
