@@ -100,7 +100,7 @@ namespace Dilizity.API.Security.Controllers
                     dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
                     dataBasService.Add("Model", jobject["Model"]);
 
-                    IAbstractBusiness businessManager = new MakerUpdateBusinessManager();
+                    IAbstractBusiness businessManager = new MakerSaveAsDraftBusinessManager();
                     businessManager.Do(dataBasService);
 
                     //WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
@@ -134,7 +134,7 @@ namespace Dilizity.API.Security.Controllers
                     dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
                     dataBasService.Add("Model", jobject["Model"]);
 
-                    IAbstractBusiness businessManager = new MakerUpdateBusinessManager();
+                    IAbstractBusiness businessManager = new CheckerRejectBusinessManager();
                     businessManager.Do(dataBasService);
 
                     //WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
@@ -168,7 +168,7 @@ namespace Dilizity.API.Security.Controllers
                     dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
                     dataBasService.Add("Model", jobject["Model"]);
 
-                    IAbstractBusiness businessManager = new MakerUpdateBusinessManager();
+                    IAbstractBusiness businessManager = new CheckerCorrectionBusinessManager();
                     businessManager.Do(dataBasService);
 
                     //WorkFlowActionManager workFlowManager = new WorkFlowActionManager();

@@ -137,10 +137,14 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Managers\RoleAddUpdateBusinessManager.cs" />
+    <Compile Include="Managers\CheckerApproveBusinessManager.cs" />
+    <Compile Include="Managers\CheckerCorrectionBusinessManager.cs" />
     <Compile Include="Managers\CheckerSearchBusinessManager.cs" />
     <Compile Include="Managers\CheckerScreenManager.cs" />
-    <Compile Include="Managers\MakerUpdateBusinessManager.cs" />
-    <Compile Include="Managers\MakerBusinessManager.cs" />
+    <Compile Include="Managers\CheckerRejectBusinessManager.cs" />
+    <Compile Include="Managers\MakerSaveAsDraftBusinessManager.cs" />
+    <Compile Include="Managers\MakerApprovalReadyBusinessManager.cs" />
     <Compile Include="Managers\MakerSearchBusinessManager.cs" />
     <Compile Include="Managers\SideMenuManager.cs" />
     <Compile Include="Managers\ReportExecutionBusinessManager.cs" />

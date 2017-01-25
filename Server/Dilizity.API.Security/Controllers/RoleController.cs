@@ -172,7 +172,7 @@ namespace Dilizity.API.Security.Controllers
                     JObject model = (JObject)jobject["Model"];
                     dataBasService.Add("Model", model);
 
-                    IAbstractBusiness businessManager = new MakerBusinessManager();
+                    IAbstractBusiness businessManager = new MakerApprovalReadyBusinessManager();
                     businessManager.Do(dataBasService);
 
                     //WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
@@ -209,7 +209,7 @@ namespace Dilizity.API.Security.Controllers
                     JObject model = (JObject)jobject["Model"];
                     dataBasService.Add("Model", model);
 
-                    IAbstractBusiness businessManager = new MakerBusinessManager();
+                    IAbstractBusiness businessManager = new MakerApprovalReadyBusinessManager();
                     businessManager.Do(dataBasService);
 
                     //WorkFlowActionManager workFlowManager = new WorkFlowActionManager();

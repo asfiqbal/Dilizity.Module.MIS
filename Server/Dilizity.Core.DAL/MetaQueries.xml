@@ -30,6 +30,7 @@
       <Query ID="InsertReport">
         <![CDATA[
           INSERT INTO REPORT (REPORT_NAME, REPORT_DISPLAY_NAME, REPORT_SQL) VALUES (@ReportName, @ReportDisplayName, @ReportSQL)
+          SELECT SCOPE_IDENTITY(); 
         ]]>
         <Param Name="ReportName" Type="System.String"  Size="50"/>
         <Param Name="ReportDisplayName" Type="System.String"  Size="20"/>
@@ -39,12 +40,14 @@
         <![CDATA[
           UPDATE REPORT
           SET REPORT_NAME = 'Transaction'
+          SELECT @@ROWCOUNT;
         ]]>
       </Query>
       <Query ID="DeleteReport">
         <![CDATA[
           DELETE FROM REPORT
           WHERE REPORT_ID = @ReportId
+          SELECT @@ROWCOUNT;
         ]]>
         <Param Name="ReportId" Type="System.Int32"  Size="0"/>
       </Query>
@@ -281,6 +284,7 @@
                       LAST_LOGIN_DATETIME = GetDate()
               WHERE   IS_DELETED = 0
               AND     LOGIN_ID = @LoginId
+              SELECT @@ROWCOUNT;
             ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="PasswordAttempt" Type="System.Int32"  Size="0"/>
@@ -297,6 +301,7 @@
 		                  CHANGE_PASSWORD_ON_LOGON = 0
               WHERE   IS_DELETED = 0
               AND     LOGIN_ID = @LoginId;
+              SELECT @@ROWCOUNT;
             ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="Password" Type="System.String"  Size="200"/>
@@ -305,6 +310,7 @@
         <![CDATA[
               INSERT INTO [SEC_CHANGE_PASSWORD_HISTORY](USER_ID,PASSWORD,CREATED_ON,CREATED_BY)
               VALUES((SELECT USER_ID FROM SEC_USER WHERE LOGIN_ID = @LoginId),@Password, GetDate(), @LoginId);
+              SELECT SCOPE_IDENTITY(); 
             ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="Password" Type="System.String"  Size="200"/>
@@ -354,6 +360,7 @@
       <Query ID="InsertAudit">
         <![CDATA[
             INSERT INTO SEC_AUDIT (USER_ID, PERMISSION_ID, IS_SUCCESS, DATA, CREATED_BY) VALUES ((SELECT USER_ID FROM SEC_USER WHERE LOGIN_ID = @LoginId), (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionName), @IsSuccess, @Data, @CreatedBy);
+            SELECT SCOPE_IDENTITY(); 
           ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="PermissionName" Type="System.String"  Size="200"/>
@@ -475,6 +482,7 @@
               SET IS_DELETED = 1
               WHERE ROLE_ID = @RoleId
               AND   IS_DELETED = 0;
+              SELECT @@ROWCOUNT;
             ]]>
         <Param Name="RoleId" Type="System.Int32"  Size="0"/>
       </Query>
@@ -500,6 +508,7 @@
                         ERROR_CODE = @ErrorCode,
                         UPDATED_ON = Getdate()
                   WHERE OPERATION_ID = @OperationId
+                  SELECT @@ROWCOUNT;
                 ]]>
         <Param Name="OperationId" Type="System.Int32"  Size="0"/>
         <Param Name="InputParams" Type="System.String"  Size="-1"/>
@@ -510,6 +519,7 @@
         <![CDATA[
           INSERT INTO MSG_NOTIFICATIONS(OPERATION_ID,NOTIFICATION_TYPE,[FROM],[TO],CC,SUBJECT,BODY,STATUS,CREATED_BY,UPDATED_BY)
           VALUES (@OperationId, @NotificationType, @From, @To, @CC, @Subject, @Body, @Status,@CreatedBy, @CreatedBy)
+          SELECT SCOPE_IDENTITY(); 
         ]]>    
         <Param Name="OperationId" Type="System.Int32"  Size="0"/>
         <Param Name="NotificationType" Type="System.String"  Size="10"/>
@@ -524,10 +534,10 @@
       <Query ID="InsertMaker">
         <![CDATA[
           INSERT INTO MAKER_LIST(PERMISSION_ID,DATA, STATUS, CREATED_BY,UPDATED_BY)
-          VALUES((Select PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionName),@Data, @Status,@CreatedBy,@CreatedBy);
+          VALUES((Select PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionId),@Data, @Status,@CreatedBy,@CreatedBy);
           SELECT SCOPE_IDENTITY(); 
                 ]]>
-        <Param Name="PermissionName" Type="System.String"  Size="200"/>
+        <Param Name="PermissionId" Type="System.String"  Size="200"/>
         <Param Name="Data" Type="System.String"  Size="-1"/>
         <Param Name="Status" Type="System.String"  Size="20"/>
         <Param Name="CreatedBy" Type="System.String"  Size="200"/>
@@ -537,11 +547,13 @@
           UPDATE MAKER_LIST
           SET		DATA = @Data,
 		            Status = @Status,
+                PERMISSION_ID = (Select PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionId)
 		            UPDATED_BY = @UpdatedBy,
                 UPDATED_ON = Getdate()
           WHERE MAKER_ID = @MakerId;
           SELECT @@ROWCOUNT;
         ]]>
+        <Param Name="PermissionId" Type="System.String"  Size="200"/>
         <Param Name="Data" Type="System.String"  Size="-1"/>
         <Param Name="Status" Type="System.String"  Size="20"/>
         <Param Name="UpdatedBy" Type="System.String"  Size="200"/>
@@ -618,6 +630,23 @@
               ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="PermissionId" Type="System.String"  Size="200"/>
+      </Query>
+      <Query ID="InsertRole" DataSource="">
+        <![CDATA[
+            Insert INTO SEC_ROLE(ROLE_NAME, IS_SYSTEM, IS_DELETED, CREATED_BY, UPDATED_BY)
+            VALUES (@RoleName, 0, 0, @LoginId, @LoginId);
+            SELECT SCOPE_IDENTITY(); 
+        ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="RoleName" Type="System.String"  Size="200"/>
+      </Query>
+      <Query ID="InsertRolePermission" DataSource="">
+        <![CDATA[
+            Insert INTO SEC_ROLE_PERMISSION(ROLE_ID,PERMISSION_ID,CREATED_BY,UPDATED_BY)
+            VALUES (SCOPE_IDENTITY(), @PermissionId, @LoginId, @LoginId);
+          ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="PermissionId" Type="System.Int32"  Size="0"/>
       </Query>
 
   </Schema>

@@ -118,9 +118,9 @@ namespace Dilizity.API.Security.Controllers
             }
         }
 
-        [ActionName("Update")]
+        [ActionName("SaveAsDraft")]
         [HttpPost]
-        public IHttpActionResult Update(JObject jobject)
+        public IHttpActionResult SaveAsDraft(JObject jobject)
         {
             try
             {
@@ -134,7 +134,7 @@ namespace Dilizity.API.Security.Controllers
                     dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
                     dataBasService.Add("Model", jobject["Model"]);
 
-                    IAbstractBusiness businessManager = new MakerUpdateBusinessManager();
+                    IAbstractBusiness businessManager = new MakerSaveAsDraftBusinessManager();
                     businessManager.Do(dataBasService);
 
                     //WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
@@ -152,9 +152,9 @@ namespace Dilizity.API.Security.Controllers
             }
         }
 
-        [ActionName("Add")]
+        [ActionName("CheckerApprovalReady")]
         [HttpPost]
-        public IHttpActionResult Add(JObject jobject)
+        public IHttpActionResult CheckerApprovalReady(JObject jobject)
         {
             try
             {
@@ -171,7 +171,7 @@ namespace Dilizity.API.Security.Controllers
                     JObject model = (JObject)jobject["Model"];
                     dataBasService.Add("Model", model);
 
-                    IAbstractBusiness businessManager = new MakerBusinessManager();
+                    IAbstractBusiness businessManager = new MakerApprovalReadyBusinessManager();
                     businessManager.Do(dataBasService);
 
                     //WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
