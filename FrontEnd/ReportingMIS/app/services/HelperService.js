@@ -41,6 +41,17 @@
             },
             IsNumber: function IsNumber(theObject) {
                 return !(theObject === null || !angular.isDefined(theObject) || (angular.isNumber(theObject) && !isFinite(theObject)));
+            },
+            containsAny: function containsAny(str, substrings) {
+                var outResult = false;
+                for (var i = 0; i != substrings.length; i++) {
+                    var substring = substrings[i];
+                    if (str.indexOf(substring) != -1) {
+                        outResult = true
+                        break;
+                    }
+                }
+                return outResult;
             }
         }
     };
