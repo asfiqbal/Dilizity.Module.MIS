@@ -10,8 +10,8 @@
         var service = {};
 
         service.Search = Search;
-        service.Update = Update;
-        service.Add = Add;
+        service.SaveAsDraft = SaveAsDraft;
+        service.CheckerApprovalReady = CheckerApprovalReady;
         service.LoadSearchScreen = LoadSearchScreen;
         //service.GetActionMakerScreenInfo = GetActionMakerScreenInfo;
         service.Delete = Delete;
@@ -19,7 +19,7 @@
         return service;
 
         function Search(permissionId, userName, makerId, selectedPermissionId, pageSize, pageNumber, sort, successCallBack, errorCallBack) {
-            console.log("SearchMakerActivity Begin");
+            console.log("Search Begin");
 
             /* Use this for real execution
              ----------------------------------------------*/
@@ -30,40 +30,40 @@
                     errorCallBack(response);
                 }
             );
-            console.log("SearchMakerActivity End");
+            console.log("Search End");
 
         }
 
-        function Update(permissionName, userName, model, successCallback, errorCallback) {
+        function SaveAsDraft(permissionName, userName, model, successCallback, errorCallback) {
 
-            console.log("UpdateMakerActivity Begin");
+            console.log("SaveAsDraft Begin");
 
-            $http.post(AppSettings.baseUrl + 'Maker/Update', { PermissionId: permissionName, LoginId: userName, Model: model })
+            $http.post(AppSettings.baseUrl + 'Maker/SaveAsDraft', { PermissionId: permissionName, LoginId: userName, Model: model })
                 .then(function (response) {
                     successCallback(response);
                 }, function (response) {
                     errorCallback(response);
                 }
             );
-            console.log("UpdateMakerActivity End");
+            console.log("SaveAsDraft End");
         }
 
-        function Add(permissionName, userName, model, successCallback, errorCallback) {
+        function CheckerApprovalReady(permissionName, userName, model, successCallback, errorCallback) {
 
-            console.log("Add Begin");
+            console.log("CheckerApprovalReady Begin");
 
-            $http.post(AppSettings.baseUrl + 'Maker/Add', { PermissionId: permissionName, LoginId: userName, Model: model })
+            $http.post(AppSettings.baseUrl + 'Maker/CheckerApprovalReady', { PermissionId: permissionName, LoginId: userName, Model: model })
                 .then(function (response) {
                     successCallback(response);
                 }, function (response) {
                     errorCallback(response);
                 }
             );
-            console.log("Add End");
+            console.log("CheckerApprovalReady End");
         }
 
         function LoadSearchScreen(permissionName, userName, successCallback, errorCallback) {
-            console.log("GetScreenPermissions Begin");
+            console.log("LoadSearchScreen Begin");
 
             $http.post(AppSettings.baseUrl + 'Maker/LoadSearchScreen', { PermissionId: permissionName, LoginId: userName })
                 .then(function (response) {
@@ -72,7 +72,7 @@
                     errorCallback(response);
                 }
             );
-            console.log("GetScreenPermissions End");
+            console.log("LoadSearchScreen End");
         }
 
         //function GetActionMakerScreenInfo(permissionName, userName, makerId, successCallback, errorCallback) {

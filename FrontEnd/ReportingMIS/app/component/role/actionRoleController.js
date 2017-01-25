@@ -16,7 +16,8 @@
 
         vm.title = '';
 
-        vm.addUpdateMaker = addUpdateMaker;
+        vm.saveAsDraft = saveAsDraft;
+        vm.checkerApprovalReady = checkerApprovalReady;
         vm.add = add;
         vm.update = update;
         vm.approve = approve;
@@ -147,29 +148,36 @@
             console.log("actionRoleController.initController -> End");
         })();
 
-        function addUpdateMaker(makerStatus) {
-            console.log("addUpdateMaker Begin");
+        function saveAsDraft(makerStatus) {
+            console.log("saveAsDraft Begin");
             //vm.dataLoading = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
             var model = CreateModel(makerStatus);
 
-            if (makerId > 0) {
-                dilizityBackofficeMakerService.Update(vm.permissionName, tmpUserName, model, function (response) {
-                    console.log("Success!");
-                    Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
-                }, function (response) {
-                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
-                });
-            }
-            else {
-                dilizityBackofficeMakerService.Add(vm.permissionName, tmpUserName, model, function (response) {
-                    console.log("Success!");
-                    Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
-                }, function (response) {
-                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
-                });
-            }
-            console.log("addUpdateMaker End");
+            dilizityBackofficeMakerService.SaveAsDraft(vm.permissionName, tmpUserName, model, function (response) {
+                console.log("Success!");
+                Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+            }, function (response) {
+                Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+            });
+
+            console.log("saveAsDraft End");
+        };
+
+        function checkerApprovalReady(makerStatus) {
+            console.log("checkerApprovalReady Begin");
+            //vm.dataLoading = true;
+            var tmpUserName = $rootScope.globals.currentUser.username;
+            var model = CreateModel(makerStatus);
+
+            dilizityBackofficeMakerService.CheckerApprovalReady(vm.permissionName, tmpUserName, model, function (response) {
+                console.log("Success!");
+                Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+            }, function (response) {
+                Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+            });
+
+            console.log("checkerApprovalReady End");
         };
 
         function correctionRequired(makerStatus) {
