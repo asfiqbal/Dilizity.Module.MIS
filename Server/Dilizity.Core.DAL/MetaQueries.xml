@@ -29,7 +29,7 @@
       </Query>
       <Query ID="InsertReport">
         <![CDATA[
-          INSERT INTO REPORT (REPORT_NAME, REPORT_DISPLAY_NAME, REPORT_SQL) VALUES (@ReportName, @ReportDisplayName, @ReportSQL)
+          INSERT INTO REPORT (REPORT_NAME, REPORT_DISPLAY_NAME, REPORT_SQL) VALUES (@ReportName, @ReportDisplayName, @ReportSQL);
           SELECT SCOPE_IDENTITY(); 
         ]]>
         <Param Name="ReportName" Type="System.String"  Size="50"/>
@@ -39,14 +39,14 @@
       <Query ID="UpdateReport">
         <![CDATA[
           UPDATE REPORT
-          SET REPORT_NAME = 'Transaction'
+          SET REPORT_NAME = 'Transaction';
           SELECT @@ROWCOUNT;
         ]]>
       </Query>
       <Query ID="DeleteReport">
         <![CDATA[
           DELETE FROM REPORT
-          WHERE REPORT_ID = @ReportId
+          WHERE REPORT_ID = @ReportId;
           SELECT @@ROWCOUNT;
         ]]>
         <Param Name="ReportId" Type="System.Int32"  Size="0"/>
@@ -283,7 +283,7 @@
                       ACCOUNT_LOCKED = @AccountLocked,
                       LAST_LOGIN_DATETIME = GetDate()
               WHERE   IS_DELETED = 0
-              AND     LOGIN_ID = @LoginId
+              AND     LOGIN_ID = @LoginId;
               SELECT @@ROWCOUNT;
             ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
@@ -428,6 +428,7 @@
 		             INNER JOIN SEC_PERMISSION P ON M.PERMISSION_ID = P.PERMISSION_ID
                 WHERE   IS_DELETED = 0
                 AND	(MAKER_ID = @MakerId OR @MakerId = 0)
+                AND	M.CREATED_BY != @LoginId
                 AND	((M.PERMISSION_ID = @SelectedPermissionId) OR @SelectedPermissionId = -1)
 	            AND	M.STATUS in ('SaveAsDraft', 'CorrectionRequired')
             )
@@ -437,6 +438,7 @@
             order by ResultNum
             ]]>
         <Param Name="MakerId" Type="System.Int32"  Size="0"/>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="SelectedPermissionId" Type="System.Int32"  Size="0"/>
         <Param Name="PageSize" Type="System.Int32"  Size="0"/>
         <Param Name="PageNumber" Type="System.Int32"  Size="0"/>
@@ -507,7 +509,7 @@
                         INPUT_PARAMS = @InputParams,
                         ERROR_CODE = @ErrorCode,
                         UPDATED_ON = Getdate()
-                  WHERE OPERATION_ID = @OperationId
+                  WHERE OPERATION_ID = @OperationId;
                   SELECT @@ROWCOUNT;
                 ]]>
         <Param Name="OperationId" Type="System.Int32"  Size="0"/>
@@ -518,7 +520,7 @@
         <Query ID="InsertNotification">
         <![CDATA[
           INSERT INTO MSG_NOTIFICATIONS(OPERATION_ID,NOTIFICATION_TYPE,[FROM],[TO],CC,SUBJECT,BODY,STATUS,CREATED_BY,UPDATED_BY)
-          VALUES (@OperationId, @NotificationType, @From, @To, @CC, @Subject, @Body, @Status,@CreatedBy, @CreatedBy)
+          VALUES (@OperationId, @NotificationType, @From, @To, @CC, @Subject, @Body, @Status,@CreatedBy, @CreatedBy);
           SELECT SCOPE_IDENTITY(); 
         ]]>    
         <Param Name="OperationId" Type="System.Int32"  Size="0"/>
@@ -547,7 +549,7 @@
           UPDATE MAKER_LIST
           SET		DATA = @Data,
 		            Status = @Status,
-                PERMISSION_ID = (Select PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionId)
+                PERMISSION_ID = (Select PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionId),
 		            UPDATED_BY = @UpdatedBy,
                 UPDATED_ON = Getdate()
           WHERE MAKER_ID = @MakerId;
@@ -593,6 +595,7 @@
 		               INNER JOIN SEC_PERMISSION P ON M.PERMISSION_ID = P.PERMISSION_ID
                   WHERE   IS_DELETED = 0
                   AND	(MAKER_ID = @MakerId OR @MakerId = 0)
+                  AND	M.CREATED_BY != @LoginId
                   AND	((M.PERMISSION_ID = @SelectedPermissionId) OR @SelectedPermissionId = -1)
 	              AND	M.STATUS in ('PendingApproval')
               )
@@ -602,6 +605,7 @@
               order by ResultNum
               ]]>
         <Param Name="MakerId" Type="System.Int32"  Size="0"/>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="SelectedPermissionId" Type="System.Int32"  Size="0"/>
         <Param Name="PageSize" Type="System.Int32"  Size="0"/>
         <Param Name="PageNumber" Type="System.Int32"  Size="0"/>
@@ -640,14 +644,35 @@
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="RoleName" Type="System.String"  Size="200"/>
       </Query>
+      <Query ID="UpdateRole" DataSource="">
+        <![CDATA[
+              UPDATE SEC_ROLE
+              SET   ROLE_NAME = @RoleName,
+                    UPDATED_BY = @LoginId,
+                    UPDATED_ON = Getdate()
+              WHERE ROLE_ID = @RoleId;
+              SELECT @@ROWCOUNT;
+          ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="RoleName" Type="System.String"  Size="200"/>
+        <Param Name="RoleId" Type="System.Int32"  Size="0"/>
+      </Query>    
       <Query ID="InsertRolePermission" DataSource="">
         <![CDATA[
             Insert INTO SEC_ROLE_PERMISSION(ROLE_ID,PERMISSION_ID,CREATED_BY,UPDATED_BY)
-            VALUES (SCOPE_IDENTITY(), @PermissionId, @LoginId, @LoginId);
+            VALUES ((SELECT ROLE_ID FROM SEC_ROLE WHERE ROLE_NAME = @RoleName), @PermissionId, @LoginId, @LoginId);
           ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="PermissionId" Type="System.Int32"  Size="0"/>
+        <Param Name="RoleName" Type="System.String"  Size="200"/>
       </Query>
-
+      <Query ID="DeleteRolePermission" DataSource="">
+        <![CDATA[
+              DELETE FROM SEC_ROLE_PERMISSION
+              WHERE  ROLE_ID = @RoleId;
+              SELECT @@ROWCOUNT;
+            ]]>
+        <Param Name="RoleId" Type="System.Int32"  Size="0"/>
+      </Query>
   </Schema>
 </root>

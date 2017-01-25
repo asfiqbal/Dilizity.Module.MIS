@@ -23,6 +23,8 @@ namespace Dilizity.API.Security.Managers
     {
         private const string INSERT_ROLE = "InsertRole";
         private const string INSERT_ROLE_PERMISSION = "InsertRolePermission";
+        private const string UPDATE_ROLE = "UpdateRole";
+        private const string DELETE_ROLE_PERMISSION = "DeleteRolePermission";
 
 
         public void Do(BusService parameterBusService)
@@ -41,8 +43,8 @@ namespace Dilizity.API.Security.Managers
 
                     JObject model = (JObject)parameterBusService.Get("Model");
                     string data = model.ToString();
-                    string loginId= (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
-                    string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION_PARAM);
+                    string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
+                    string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
                     string status = model["Status"].ToString();
                     string id = model["Id"].ToString();
                     string roleName = model["Name"].ToString();
@@ -54,27 +56,16 @@ namespace Dilizity.API.Security.Managers
 
                     int.TryParse(id, out roleId);
 
-                    JObject AssignedPermissions = (JObject)model["AssignedPermissions"];
+                    JArray AssignedPermissions = (JArray)model["AssignedPermissions"];
+
+                    if (roleId > 0)
+                        Success = UpdateRole(loginId, roleName, roleId, AssignedPermissions);
+                    else
+                        Success = InsertRole(loginId, roleName, AssignedPermissions);
 
 
-                    using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA, true, true))
-                    {
-                        dataLayer.DelayExecuteNonQueryUsingKey(INSERT_ROLE, "RoleName", roleName, "LoginId", loginId);
-
-                        foreach (JToken token in AssignedPermissions.FindTokens("Id"))
-                        {
-                            Console.WriteLine(token.Path + ": " + token.ToString());
-                            dataLayer.DelayExecuteNonQueryUsingKey(INSERT_ROLE_PERMISSION, "PermissionId", token.ToString(), "LoginId", loginId);
-                        }
-
-                        Success = dataLayer.DelayExecuteBulk();
-
-                        if (Success <= 0)
-                            throw new ApplicationBusinessException(GlobalErrorCodes.SQLError);
-                    }
-
-                    parameterBusService.Add(GlobalConstants.OUT_RESULT, Success);
-                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.SUCCESS);
+                    parameterBusService[GlobalConstants.OUT_RESULT] = Success;
+                    parameterBusService[GlobalConstants.OUT_FUNCTION_STATUS] = GlobalConstants.SUCCESS;
 
                     childOperation.ErrorCode = GlobalErrorCodes.Success;
                     childOperation.Status = GlobalConstants.SUCCESS;
@@ -83,7 +74,7 @@ namespace Dilizity.API.Security.Managers
                 catch (ApplicationBusinessException ex)
                 {
                     Log.Error(this.GetType(), ex.Message, ex);
-                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                    parameterBusService[GlobalConstants.OUT_FUNCTION_STATUS] = GlobalConstants.FAILURE;
                     childOperation.ErrorCode = ex.ErrorCode;
                     childOperation.Status = GlobalConstants.FAILURE;
                     childOperation.saveToDB();
@@ -92,7 +83,7 @@ namespace Dilizity.API.Security.Managers
                 catch (Exception ex)
                 {
                     Log.Error(this.GetType(), ex.Message, ex);
-                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                    parameterBusService[GlobalConstants.OUT_FUNCTION_STATUS] = GlobalConstants.FAILURE;
                     childOperation.ErrorCode = GlobalErrorCodes.SystemError;
                     childOperation.Status = GlobalConstants.FAILURE;
                     childOperation.saveToDB();
@@ -101,8 +92,51 @@ namespace Dilizity.API.Security.Managers
             }
         }
 
+        private static int? InsertRole(string loginId, string roleName, JArray AssignedPermissions)
+        {
+            int? Success;
+            using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA, true, true))
+            {
+                dataLayer.DelayExecuteNonQueryUsingKey(INSERT_ROLE, "RoleName", roleName, "LoginId", loginId);
 
+                foreach (JToken token in AssignedPermissions.FindTokens("Id"))
+                {
+                    Console.WriteLine(token.Path + ": " + token.ToString());
+                    dataLayer.DelayExecuteNonQueryUsingKey(INSERT_ROLE_PERMISSION, "PermissionId", token.ToString(), "RoleName", roleName, "LoginId", loginId);
+                }
 
+                Success = dataLayer.DelayExecuteBulk();
+                dataLayer.CommitTransaction();
 
+                if (Success <= 0)
+                    throw new ApplicationBusinessException(GlobalErrorCodes.SQLError);
+            }
+
+            return Success;
+        }
+
+        private static int? UpdateRole(string loginId, string roleName, int roleId, JArray AssignedPermissions)
+        {
+            int? Success;
+            using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA, true, true))
+            {
+                dataLayer.DelayExecuteNonQueryUsingKey(UPDATE_ROLE, "RoleName", roleName, "LoginId", loginId, "RoleId", roleId);
+                dataLayer.DelayExecuteNonQueryUsingKey(DELETE_ROLE_PERMISSION, "RoleId", roleId);
+
+                foreach (JToken token in AssignedPermissions.FindTokens("Id"))
+                {
+                    Console.WriteLine(token.Path + ": " + token.ToString());
+                    dataLayer.DelayExecuteNonQueryUsingKey(INSERT_ROLE_PERMISSION, "PermissionId", token.ToString(), "RoleName", roleName, "LoginId", loginId);
+                }
+
+                Success = dataLayer.DelayExecuteBulk();
+                dataLayer.CommitTransaction();
+
+                if (Success <= 0)
+                    throw new ApplicationBusinessException(GlobalErrorCodes.SQLError);
+            }
+
+            return Success;
+        }
     }
 }

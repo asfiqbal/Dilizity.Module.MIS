@@ -522,8 +522,9 @@ namespace Dilizity.Core.DAL
                         }
 
                         object result = command.ExecuteScalar();
-                        return result;
-                    }
+                    
+                        return Convert.ToInt32(result);
+                }
                 //}
             }
         }

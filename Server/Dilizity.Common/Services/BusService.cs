@@ -55,5 +55,17 @@ namespace Dilizity.Business.Common.Services
                     throw new FormatException(string.Format("[{0}] Key is either Empty or Null", key));
             }
         }
+
+        public object this[string key]
+        {
+            get
+            {
+                return BusObject[key];
+            }
+            set
+            {
+                BusObject[key] = value;
+            }
+        }
     }
 }

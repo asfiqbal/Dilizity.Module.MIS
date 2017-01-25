@@ -100,11 +100,11 @@ namespace Dilizity.API.Security.Controllers
                     dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
                     dataBasService.Add("Model", jobject["Model"]);
 
-                    IAbstractBusiness businessManager = new MakerSaveAsDraftBusinessManager();
-                    businessManager.Do(dataBasService);
+                    //IAbstractBusiness businessManager = new RoleAddUpdateBusinessManager();
+                    //businessManager.Do(dataBasService);
 
-                    //WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
-                    //workFlowManager.Do(dataBasService);
+                    WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
+                    workFlowManager.Do(dataBasService);
 
 
                     dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);

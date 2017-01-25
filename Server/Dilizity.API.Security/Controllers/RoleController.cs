@@ -172,12 +172,8 @@ namespace Dilizity.API.Security.Controllers
                     JObject model = (JObject)jobject["Model"];
                     dataBasService.Add("Model", model);
 
-                    IAbstractBusiness businessManager = new MakerApprovalReadyBusinessManager();
-                    businessManager.Do(dataBasService);
-
-                    //WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
-                    //workFlowManager.Do(dataBasService);
-
+                    WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
+                    workFlowManager.Do(dataBasService);
 
                     dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);
                     return Ok(outObject);
@@ -209,12 +205,11 @@ namespace Dilizity.API.Security.Controllers
                     JObject model = (JObject)jobject["Model"];
                     dataBasService.Add("Model", model);
 
-                    IAbstractBusiness businessManager = new MakerApprovalReadyBusinessManager();
-                    businessManager.Do(dataBasService);
+                    //IAbstractBusiness businessManager = new MakerApprovalReadyBusinessManager();
+                    //businessManager.Do(dataBasService);
 
-                    //WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
-                    //workFlowManager.Do(dataBasService);
-
+                    WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
+                    workFlowManager.Do(dataBasService);
 
                     dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);
                     return Ok(outObject);

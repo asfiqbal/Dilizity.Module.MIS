@@ -70,8 +70,7 @@ namespace ilizity.Business.Common.Model
                     //var _t = DynamicExtensions.ToDynamic<Operation>(this);
 
 
-                    Object _t =  dataLayer.ExecuteScalarUsingKey(INSERT_OPERATION, "ParentOperationId", ParentOperationId, "PermissionName", PermissionName, "PermissionClass", PermissionClass, "InputParams", InputParams, "Status", Status, "ErrorCode", ErrorCode, "UpdatedBy", UpdatedBy);
-                    OperationId = Convert.ToInt32(_t);
+                    OperationId =  (int)dataLayer.ExecuteScalarUsingKey(INSERT_OPERATION, "ParentOperationId", ParentOperationId, "PermissionName", PermissionName, "PermissionClass", PermissionClass, "InputParams", InputParams, "Status", Status, "ErrorCode", ErrorCode, "UpdatedBy", UpdatedBy);
                 }
 
             }

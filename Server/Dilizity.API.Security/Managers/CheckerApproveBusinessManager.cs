@@ -42,7 +42,7 @@ namespace Dilizity.API.Security.Managers
                     JObject model = (JObject)parameterBusService.Get("Model");
                     string data = model.ToString();
                     string loginId= (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
-                    string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION_PARAM);
+                    string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
                     string status = model["Status"].ToString();
 
                     int makerId = -1;
