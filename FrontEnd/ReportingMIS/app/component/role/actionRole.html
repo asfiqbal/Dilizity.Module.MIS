@@ -21,13 +21,13 @@
                             <a ng-show="vm.isMakerMode()" uib-tooltip="Ready for Checker Approval" tooltip-placement="left" ng-click="vm.checkerApprovalReady('PendingApproval')" class="collapse-link"><i class="glyphicon glyphicon-floppy-save"></i></a>
                         </li>
                         <li>
-                            <a ng-show="vm.isCheckerMode()" uib-tooltip="Approve" tooltip-placement="left" ng-click="vm.approve()" class="collapse-link"><i class="glyphicon glyphicon-ok"></i></a>
+                            <a ng-show="vm.isCheckerMode()" uib-tooltip="Approve" tooltip-placement="left" ng-click="vm.approve('Approve')" class="collapse-link"><i class="glyphicon glyphicon-ok"></i></a>
                         </li>
                         <li>
-                            <a ng-show="vm.isCheckerMode()" uib-tooltip="Correction Required" tooltip-placement="left" ng-click="vm.correctionRequired()" class="collapse-link"><i class="glyphicon glyphicon-eye-open"></i></a>
+                            <a ng-show="vm.isCheckerMode()" uib-tooltip="Correction Required" tooltip-placement="left" ng-click="vm.correctionRequired('CorrectionRequired')" class="collapse-link"><i class="glyphicon glyphicon-eye-open"></i></a>
                         </li>
                         <li>
-                            <a ng-show="vm.isCheckerMode()" uib-tooltip="Reject" tooltip-placement="left" ng-click="vm.reject()" class="collapse-link"><i class="glyphicon glyphicon-remove"></i></a>
+                            <a ng-show="vm.isCheckerMode()" uib-tooltip="Reject" tooltip-placement="left" ng-click="vm.reject('Reject')" class="collapse-link"><i class="glyphicon glyphicon-remove"></i></a>
                         </li>
                         <li>
                             <a ng-show="vm.permissionName=='Dilizity.Backoffice.Role.Add'" uib-tooltip="Ready for Checker Approval" tooltip-placement="left" ng-click="vm.add()" class="collapse-link"><i class="glyphicon glyphicon-saved"></i></a>
@@ -36,8 +36,12 @@
                             <a ng-show="vm.permissionName=='Dilizity.Backoffice.Role.Edit'" uib-tooltip="Ready for Checker Approval" tooltip-placement="left" ng-click="vm.update()" class="collapse-link"><i class="glyphicon glyphicon-floppy-save"></i></a>
                         </li>
                         <li>
-                            <a ng-show="vm.isMakerCheckerMode()" data-toggle="modal" data-target=".bs-example-modal-sm" uib-tooltip="Comments" tooltip-placement="left" ng-click="vm.update()" class="collapse-link"><i class="glyphicon glyphicon-comment"></i></a>
+                            <a ng-show="vm.isMakerCheckerMode()" data-toggle="modal" data-target=".bs-example-modal-lg" uib-tooltip="Comments" tooltip-placement="left" class="collapse-link"><i class="glyphicon glyphicon-comment"></i></a>
                         </li>
+                        <li>
+                            <a ng-show="vm.permissionName=='Dilizity.Backoffice.Role.Edit.Checker"  uib-tooltip="Compare" tooltip-placement="left" class="collapse-link"><i class="glyphicon glyphicon-sunglasses"></i></a>
+                        </li>
+                        
                     </ul>
                     <div class="clearfix"></div>
                 </div>
@@ -93,33 +97,56 @@
                         </div>
                     </form>
                 </div>
-                <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog modal-sm">
+                <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">×</span>
                                 </button>
-                                <h4 class="modal-title" id="myModalLabel2">Maker Activities</h4>
+                                <h4 class="modal-title" id="myModalLabel2">Notes</h4>
                             </div>
                             <div class="modal-body">
-                                <h4>Following Maker Activities have been selected for Deletion!</h4>
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr ng-repeat="item in vm.selectedMakerActivities">
-                                            <th scope="row">{{item}}</th>
-                                        </tr>
-                                    </tbody>
-                                </table>
+
+                                <div class="" role="tabpanel" data-example-id="togglable-tabs">
+                                    <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+                                        <li role="presentation" class="active">
+                                            <a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Message</a>
+                                        </li>
+                                        <li role="presentation" class="">
+                                            <a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Notes</a>
+                                        </li>
+                                    </ul>
+                                    <div id="myTabContent" class="tab-content">
+                                        <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
+                                            <form>
+                                                <div class="form-group">
+                                                    <label for="message-text" class="control-label">Message:</label>
+                                                    <textarea class="form-control" ng-model="vm.newMessage" id="message-text"></textarea>
+                                                </div>
+                                            </form>                                      
+                                         </div>
+                                        <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="item in vm.notes">
+                                                        <th scope="row">{{item}}</th>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="vm.deleteRoles()">Save</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="vm.saveNote()">Save</button>
                             </div>
                         </div>
                     </div>

@@ -15,6 +15,7 @@
         var makerId = -1;
 
         vm.title = '';
+        vm.newMessage = '';
 
         vm.saveAsDraft = saveAsDraft;
         vm.checkerApprovalReady = checkerApprovalReady;
@@ -31,6 +32,8 @@
         vm.roleName = '';
         vm.availablePermissions = {};
         vm.assignedPermissions = [];
+        vm.notes = [];
+
         vm.permissionName = '';
 
         vm.deleteTreeItem = function (tree, id) {
@@ -109,6 +112,8 @@
                 vm.roleName = data.Name;
                 vm.availablePermissions = data.AvailablePermissions;
                 vm.assignedPermissions = data.AssignedPermissions;
+                vm.notes = data.Notes;
+
                 console.log("data", data);
             }, function (response) {
                 Notification.error({ message: "You don't have permission", positionY: 'bottom', positionX: 'right' });
@@ -136,11 +141,9 @@
             }
             console.log("makerId", makerId);
 
-
             var arr = vm.permissionName.split(".");
             vm.title = arr[arr.length - 1] + ' Role';
             console.log("vm.title", vm.title);
-
 
 
             loadScreenPermissionsAndInfo();
@@ -231,7 +234,7 @@
             console.log("add Begin");
             //vm.dataLoading = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
-            model = CreateModel(null);
+            var model = CreateModel(null);
 
             console.log(model);
 
@@ -249,7 +252,7 @@
             console.log("update Begin");
             //vm.dataLoading = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
-            model = CreateModel(null);
+            var model = CreateModel(null);
 
             console.log(model);
 
@@ -269,14 +272,15 @@
             var tmpUserName = $rootScope.globals.currentUser.username;
             var model = {};
 
-            if (vm.permissionName.indexOf(".Maker") != -1) {
+            if (isMakerCheckerMode()) {
                 model = {
                     "Id": roleId,
                     "MakerId": makerId,
                     "Name": vm.roleName,
                     "Status": makerStatus,
                     "AvailablePermissions": vm.availablePermissions,
-                    "AssignedPermissions": vm.assignedPermissions
+                    "AssignedPermissions": vm.assignedPermissions,
+                    "Notes": vm.notes
                 };
             }
             else {
@@ -288,6 +292,9 @@
                     "AssignedPermissions": vm.assignedPermissions
                 };
             }
+
+            console.log("model", model);
+
 
             return model;
             console.log("CreateModel End");
@@ -305,7 +312,23 @@
             return HelperService.containsAny(vm.permissionName, ['Checker'])
         };
 
+        vm.saveNote = function saveNote() {
+            console.log("saveNote Begin");
 
+            console.log("vm.notes", vm.notes);
+            console.log("vm.newMessage", vm.newMessage);
+
+            if (!vm.notes) {
+                vm.notes = new Array();
+            }
+
+            console.log("vm.notes", vm.notes);
+
+            vm.notes.push(vm.newMessage);
+            vm.newMessage = '';
+
+            console.log("saveNote End");
+        };
 
     }
 

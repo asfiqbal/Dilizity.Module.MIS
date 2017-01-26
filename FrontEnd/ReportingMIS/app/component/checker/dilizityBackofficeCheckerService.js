@@ -38,7 +38,7 @@
 
             console.log("UpdateMakerActivity Begin");
 
-            $http.post(AppSettings.baseUrl + 'Checker/Update', { PermissionId: permissionName, LoginId: userName, Model: model })
+            $http.post(AppSettings.baseUrl + 'Checker/CorrectionRequired', { PermissionId: permissionName, LoginId: userName, Model: model })
                 .then(function (response) {
                     successCallback(response);
                 }, function (response) {
@@ -52,7 +52,7 @@
 
             console.log("Add Begin");
 
-            $http.post(AppSettings.baseUrl + 'Checker/Add', { PermissionId: permissionName, LoginId: userName, Model: model })
+            $http.post(AppSettings.baseUrl + 'Checker/Approve', { PermissionId: permissionName, LoginId: userName, Model: model })
                 .then(function (response) {
                     successCallback(response);
                 }, function (response) {
@@ -91,7 +91,7 @@
         function Reject(permissionId, userName, makerActivitiesToBeDeleted, successCallback, errorCallback) {
             console.log("Delete Begin");
 
-            $http.post(AppSettings.baseUrl + 'Checker/Delete', { PermissionId: permissionId, LoginId: userName, MakerActivities: makerActivitiesToBeDeleted })
+            $http.post(AppSettings.baseUrl + 'Checker/Reject', { PermissionId: permissionId, LoginId: userName, MakerActivities: makerActivitiesToBeDeleted })
                 .then(function (response) {
                     successCallback(response);
                 }, function (response) {
