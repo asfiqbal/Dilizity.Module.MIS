@@ -428,7 +428,7 @@
 		             INNER JOIN SEC_PERMISSION P ON M.PERMISSION_ID = P.PERMISSION_ID
                 WHERE   IS_DELETED = 0
                 AND	(MAKER_ID = @MakerId OR @MakerId = 0)
-                AND	M.CREATED_BY != @LoginId
+                AND	M.CREATED_BY = @LoginId
                 AND	((M.PERMISSION_ID = @SelectedPermissionId) OR @SelectedPermissionId = -1)
 	            AND	M.STATUS in ('SaveAsDraft', 'CorrectionRequired')
             )

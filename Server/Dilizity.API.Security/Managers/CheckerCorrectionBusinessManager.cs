@@ -44,6 +44,7 @@ namespace Dilizity.API.Security.Managers
                     string loginId= (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
                     string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
                     string status = model["Status"].ToString();
+                    string makerPermissionId = permissionId.Replace(".Checker", ".Maker");
 
                     int makerId = -1;
                     string smakerId = model[GlobalConstants.MAKER_ID_PARAM].ToString();
@@ -56,7 +57,7 @@ namespace Dilizity.API.Security.Managers
 
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                     {
-                        Success = (int?)dataLayer.ExecuteScalarUsingKey(UPDATE_MAKER_LIST, "MakerId", makerId, "PermissionId", permissionId, "Data", data, "Status", status, "UpdatedBy", loginId);
+                        Success = (int?)dataLayer.ExecuteScalarUsingKey(UPDATE_MAKER_LIST, "MakerId", makerId, "PermissionId", makerPermissionId, "Data", data, "Status", status, "UpdatedBy", loginId);
 
                         if (Success <= 0)
                             throw new ApplicationBusinessException(GlobalErrorCodes.SQLError);
