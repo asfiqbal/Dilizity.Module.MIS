@@ -5,8 +5,8 @@
         .module('ReportingMIS')
         .factory('AuthenticationService', AuthenticationService);
 
-    AuthenticationService.$inject = ['$http', '$cookieStore', '$rootScope', '$timeout', 'AppSettings'];
-    function AuthenticationService($http, $cookieStore, $rootScope, $timeout, AppSettings) {
+    AuthenticationService.$inject = ['$http', '$cookieStore', '$rootScope', '$timeout', 'AppSettings', 'UniversalService'];
+    function AuthenticationService($http, $cookieStore, $rootScope, $timeout, AppSettings, UniversalService) {
         var service = {};
 
         service.Login = Login;
@@ -17,71 +17,51 @@
 
         return service;
 
-        function Login(permission, username, password, callback) {
+        function Login(permission, username, password, successCallBack, errorCallBack) {
+            console.log("Login Begin");
 
-            /* Dummy authentication for testing, uses $timeout to simulate api call
-             ----------------------------------------------*/
-            //$timeout(function () {
-            //    var response;
-            //    var user = UserService.GetByUsername(username);
-            //    if (user !== null && user.password === password) {
-            //        response = { success: true };
-            //    } else {
-            //        response = { success: false, message: 'Username or password is incorrect' };
+            var encPassword = Base64.encode(password);
+
+            var model = {
+                Password: encPassword
+            }
+
+            UniversalService.Do(permission, username, model, successCallBack, errorCallBack);
+
+            //$http.post(AppSettings.baseUrl + 'Universal/Do', { PermissionId: permission, LoginId: username, Model: model })
+            //    .then(function (response) {
+            //        successCallBack(response);
+            //    }, function (response) {
+            //        errorCallBack(response);
             //    }
-            //    callback(response);
-            //}, 1000);
+            //);
 
-            /* Use this for real authentication
-             ----------------------------------------------*/
-            //$http.post('http://localhost:54341/api/Security/Authenticate', { LoginId: username, Password: password })
-            //    .success(function (response) {
-            //        callback(response);
-            //    });
-            $http.post(AppSettings.baseUrl + 'Security/Authenticate', { PermissionId: permission, LoginId: username, Password: password })
-                .then(function (response) {
-                    if (response.success) {
-                        AuthenticationService.SetCredentials(username, password);
-                    }
-                    callback(response);
-                }, function (response) {
-                    callback(response);
-                }
-            );
-
-
+            console.log("Login End");
         }
 
-        function ChangePassword(permission, loginId, oldPassword, newPassword, callback) {
+        function ChangePassword(permission, loginId, oldPassword, newPassword, successCallBack, errorCallBack) {
+            console.log("ChangePassword Begin");
 
-            /* Dummy authentication for testing, uses $timeout to simulate api call
-             ----------------------------------------------*/
-            //$timeout(function () {
-            //    var response;
-            //    var user = UserService.GetByUsername(username);
-            //    if (user !== null && user.password === password) {
-            //        response = { success: true };
-            //    } else {
-            //        response = { success: false, message: 'Username or password is incorrect' };
+            var encOldPassword = Base64.encode(oldPassword);
+            var encNewPassword = Base64.encode(newPassword);
+
+
+            var model = {
+                OldPassword: encOldPassword,
+                NewPassword: encNewPassword
+            }
+
+            UniversalService.Do(permission, username, model, successCallBack, errorCallBack);
+
+
+            //$http.post(AppSettings.baseUrl + 'Universal/Do', { PermissionId: permission, LoginId: loginId, Model: model })
+            //    .then(function (response) {
+            //        successCallBack(response);
+            //    }, function (response) {
+            //        errorCallBack(response);
             //    }
-            //    callback(response);
-            //}, 1000);
-
-            /* Use this for real authentication
-             ----------------------------------------------*/
-            //$http.post('http://localhost:54341/api/Security/ChangePassword', { LoginId: username, Password: password })
-            //    .success(function (response) {
-            //        callback(response);
-            //    });
-            $http.post(AppSettings.baseUrl + 'Security/ChangePassword', { PermissionId: permission, LoginId: loginId, OldPassword: oldPassword, NewPassword: newPassword })
-                .then(function (response) {
-                    callback(response);
-                }, function (response) {
-                    callback(response);
-                }
-            );
-
-
+            //);
+            console.log("ChangePassword Begin");
         }
 
         function SetCredentials(username, password) {

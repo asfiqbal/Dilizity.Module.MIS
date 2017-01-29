@@ -5,8 +5,8 @@
         .module('ReportingMIS')
         .controller('changePasswordController', changePasswordController);
 
-    changePasswordController.$inject = ['$rootScope', '$window', '$location', '$state', 'AuthenticationService', 'FlashService'];
-    function changePasswordController($rootScope, $window, $location, $state, AuthenticationService, FlashService) {
+    changePasswordController.$inject = ['$rootScope', '$window', '$location', '$state', 'AuthenticationService', 'Notification'];
+    function changePasswordController($rootScope, $window, $location, $state, AuthenticationService, Notification) {
         var vm = this;
 
         vm.changePassword = changePassword;
@@ -21,16 +21,22 @@
             var username = $rootScope.globals.currentUser.username;
             console.log("vm.permission", vm.permission);
             AuthenticationService.ChangePassword(vm.permission, username, vm.oldPassword, vm.newPassword, function (response) {
-                if (response.status == 200) {
-                    console.log("AuthenticationService.ChangePassword", response.Message);
+                console.log("Success!");
+
+                var data = angular.fromJson(response.data);
+                if (data.ErrorCode == 0) {
+                    AuthenticationService.SetCredentials(vm.username, vm.password);
                     $window.location = '/index.html';
                 }
-                else {
-                    console.log("response.Message", response.Message);
-                    FlashService.Error("Change Password Failed!");
-                    vm.dataLoading = false;
+                else  {
+                    Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
                 }
+
+            }, function (response) {
+                Notification.error({ message: "Internal Server Error Occurred!, Check Server Logs.", positionY: 'bottom', positionX: 'right' });
             });
+
+            vm.dataLoading = false;
         };
     }
 

@@ -6,8 +6,8 @@
         .module('ReportingMIS')
         .controller('searchRoleController', searchRoleController);
 
-    searchRoleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'AlertService', 'Notification'];
-    function searchRoleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, AlertService, Notification) {
+    searchRoleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'UniversalService', 'Notification'];
+    function searchRoleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, UniversalService, Notification) {
         var vm = this;
 
         var permissionName = '';
@@ -17,6 +17,7 @@
         vm.loadScreenPermissionsAndInfo = loadScreenPermissionsAndInfo;
         vm.load = load;
         vm.deleteRoles = deleteRoles;
+        vm.isMakerDelete = isMakerDelete;
 
         vm.roleId = '';
         vm.roleName = '';
@@ -69,13 +70,17 @@
               { name: 'Action', cellTemplate: '<div>'+
                                                 '<ul class="nav navbar-right panel_toolbox">'+
 	                                                '<li>'+
-                                                		'<a ng-show="vm.userPermission.View==Dilizity.Backoffice.Role.View" uib-tooltip="View Role" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, makerId: 0, permissionName: \'Dilizity.Backoffice.Role.View\' })" class="pull-right"><i class="fa fa-eye"></i></a>' +
+                                                		'<a ng-show="grid.appScope.vm.userPermission.View===\'Dilizity.Backoffice.Role.View\'" uib-tooltip="View Role" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, makerId: 0, permissionName: \'Dilizity.Backoffice.Role.View\' })" class="pull-right"><i class="fa fa-eye"></i></a>' +
 	                                                '</li>'+
 	                                                '<li>'+
-		                                                '<a ng-show="vm.userPermission.Edit==Dilizity.Backoffice.Role.Edit" uib-tooltip="Edit Role" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, makerId: 0, permissionName: \'Dilizity.Backoffice.Role.Edit\' })" class="pull-right"><i class="fa fa-pencil-square"></i></a>' +
-		                                                '<a ng-show="vm.userPermission.Edit==Dilizity.Backoffice.Role.Edit.Maker" uib-tooltip="Edit Role [Maker]" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, makerId: 0, permissionName: \'Dilizity.Backoffice.Role.Edit.Maker\' })" class="pull-right"><i class="fa fa-pencil-square"></i></a>' +
+		                                                '<a ng-show="grid.appScope.vm.userPermission.Edit===\'Dilizity.Backoffice.Role.Edit\'" uib-tooltip="Edit Role" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, makerId: 0, permissionName: \'Dilizity.Backoffice.Role.Edit\' })" class="pull-right"><i class="fa fa-pencil-square"></i></a>' +
+		                                                '<a ng-show="grid.appScope.vm.userPermission.Edit===\'Dilizity.Backoffice.Role.Edit.Maker\'" uib-tooltip="Edit Role [Maker]" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, makerId: 0, permissionName: \'Dilizity.Backoffice.Role.Edit.Maker\' })" class="pull-right"><i class="fa fa-pencil-square"></i></a>' +
 	                                                '<li>' +
-                                                '</ul>'+
+	                                                '<li>' +
+		                                                '<a ng-show="grid.appScope.vm.userPermission.Delete===\'Dilizity.Backoffice.Role.Delete\'" uib-tooltip="Delete Role" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, makerId: 0, permissionName: \'Dilizity.Backoffice.Role.Delete\' })" class="pull-right"><i class="fa fa-trash"></i></a>' +
+		                                                '<a ng-show="grid.appScope.vm.userPermission.Delete===\'Dilizity.Backoffice.Role.Delete.Maker\'" uib-tooltip="Delete Role [Maker]" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: row.entity.RoleId, makerId: 0, permissionName: \'Dilizity.Backoffice.Role.Delete.Maker\' })" class="pull-right"><i class="fa fa-trash"></i></a>' +
+	                                                '<li>' +
+                                                '</ul>' +
                                                '</div>' }
             ],
             data:[],
@@ -132,15 +137,21 @@
         function loadScreenPermissionsAndInfo() {
             console.log("loadScreenPermissionsAndInfo Begin");
             var tmpUserName = $rootScope.globals.currentUser.username;
-            RoleService.LoadSearchScreen('Dilizity.Backoffice.Role', tmpUserName, function (response) {
-                var data = angular.fromJson(response.data);
-                vm.userPermission = data.UserPermission;
-                vm.permissionList = data.PermissionList;
-                console.log("data", data);
-                console.log("vm.userPermission.Add", vm.userPermission.Add);
-            }, function (response) {
-                Notification.error({message: "You don't have permission", positionY: 'bottom', positionX: 'right'});
-            });
+            
+            UniversalService.Do('Dilizity.Backoffice.Role', tmpUserName, null,
+                  function (response) {
+                      var data = angular.fromJson(response.data);
+
+                      if (data.ErrorCode == 0) {
+                          vm.userPermission = data.Data.UserPermission;
+                          vm.permissionList = data.Data.PermissionList;
+                      }
+                      else {
+                          Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                      }
+                  }, function (response) {
+                      Notification.error({message: "You don't have permission", positionY: 'bottom', positionX: 'right'});
+                  });
             console.log("loadScreenPermissionsAndInfo End");
         };
 
@@ -177,28 +188,34 @@
             console.log("searchRole Begin");
             var tmpUserName = $rootScope.globals.currentUser.username;
             vm.permissionName = "Dilizity.Backoffice.Role.Search";
-            //console.log("permissionName", vm.permissionName);
-            //console.log("roleId", vm.roleId);
-            //console.log("roleName", vm.roleName);
-            //console.log("selectedRolePermission", vm.selectedRolePermission);
-            //console.log("$scope.pagination.pageSize", $scope.pagination.pageSize);
-            //console.log("$scope.pagination.pageNumber", $scope.pagination.pageNumber);
 
-            RoleService.Search(vm.permissionName, tmpUserName, vm.roleId, vm.roleName, vm.selectedRolePermission, $scope.pagination.pageSize, $scope.pagination.pageNumber, $scope.sort,
+            var model = {
+                RoleId: vm.roleId,
+                RoleName: vm.roleName,
+                RolePermissionId: vm.selectedRolePermission,
+                PageSize: $scope.pagination.pageSize,
+                PageNumber: $scope.pagination.pageNumber,
+                Sort: $scope.sort
+            }
+
+            UniversalService.Do(vm.permissionName, tmpUserName, model,
                 function (response) {
                     console.log("Success!");
-                    $scope.gridOptions.data = response.data;
-                    $scope.pagination.totalItems = 25;
+
+                    var data = angular.fromJson(response.data);
+
+                    if (data.ErrorCode == 0) {
+                        $scope.gridOptions.data = data.Data;
+                        $scope.pagination.totalItems = 25;
+                    }
+                    else
+                    {
+                        Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                    }
                 },
                 function (response) {
                     console.log("response!", response);
-                    if (response.status == -1) {
-                        Notification.error({message: "Service Not Available.", positionY: 'bottom', positionX: 'right' });
-
-                    }
-                    else {
-                        Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
-                    }
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
                 }
             );
             console.log("searchRole End");
@@ -230,6 +247,12 @@
             );
             console.log("deleteRoles End");
 
+        };
+
+
+        function isMakerDelete() {
+            console.log("isMakerDelete Begin");
+            return HelperService.containsAny(vm.userPermission, ['Maker', 'Delete'])
         };
 
 

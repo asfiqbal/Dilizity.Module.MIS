@@ -7,8 +7,8 @@
         .module('ReportingMIS')
         .controller('actionRoleController', actionRoleController);
 
-    actionRoleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'Notification', 'HelperService', 'dilizityBackofficeMakerService', 'dilizityBackofficeCheckerService'];
-    function actionRoleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, Notification, HelperService, dilizityBackofficeMakerService, dilizityBackofficeCheckerService) {
+    actionRoleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'Notification', 'HelperService', 'dilizityBackofficeMakerService', 'dilizityBackofficeCheckerService','UniversalService'];
+    function actionRoleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, Notification, HelperService, dilizityBackofficeMakerService, dilizityBackofficeCheckerService, UniversalService) {
         var vm = this;
 
         var roleId = -1;
@@ -106,18 +106,34 @@
         function loadScreenPermissionsAndInfo() {
             console.log("loadScreenPermissionsAndInfo Begin");
             var tmpUserName = $rootScope.globals.currentUser.username;
-            RoleService.GetActionRoleScreenInfo(vm.permissionName, tmpUserName, roleId, makerId, function (response) {
-                var data = angular.fromJson(response.data);
-                vm.roleId = data.Id;
-                vm.roleName = data.Name;
-                vm.availablePermissions = data.AvailablePermissions;
-                vm.assignedPermissions = data.AssignedPermissions;
-                vm.notes = data.Notes;
 
-                console.log("data", data);
-            }, function (response) {
-                Notification.error({ message: "You don't have permission", positionY: 'bottom', positionX: 'right' });
-            });
+
+            var model = {
+                RoleId: roleId,
+                MakerId: makerId
+            }
+
+            UniversalService.Do(vm.permissionName, tmpUserName, model,
+                function (response) {
+                    console.log("Success!");
+                    var data = angular.fromJson(response.data);
+
+                    if (response.data.ErrorCode == 0) {
+                        vm.roleId = data.Data.Id;
+                        vm.roleName = data.Data.Name;
+                        vm.availablePermissions = data.Data.AvailablePermissions;
+                        vm.assignedPermissions = data.Data.AssignedPermissions;
+                        vm.notes = data.Data.Notes;
+                    }
+                    else {
+                        Notification.error({ message: response.data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                    }
+                },
+                function (response) {
+                    console.log("response!", response);
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+                }
+            );
 
             console.log("loadScreenPermissionsAndInfo End");
         };
@@ -157,12 +173,37 @@
             var tmpUserName = $rootScope.globals.currentUser.username;
             var model = CreateModel(makerStatus);
 
-            dilizityBackofficeMakerService.SaveAsDraft(vm.permissionName, tmpUserName, model, function (response) {
-                console.log("Success!");
-                Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
-            }, function (response) {
-                Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
-            });
+            var savePermission = vm.permissionName + '.Save';
+
+            //dilizityBackofficeMakerService.SaveAsDraft(savePermission, tmpUserName, model, function (response) {
+            //    console.log("Success!");
+            //    Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+            //}, function (response) {
+            //    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+            //});
+
+            console.log("savePermission", savePermission);
+
+
+            UniversalService.Do(savePermission, tmpUserName, model,
+                function (response) {
+                    console.log("Success!");
+                    var data = angular.fromJson(response.data);
+
+                    if (data.ErrorCode == 0) {
+                        Notification.success({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                    }
+                    else {
+                        Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                    }
+                },
+                function (response) {
+                    console.log("response!", response);
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+                }
+            );
+
+
 
             console.log("saveAsDraft End");
         };
@@ -171,14 +212,34 @@
             console.log("checkerApprovalReady Begin");
             //vm.dataLoading = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
+            var savePermission = vm.permissionName + '.ApprovalReady';
+
             var model = CreateModel(makerStatus);
 
-            dilizityBackofficeMakerService.CheckerApprovalReady(vm.permissionName, tmpUserName, model, function (response) {
-                console.log("Success!");
-                Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
-            }, function (response) {
-                Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
-            });
+            //dilizityBackofficeMakerService.CheckerApprovalReady(vm.permissionName, tmpUserName, model, function (response) {
+            //    console.log("Success!");
+            //    Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+            //}, function (response) {
+            //    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+            //});
+
+            UniversalService.Do(savePermission, tmpUserName, model,
+                function (response) {
+                    console.log("Success!");
+                    var data = angular.fromJson(response.data);
+
+                    if (data.ErrorCode == 0) {
+                        Notification.success({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                    }
+                    else {
+                        Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                    }
+                },
+                function (response) {
+                    console.log("response!", response);
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+                }
+            );
 
             console.log("checkerApprovalReady End");
         };

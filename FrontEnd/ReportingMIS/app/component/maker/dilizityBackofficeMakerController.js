@@ -6,8 +6,8 @@
         .module('ReportingMIS')
         .controller('dilizityBackofficeMakerController', dilizityBackofficeMakerController);
 
-    dilizityBackofficeMakerController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'dilizityBackofficeMakerService', 'AlertService', 'Notification'];
-    function dilizityBackofficeMakerController($scope, $stateParams, $rootScope, AuthenticationService, dilizityBackofficeMakerService, AlertService, Notification) {
+    dilizityBackofficeMakerController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'dilizityBackofficeMakerService', 'UniversalService', 'Notification'];
+    function dilizityBackofficeMakerController($scope, $stateParams, $rootScope, AuthenticationService, dilizityBackofficeMakerService, UniversalService, Notification) {
         var vm = this;
 
         var permissionId = '';
@@ -127,11 +127,18 @@
         function loadScreenPermissionsAndInfo() {
             console.log("loadScreenPermissionsAndInfo Begin");
             var tmpUserName = $rootScope.globals.currentUser.username;
-            dilizityBackofficeMakerService.LoadSearchScreen(permissionId, tmpUserName, function (response) {
+
+            UniversalService.Do(permissionId, tmpUserName, null,
+             function (response) {
                 var data = angular.fromJson(response.data);
-                vm.userPermission = data.UserPermission;
-                vm.permissionList = data.PermissionList;
-                console.log("data", data);
+
+                if (data.ErrorCode == 0) {
+                    vm.userPermission = data.Data.UserPermission;
+                    vm.permissionList = data.Data.PermissionList;
+                }
+                else {
+                    Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                }
             }, function (response) {
                 Notification.error({message: "You don't have permission", positionY: 'bottom', positionX: 'right'});
             });
@@ -156,20 +163,32 @@
 
             var searchPermissionId = permissionId + '.Search';
 
-            dilizityBackofficeMakerService.Search(searchPermissionId, tmpUserName, vm.makerId, vm.selectedPermissions, $scope.pagination.pageSize, $scope.pagination.pageNumber, $scope.sort,
+            var model = {
+                MakerId: vm.makerId,
+                SelectedPermissionId: vm.selectedPermissions,
+                PageSize: $scope.pagination.pageSize,
+                PageNumber: $scope.pagination.pageNumber, 
+                Sort: $scope.sort
+            }
+
+            // dilizityBackofficeMakerService.Search(searchPermissionId, tmpUserName, vm.makerId, vm.selectedPermissions, $scope.pagination.pageSize, $scope.pagination.pageNumber, $scope.sort,
+            UniversalService.Do(searchPermissionId, tmpUserName, model,
                 function (response) {
                     console.log("Success!");
-                    $scope.gridOptions.data = response.data;
-                    $scope.pagination.totalItems = 25;
+
+                    var data = angular.fromJson(response.data);
+
+                    if (data.ErrorCode == 0) {
+                        $scope.gridOptions.data = response.data.Data;
+                        $scope.pagination.totalItems = 25;
+                    }
+                    else {
+                        Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                    }
                 },
                 function (response) {
                     console.log("response!", response);
-                    if (response.status == -1) {
-                        Notification.error({message: "Service Not Available.", positionY: 'bottom', positionX: 'right' });
-                    }
-                    else {
-                        Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
-                    }
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
                 }
             );
             console.log("searchMakerActivity End");

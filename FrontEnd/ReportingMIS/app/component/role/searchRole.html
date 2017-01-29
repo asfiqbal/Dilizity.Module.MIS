@@ -16,8 +16,7 @@
                             <a ng-show="vm.userPermission.Add=='Dilizity.Backoffice.Role.Add.Maker'" uib-tooltip="Add Role [Maker]" tooltip-placement="left" ui-sref="index.ActionRole({ roleId: 0, makerId:0, permissionName: 'Dilizity.Backoffice.Role.Add.Maker' })" class="collapse-link"><i class="fa fa-plus"></i></a>
                         </li>
                         <li class="dropdown">
-                            <a ng-show="vm.userPermission.Delete=='Dilizity.Backoffice.Role.Delete'" data-toggle="modal" data-target=".bs-example-modal-sm" uib-tooltip="Delete Role" tooltip-placement="left" class="collapse-link"><i class="fa fa-trash"></i></a>
-                            <a ng-show="vm.userPermission.Delete=='Dilizity.Backoffice.Role.Delete.Maker'" data-toggle="modal" data-target=".bs-example-modal-sm" uib-tooltip="Delete Role [Maker]" tooltip-placement="left" class="collapse-link"><i class="fa fa-trash"></i></a>
+                            <a ng-show="vm.userPermission.Delete=='Dilizity.Backoffice.Role.Delete.Bulk'" data-toggle="modal" data-target=".bs-example-modal-sm" uib-tooltip="Delete Role" tooltip-placement="left" class="collapse-link"><i class="fa fa-trash"></i></a>
                         </li>
                         <li>
                             <a ng-show="vm.userPermission.Search=='Dilizity.Backoffice.Role.Search'" uib-tooltip="Search Role" tooltip-placement="left" ng-click="vm.searchRole()" class="collapse-link"><i class="fa fa-search"></i></a>
@@ -59,7 +58,7 @@
                             </div>
                         </div>
                         <div class="ln_solid"></div>
-                        <div ui-grid="gridOptions" external-scopes="editClickHandler" ui-grid-selection ui-grid-pagination ui-grid-exporter class="grid"></div>
+                        <div ui-grid="gridOptions" external-scopes="vm.userPermission" ui-grid-selection ui-grid-pagination ui-grid-exporter class="grid"></div>
                         <br />
                         <div class="row">
                             <div class="form-group col-md-12 col-sm-12 col-xs-12">
