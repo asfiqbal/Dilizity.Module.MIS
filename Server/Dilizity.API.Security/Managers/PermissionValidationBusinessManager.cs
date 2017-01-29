@@ -50,7 +50,7 @@ namespace Dilizity.API.Security.Managers
             catch (ApplicationBusinessException ex)
             {
                 Log.Error(this.GetType(), ex.Message, ex);
-                parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = ex.ErrorCode;
                 childOperation.ErrorCode = ex.ErrorCode;
                 childOperation.Status = GlobalConstants.FAILURE;
                 childOperation.saveToDB();
@@ -59,7 +59,7 @@ namespace Dilizity.API.Security.Managers
             catch (Exception ex)
             {
                 Log.Error(this.GetType(), ex.Message, ex);
-                parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.SystemError;
                 childOperation.ErrorCode = GlobalErrorCodes.SystemError;
                 childOperation.Status = GlobalConstants.FAILURE;
                 childOperation.saveToDB();

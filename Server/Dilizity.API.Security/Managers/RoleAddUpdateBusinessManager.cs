@@ -65,7 +65,7 @@ namespace Dilizity.API.Security.Managers
 
 
                     parameterBusService[GlobalConstants.OUT_RESULT] = Success;
-                    parameterBusService[GlobalConstants.OUT_FUNCTION_STATUS] = GlobalConstants.SUCCESS;
+                    parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.Success;
 
                     childOperation.ErrorCode = GlobalErrorCodes.Success;
                     childOperation.Status = GlobalConstants.SUCCESS;
@@ -74,7 +74,7 @@ namespace Dilizity.API.Security.Managers
                 catch (ApplicationBusinessException ex)
                 {
                     Log.Error(this.GetType(), ex.Message, ex);
-                    parameterBusService[GlobalConstants.OUT_FUNCTION_STATUS] = GlobalConstants.FAILURE;
+                    parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = ex.ErrorCode;
                     childOperation.ErrorCode = ex.ErrorCode;
                     childOperation.Status = GlobalConstants.FAILURE;
                     childOperation.saveToDB();
@@ -83,7 +83,7 @@ namespace Dilizity.API.Security.Managers
                 catch (Exception ex)
                 {
                     Log.Error(this.GetType(), ex.Message, ex);
-                    parameterBusService[GlobalConstants.OUT_FUNCTION_STATUS] = GlobalConstants.FAILURE;
+                    parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalConstants.FAILURE;
                     childOperation.ErrorCode = GlobalErrorCodes.SystemError;
                     childOperation.Status = GlobalConstants.FAILURE;
                     childOperation.saveToDB();

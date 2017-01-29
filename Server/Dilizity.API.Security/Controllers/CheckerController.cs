@@ -21,68 +21,68 @@ namespace Dilizity.API.Security.Controllers
 {
     public class CheckerController : ApiController
     {
-        [ActionName("LoadSearchScreen")]
-        [HttpPost]
-        public IHttpActionResult LoadSearchScreen(JObject jobject)
-        {
-            try
-            {
-                using (FnTraceWrap tracer = new FnTraceWrap(jobject))
-                {
-                    BusService dataBasService = new BusService();
+        //[ActionName("LoadSearchScreen")]
+        //[HttpPost]
+        //public IHttpActionResult LoadSearchScreen(JObject jobject)
+        //{
+        //    try
+        //    {
+        //        using (FnTraceWrap tracer = new FnTraceWrap(jobject))
+        //        {
+        //            BusService dataBasService = new BusService();
 
-                    dataBasService.Add(GlobalConstants.IN_PARAM, jobject);
-                    dataBasService.Add(GlobalConstants.LOGIN_ID, jobject[GlobalConstants.LOGIN_PARAM].ToString());
-                    string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
-                    dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
+        //            dataBasService.Add(GlobalConstants.IN_PARAM, jobject);
+        //            dataBasService.Add(GlobalConstants.LOGIN_ID, jobject[GlobalConstants.LOGIN_PARAM].ToString());
+        //            string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
+        //            dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
 
-                    IAbstractBusiness businessManager = new CheckerScreenManager();
-                    businessManager.Do(dataBasService);
+        //            IAbstractBusiness businessManager = new CheckerScreenManager();
+        //            businessManager.Do(dataBasService);
 
-                    dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);
-                    return Ok(outObject);
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Debug(typeof(RoleController), "{0}", e.Message);
-                return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
-            }
-        }
+        //            dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);
+        //            return Ok(outObject);
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Log.Debug(typeof(RoleController), "{0}", e.Message);
+        //        return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
+        //    }
+        //}
 
-        [ActionName("Search")]
-        [HttpPost]
-        public IHttpActionResult Search(JObject jobject)
-        {
-            try
-            {
-                using (FnTraceWrap tracer = new FnTraceWrap(jobject))
-                {
-                    BusService dataBasService = new BusService();
+        //[ActionName("Search")]
+        //[HttpPost]
+        //public IHttpActionResult Search(JObject jobject)
+        //{
+        //    try
+        //    {
+        //        using (FnTraceWrap tracer = new FnTraceWrap(jobject))
+        //        {
+        //            BusService dataBasService = new BusService();
 
-                    dataBasService.Add(GlobalConstants.IN_PARAM, jobject);
-                    dataBasService.Add(GlobalConstants.LOGIN_ID, jobject[GlobalConstants.LOGIN_PARAM].ToString());
-                    string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
-                    dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
-                    dataBasService.Add("MakerId", jobject["MakerId"].ToString());
-                    dataBasService.Add("SelectedPermissionId", jobject["SelectedPermissionId"].ToString());
-                    dataBasService.Add("Sort", jobject["Sort"]);
-                    dataBasService.Add("PageSize", jobject["PageSize"].ToString());
-                    dataBasService.Add("PageNumber", jobject["PageNumber"].ToString());
+        //            dataBasService.Add(GlobalConstants.IN_PARAM, jobject);
+        //            dataBasService.Add(GlobalConstants.LOGIN_ID, jobject[GlobalConstants.LOGIN_PARAM].ToString());
+        //            string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
+        //            dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
+        //            dataBasService.Add("MakerId", jobject["MakerId"].ToString());
+        //            dataBasService.Add("SelectedPermissionId", jobject["SelectedPermissionId"].ToString());
+        //            dataBasService.Add("Sort", jobject["Sort"]);
+        //            dataBasService.Add("PageSize", jobject["PageSize"].ToString());
+        //            dataBasService.Add("PageNumber", jobject["PageNumber"].ToString());
 
-                    WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
-                    workFlowManager.Do(dataBasService);
+        //            WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
+        //            workFlowManager.Do(dataBasService);
 
-                    dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);
-                    return Ok(outObject);
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Debug(typeof(RoleController), "{0}", e.Message);
-                return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
-            }
-        }
+        //            dynamic outObject = dataBasService.Get(GlobalConstants.OUT_RESULT);
+        //            return Ok(outObject);
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Log.Debug(typeof(RoleController), "{0}", e.Message);
+        //        return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
+        //    }
+        //}
 
         [ActionName("Approve")]
         [HttpPost]

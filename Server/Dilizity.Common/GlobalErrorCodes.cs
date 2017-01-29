@@ -10,16 +10,15 @@ namespace Dilizity.Business.Common
     {
         public const int Success =0;
         public const int SystemError = 1;
-        public const int SQLError = 1000;
+        public const int UserDoNothavePermission = 2;
+        public const int SQLError = 3;
 
-        public const int IncorrectPassword = 2;
-        public const int AccountIsLocked = 3;
-        public const int UserDoNothavePermission = 4;
-        public const int PasswordCantReuse = 5;
+        public const int IncorrectPassword = 101;
+        public const int AccountIsLocked = 102;
+        public const int PasswordCantReuse = 103;
 
-
-
-
+        public const int ActivityAlreadyPending = 2001;
+        
     }
     
 }

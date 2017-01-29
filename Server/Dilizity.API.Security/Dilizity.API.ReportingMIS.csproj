@@ -130,13 +130,16 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\CheckerController.cs" />
+    <Compile Include="Controllers\ControllerHelper.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\MakerController.cs" />
+    <Compile Include="Controllers\UniversalController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Managers\RoleScreenManager.cs" />
     <Compile Include="Managers\RoleAddUpdateBusinessManager.cs" />
     <Compile Include="Managers\CheckerApproveBusinessManager.cs" />
     <Compile Include="Managers\CheckerCorrectionBusinessManager.cs" />
@@ -152,7 +155,6 @@
     <Compile Include="Managers\DeleteRoleBusinessManager.cs" />
     <Compile Include="Managers\RoleSearchBusinessManager.cs" />
     <Compile Include="Managers\ReportMetaDataBusinessManager.cs" />
-    <Compile Include="Managers\CommonScreenManager.cs" />
     <Compile Include="Managers\WorkFlowActionManager.cs" />
     <Compile Include="Managers\ChangePasswordBusinessManager.cs" />
     <Compile Include="Managers\AuthenticationBusinessManager.cs" />

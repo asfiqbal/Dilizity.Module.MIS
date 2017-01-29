@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="GlobalErrorCodes.cs" />
     <Compile Include="Model\ApplicationBusinessException.cs" />
+    <Compile Include="ErrorMappingManager.cs" />
     <Compile Include="SystemConfigurationManager.cs" />
     <Compile Include="Managers\AuditBusinessManager.cs" />
     <Compile Include="AuditHelper.cs" />

@@ -39,13 +39,11 @@ namespace Dilizity.API.Security.Managers
             {
                 string LoginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
                 string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
-                int roleId = (int)parameterBusService.Get(GlobalConstants.ROLE_ID_PARAM);
-                int makerId = -1;
-                if (parameterBusService.IsKeyPresent(GlobalConstants.MAKER_ID_PARAM))
-                {
-                    makerId = (int)parameterBusService.Get(GlobalConstants.MAKER_ID_PARAM);
-                    Log.Debug(this.GetType(), "Maker Id Present", makerId);
-                }
+
+                JObject model = (JObject)parameterBusService.Get(GlobalConstants.MODEL);
+
+                int roleId = Utility.ConvertStringToInt(model["RoleId"].ToString());
+                int makerId = Utility.ConvertStringToInt(model["MakerId"].ToString());
 
                 dynamic outObject = new ExpandoObject();
 
@@ -87,7 +85,7 @@ namespace Dilizity.API.Security.Managers
                     }
                 }
                 parameterBusService.Add(GlobalConstants.OUT_RESULT, outObject);
-                parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.SUCCESS);
+                parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.Success;
             }
         }
 

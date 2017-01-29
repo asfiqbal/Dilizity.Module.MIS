@@ -14,6 +14,7 @@ using Dilizity.Business.Common;
 using Dilizity.Business.Common.Services;
 using ilizity.Business.Common.Model;
 using Dilizity.Business.Common.Model;
+using Newtonsoft.Json.Linq;
 
 namespace Dilizity.API.Security.Managers
 {
@@ -25,7 +26,8 @@ namespace Dilizity.API.Security.Managers
         private const string GET_USER_PASSWORD_POLICY = "GetUserPasswordPolicy";
         private const string PASSOWRD_MATCHED = "Passowrd Matched";
         private const string UPDATE_USER_PASSWORD_ATTEMPT = "UpdateUserPasswordAttempt";
-        
+        private const int CHANGE_PASSWORD = 1;
+
 
 
         public void Do(BusService parameterBusService)
@@ -39,22 +41,30 @@ namespace Dilizity.API.Security.Managers
                     childOperation.PermissionClass = this.GetType().ToString();
                     childOperation.saveToDB();
                     string success = GlobalConstants.FAILURE;
-                    UserCredential userCredentials = (UserCredential)parameterBusService.Get(GlobalConstants.IN_PARAM);
+
+                    string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
+                    string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
+                    JObject model = (JObject)parameterBusService.Get(GlobalConstants.MODEL);
+                    string password = model["Password"].ToString();
+
+                    //UserCredential userCredentials = (UserCredential)parameterBusService.Get(GlobalConstants.IN_PARAM);
                     dynamic secUser = null;
                     dynamic passwordPolicy = null;
+                    int actionCode = -1;
 
 
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                     {
-                        passwordPolicy = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_USER_PASSWORD_POLICY, GlobalConstants.LOGIN_PARAM, userCredentials.LoginId);
+                        passwordPolicy = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_USER_PASSWORD_POLICY, GlobalConstants.LOGIN_PARAM, loginId);
 
-                        secUser = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_USER, GlobalConstants.LOGIN_PARAM, userCredentials.LoginId);
+                        secUser = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_USER, GlobalConstants.LOGIN_PARAM, loginId);
                     }
 
                     CheckIsAccountLocked(passwordPolicy.AccountLockOnFailedAttempts, secUser.AccountLocked);
 
                     string dbPassword = secUser.Password;
-                    string encryptedPassword = Utility.Encrypt(userCredentials.Password, false);
+                    string decodePassword = System.Text.ASCIIEncoding.ASCII.GetString(System.Convert.FromBase64String(password));
+                    string encryptedPassword = Utility.Encrypt(decodePassword, false);
                     if (dbPassword == encryptedPassword)
                     {
                         success = GlobalConstants.SUCCESS;
@@ -62,7 +72,7 @@ namespace Dilizity.API.Security.Managers
 
                         using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                         {
-                            dataLayer.ExecuteNonQueryUsingKey(UPDATE_USER_PASSWORD_ATTEMPT, GlobalConstants.LOGIN_PARAM, userCredentials.LoginId, "PasswordAttempt", passwordPolicy.DefaultPasswordAttempts, "AccountLocked", secUser.AccountLocked);
+                            dataLayer.ExecuteNonQueryUsingKey(UPDATE_USER_PASSWORD_ATTEMPT, GlobalConstants.LOGIN_PARAM, loginId, "PasswordAttempt", passwordPolicy.DefaultPasswordAttempts, "AccountLocked", secUser.AccountLocked);
                         }
 
                         if (passwordPolicy.FirstLoginChangePassword > 0)
@@ -71,14 +81,14 @@ namespace Dilizity.API.Security.Managers
                             if (secUser.ChangePasswordOnLogon > 0)
                             {
                                 Log.Info(typeof(AuthenticationBusinessManager), "User has logged in for the first time");
-                                success = "ChangePassword";
+                                actionCode = CHANGE_PASSWORD;
                             }
                         }
 
                         if (CheckPasswordExpiry(passwordPolicy.ExpiryRule, secUser.LastPasswordChangeDateTime))
                         {
                             Log.Info(typeof(AuthenticationBusinessManager), "User Password Expired");
-                            success = "ChangePassword";
+                            actionCode = CHANGE_PASSWORD;
                         }
                     }
                     else
@@ -93,14 +103,16 @@ namespace Dilizity.API.Security.Managers
 
                             using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                             {
-                                dataLayer.ExecuteNonQueryUsingKey(UPDATE_USER_PASSWORD_ATTEMPT, GlobalConstants.LOGIN_PARAM, userCredentials.LoginId, "PasswordAttempt", passwordAttempts, "AccountLocked", accountLock);
+                                dataLayer.ExecuteNonQueryUsingKey(UPDATE_USER_PASSWORD_ATTEMPT, GlobalConstants.LOGIN_PARAM, loginId, "PasswordAttempt", passwordAttempts, "AccountLocked", accountLock);
                             }
                         }
                         throw new ApplicationBusinessException(GlobalErrorCodes.IncorrectPassword);
                     }
                         //AuditHelper.Register(parameterBusService, userCredentials.LoginId, userCredentials.PermissionId, success, userCredentials.ToString());
                     parameterBusService.Add(GlobalConstants.OUT_RESULT, success);
-                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, success);
+                    parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.Success;
+                    parameterBusService[GlobalConstants.ACTION_CODE] = actionCode;
+
                     childOperation.ErrorCode = GlobalErrorCodes.Success;
                     childOperation.Status = success;
                     childOperation.saveToDB();
@@ -109,7 +121,7 @@ namespace Dilizity.API.Security.Managers
                 catch (ApplicationBusinessException ex)
                 {
                     Log.Error(this.GetType(), ex.Message, ex);
-                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                    parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = ex.ErrorCode;
                     childOperation.ErrorCode = ex.ErrorCode;
                     childOperation.Status = GlobalConstants.FAILURE;
                     childOperation.saveToDB();
@@ -118,7 +130,7 @@ namespace Dilizity.API.Security.Managers
                 catch (Exception ex)
                 {
                     Log.Error(this.GetType(), ex.Message, ex);
-                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                    parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.SystemError;
                     childOperation.ErrorCode = GlobalErrorCodes.SystemError;
                     childOperation.Status = GlobalConstants.FAILURE;
                     childOperation.saveToDB();

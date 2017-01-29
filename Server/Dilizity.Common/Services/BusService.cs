@@ -60,7 +60,10 @@ namespace Dilizity.Business.Common.Services
         {
             get
             {
-                return BusObject[key];
+                if (BusObject.ContainsKey(key))
+                    return BusObject[key];
+                else
+                    return null;
             }
             set
             {

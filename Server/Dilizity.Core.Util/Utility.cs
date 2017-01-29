@@ -38,7 +38,6 @@ namespace Dilizity.Core.Util
             return list;
         }
 
-
         static public string AssemblyLoadDirectory
         {
             get
@@ -59,6 +58,13 @@ namespace Dilizity.Core.Util
         {
             int oReturn = 0;
             int.TryParse(value, out oReturn);
+            return oReturn;
+        }
+
+        static public int ConvertObjectToInt(object value)
+        {
+            int oReturn = 0;
+            oReturn = Convert.ToInt32(value);
             return oReturn;
         }
 
@@ -191,6 +197,61 @@ namespace Dilizity.Core.Util
             }
             return outString;
         }
+
+        //public static string DeCodeBase64(string base64String)
+        //{
+        //    string keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+
+        //    StringBuilder output = new StringBuilder();
+            
+        //    char chr1;
+        //    char chr2;
+        //    char chr3;
+        //    char enc1;
+        //    char enc2;
+        //    char enc3;
+        //    char enc4;
+        //    var i = 0;
+
+        //    // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
+        //    var base64test = /[^ A - Za - z0 - 9\+\/\=] / g;
+        //    if (base64test.exec(base64String))
+        //    {
+        //        throw new InvalidDataException("There were invalid base64 characters in the input text.\n" +
+        //            "Valid base64 characters are A-Z, a-z, 0-9, '+', '/',and '='\n" +
+        //            "Expect errors in decoding.");
+        //    }
+        //    base64String = base64String.replace(/[^ A - Za - z0 - 9\+\/\=] / g, "");
+
+        //    do
+        //    {
+        //        enc1 = keyStr[base64String[i++]];
+        //        enc2 = keyStr[base64String[i++]];
+        //        enc3 = keyStr[base64String[i++]];
+        //        enc4 = keyStr[base64String[i++]];
+
+        //        chr1 = (char)((enc1 << 2) | (enc2 >> 4));
+        //        chr2 = (char)(((enc2 & 15) << 4) | (enc3 >> 2));
+        //        chr3 = (char)(((enc3 & 3) << 6) | enc4);
+
+        //        output.Append(chr1);
+
+        //        if (enc3 != 64)
+        //        {
+        //            output.Append(chr2);
+        //        }
+        //        if (enc4 != 64)
+        //        {
+        //            output.Append(chr3);
+        //        }
+
+        //        chr1 = chr2 = chr3 = '\0';
+        //        enc1 = enc2 = enc3 = enc4 = '\0';
+
+        //    } while (i < base64String.Length);
+
+        //    return output.ToString();
+        //}
 
     }
 }

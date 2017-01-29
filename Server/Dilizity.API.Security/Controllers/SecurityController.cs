@@ -15,6 +15,8 @@ using System.Text;
 using Dilizity.Business.Common;
 using Dilizity.Business.Common.Services;
 using Dilizity.Business.Common.Managers;
+using Dilizity.API.Security.Controllers;
+using Newtonsoft.Json.Linq;
 
 namespace Security.Controllers
 {
@@ -27,109 +29,77 @@ namespace Security.Controllers
         private const string USER_ID = "USER_ID";
         private const string GET_ALL_USERS = "GetAllUsers";
 
-        [ActionName("GetAll")]
-        [HttpGet]
-        public IHttpActionResult GetAll()
-        {
-            using (FnTraceWrap tracer = new FnTraceWrap(GlobalConstants.SECURITY_SCHEMA))
-            {
-                List<dynamic> outputDataList = new List<dynamic>();
-                try
-                {
-                    using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
-                    {
-                        foreach (dynamic record in dataLayer.ExecuteUsingKey(GET_ALL_USERS))
-                        {
-                            dynamic recordTmp = new ExpandoObject();
-                            var recordMembers = (IDictionary<string, object>)recordTmp;
-                            recordMembers.Add("UserId", record.UserId);
-                            recordMembers.Add("LoginId", record.LoginId);
-                            recordMembers.Add("IsSystem", record.IsSystem);
-                            recordMembers.Add("UpdatedBy", record.UpdatedBy);
-                            outputDataList.Add(recordTmp);
-                        }
-                    }   
-                }
-                catch(Exception e)
-                {
-                    Log.Debug(typeof(SecurityController), "{0}", e.Message);
-                }
-                return Ok(outputDataList);
-            }
-        }
-
         [ActionName("Authenticate")]
         [HttpPost]
-        public IHttpActionResult Authenticate(UserCredential userCredentials)
+        public IHttpActionResult Authenticate(JObject jobject)
         {
             try
             {
-                using (FnTraceWrap tracer = new FnTraceWrap(userCredentials))
+                using (FnTraceWrap tracer = new FnTraceWrap(jobject))
                 {
                     BusService dataBasService = new BusService();
 
-                    dataBasService.Add(GlobalConstants.IN_PARAM, userCredentials);
-                    dataBasService.Add(GlobalConstants.LOGIN_ID, userCredentials.LoginId);
-                    dataBasService.Add(GlobalConstants.PERMISSION, userCredentials.PermissionId);
+                    dataBasService.Add(GlobalConstants.IN_PARAM, jobject);
+                    dataBasService.Add(GlobalConstants.LOGIN_ID, jobject[GlobalConstants.LOGIN_PARAM].ToString());
+                    string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
+                    JObject model = (JObject)jobject[GlobalConstants.MODEL];
+
+                    dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
+                    dataBasService.Add(GlobalConstants.MODEL, model);
 
                     WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
                     workFlowManager.Do(dataBasService);
 
-                    string result = (string)dataBasService.Get(GlobalConstants.OUT_FUNCTION_STATUS);
-                    if (result == GlobalConstants.SUCCESS)
-                    {
-                        return Ok("Login Success!");
-                    }
-                    else if (result == "ChangePassword")
-                    {
-                        return Content(HttpStatusCode.PartialContent, "Force Change Password!");
-                    }
-                    else
-                    {
-                        return Content(HttpStatusCode.Unauthorized, "UnAuthorized Access!");
-                    }
+                    dynamic apiResponse = dataBasService.Get(GlobalConstants.OUT_RESULT);
+                    int errorCode = (int)dataBasService.Get(GlobalConstants.OUT_FUNCTION_ERROR_CODE);
+                    int actionCode = Utility.ConvertObjectToInt(dataBasService[GlobalConstants.ACTION_CODE]);
 
+                    dynamic outObject = ControllerHelper.GetDecoratedResponseObject(permissionId, errorCode, actionCode, apiResponse);
+
+                    return Ok(outObject);
                 }
             }
             catch (Exception e)
             {
                 Log.Debug(typeof(SecurityController), e.Message);
-                return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
+                return Content(HttpStatusCode.InternalServerError, GlobalConstants.GLOBAL_SYSTEM_ERROR_MSG);
             }
         }
 
         [ActionName("ChangePassword")]
         [HttpPost]
-        public IHttpActionResult ChangePassword(ChangePasswordModel modelChangePassword)
+        public IHttpActionResult ChangePassword(JObject jobject)
         {
             try
             {
-                using (FnTraceWrap tracer = new FnTraceWrap(modelChangePassword))
+                using (FnTraceWrap tracer = new FnTraceWrap(jobject))
                 {
                     BusService dataBasService = new BusService();
-                    dataBasService.Add(GlobalConstants.IN_PARAM, modelChangePassword);
-                    dataBasService.Add(GlobalConstants.LOGIN_ID, modelChangePassword.LoginId);
-                    dataBasService.Add(GlobalConstants.PERMISSION, modelChangePassword.PermissionId);
+                    dataBasService.Add(GlobalConstants.IN_PARAM, jobject);
+                    dataBasService.Add(GlobalConstants.LOGIN_ID, jobject[GlobalConstants.LOGIN_PARAM].ToString());
+                    string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
+                    JObject model = (JObject)jobject[GlobalConstants.MODEL];
+
+                    dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
+                    dataBasService.Add(GlobalConstants.MODEL, model);
 
                     WorkFlowActionManager workFlowManager = new WorkFlowActionManager();
                     workFlowManager.Do(dataBasService);
 
-                    string result = (string)dataBasService.Get(GlobalConstants.OUT_FUNCTION_STATUS);
-                    if (result == GlobalConstants.SUCCESS)
-                    {
-                        return Ok("Change Password Success!");
-                    }
-                    else
-                    {
-                        return Content(HttpStatusCode.BadRequest, "Change Password Failed!");
-                    }
+                    dynamic apiResponse = dataBasService.Get(GlobalConstants.OUT_RESULT);
+                    int errorCode = (int)dataBasService.Get(GlobalConstants.OUT_FUNCTION_ERROR_CODE);
+                    int actionCode = Utility.ConvertObjectToInt(dataBasService[GlobalConstants.ACTION_CODE]);
+
+                    dynamic outObject = ControllerHelper.GetDecoratedResponseObject(permissionId, errorCode, actionCode, apiResponse);
+
+                    return Ok(outObject);
 
                 }
             }
             catch (Exception e)
             {
                 Log.Debug(typeof(SecurityController), "{0}", e.Message);
-                return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
+                return Content(HttpStatusCode.InternalServerError, GlobalConstants.GLOBAL_SYSTEM_ERROR_MSG);
             }
         }
 
@@ -155,7 +125,7 @@ namespace Security.Controllers
             catch (Exception e)
             {
                 Log.Debug(typeof(SecurityController), "{0}", e.Message);
-                return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
+                return Content(HttpStatusCode.InternalServerError, GlobalConstants.GLOBAL_SYSTEM_ERROR_MSG);
             }
 
         }
@@ -180,7 +150,7 @@ namespace Security.Controllers
             catch (Exception e)
             {
                 Log.Debug(typeof(SecurityController), "{0}", e.Message);
-                return Content(HttpStatusCode.InternalServerError, "AuthenticationException Occured! Check Server Logs");
+                return Content(HttpStatusCode.InternalServerError, GlobalConstants.GLOBAL_SYSTEM_ERROR_MSG);
             }
 
         }

@@ -38,8 +38,8 @@ namespace Dilizity.API.Security.Controllers
                     IAbstractBusiness menuManager = new ReportMetaDataBusinessManager();
                     menuManager.Do(dataBasService);
 
-                    string result = (string)dataBasService.Get(GlobalConstants.OUT_FUNCTION_STATUS);
-                    if (result == GlobalConstants.SUCCESS)
+                    int result = (int)dataBasService.Get(GlobalConstants.OUT_FUNCTION_ERROR_CODE);
+                    if (result == GlobalErrorCodes.Success)
                     {
                         ReportMetaData reportMetaData = (ReportMetaData)dataBasService.Get(GlobalConstants.OUT_RESULT);
                         return Ok(reportMetaData);
@@ -75,8 +75,8 @@ namespace Dilizity.API.Security.Controllers
                     workFlowManager.Do(dataBasService);
 
 
-                    string result = (string)dataBasService.Get(GlobalConstants.OUT_FUNCTION_STATUS);
-                    if (result == GlobalConstants.SUCCESS)
+                    int result = (int)dataBasService.Get(GlobalConstants.OUT_FUNCTION_ERROR_CODE);
+                    if (result == GlobalErrorCodes.Success)
                     {
                         List<dynamic> outputDataList = (List<dynamic>)dataBasService.Get(GlobalConstants.OUT_RESULT);
                         return Ok(outputDataList);

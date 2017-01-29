@@ -62,8 +62,8 @@
           SELECT  REPORT_MENU_ID Id, 
                   PARENT_ID ParentId,
                   RM.DISPLAY_NAME MenuName,
-                  P.PERMISSION_NAME PermissionName,
-                  'index.OpenReport({ reportId: '+cast(R.REPORT_ID as nvarchar(10))+', permissionId: '''+P.PERMISSION_NAME+''' })' Url
+                  P.SYSTEM_NAME PermissionName,
+                  'index.OpenReport({ reportId: '+cast(R.REPORT_ID as nvarchar(10))+', permissionId: '''+P.SYSTEM_NAME+''' })' Url
           FROM	SEC_VW_DISTINCT_USER_PERMISSION P
                   INNER JOIN RPT_REPORT_MENU RM ON P.PERMISSION_ID = RM.PERMISSION_ID
                   LEFT OUTER JOIN RPT_REPORT R ON P.PERMISSION_ID = R.REPORT_PERMISSION_ID
@@ -145,7 +145,7 @@
 		            INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION DUP ON MAT.PERMISSION_ID = DUP.PERMISSION_ID
           WHERE MT.TEMPLATE_TYPE = @TemplateType
           AND		DUP.LOGIN_ID = @LoginId
-          AND		DUP.PERMISSION_NAME = @PermissionName
+          AND		DUP.SYSTEM_NAME = @PermissionName
         ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="PermissionName" Type="System.String"  Size="200"/>
@@ -158,7 +158,7 @@
             (
             SELECT	Permission_id, PARENT_PERMISSION_ID  
             from	SEC_PERMISSION P
-            WHERE   P.PERMISSION_NAME = @Permission
+            WHERE   P.SYSTEM_NAME = @Permission
             UNION ALL
             SELECT	P.PARENT_PERMISSION_ID, WF.Permission_id
             from	SEC_PERMISSION P
@@ -183,7 +183,7 @@
       </Query>
       <Query ID="GetReportMetaScreenInfo" DataSource="">
         <![CDATA[
-          select  'row row-no-padding' ClassName, R.REPORT_ID ReportId, UP.PERMISSION_NAME PermissionName, R.SYSTEM_NAME SystemName, R.DISPLAY_NAME DisplayName
+          select  'row row-no-padding' ClassName, R.REPORT_ID ReportId, UP.SYSTEM_NAME PermissionName, R.SYSTEM_NAME SystemName, R.DISPLAY_NAME DisplayName
           from	  RPT_REPORT R
 		              INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION UP ON R.REPORT_PERMISSION_ID = UP.PERMISSION_ID
           WHERE   R.REPORT_ID = @ReportId
@@ -349,7 +349,7 @@
 		                  INNER JOIN SEC_USER_ROLE SUR ON SU.USER_ID = SUR.USER_ID
 		                  INNER JOIN SEC_ROLE_PERMISSION SRP ON SUR.ROLE_ID = SRP.ROLE_ID
 		                  INNER JOIN SEC_PERMISSION SP ON SRP.PERMISSION_ID = SP.PERMISSION_ID
-              WHERE   SP.PERMISSION_NAME = @Permission
+              WHERE   SP.SYSTEM_NAME = @Permission
               AND     SU.LOGIN_ID = @LoginId
               ANd		  SU.ACCOUNT_LOCKED = 0
               AND		  SU.IS_DELETED = 0
@@ -359,7 +359,7 @@
       </Query>
       <Query ID="InsertAudit">
         <![CDATA[
-            INSERT INTO SEC_AUDIT (USER_ID, PERMISSION_ID, IS_SUCCESS, DATA, CREATED_BY) VALUES ((SELECT USER_ID FROM SEC_USER WHERE LOGIN_ID = @LoginId), (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionName), @IsSuccess, @Data, @CreatedBy);
+            INSERT INTO SEC_AUDIT (USER_ID, PERMISSION_ID, IS_SUCCESS, DATA, CREATED_BY) VALUES ((SELECT USER_ID FROM SEC_USER WHERE LOGIN_ID = @LoginId), (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @PermissionName), @IsSuccess, @Data, @CreatedBy);
             SELECT SCOPE_IDENTITY(); 
           ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
@@ -375,19 +375,19 @@
             (
             SELECT	Permission_id, PARENT_PERMISSION_ID
             from	SEC_PERMISSION P
-            WHERE   P.PERMISSION_NAME = @PermissionId
+            WHERE   P.SYSTEM_NAME = @PermissionId
             UNION ALL
             SELECT	P.Permission_id, P.PARENT_PERMISSION_ID
             from	SEC_PERMISSION P
 		            INNER JOIN WF ON P.PARENT_PERMISSION_ID  = WF.Permission_id
-            WHERE	UPPER(P.PERMISSION_NAME) NOT LIKE '%.EMAIL%'
-            AND		UPPER(P.PERMISSION_NAME) NOT LIKE '%.CHECKER%'
+            WHERE	UPPER(P.SYSTEM_NAME) NOT LIKE '%.EMAIL%'
+            AND		UPPER(P.SYSTEM_NAME) NOT LIKE '%.CHECKER%'
             )
-            select	[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.PERMISSION_NAME) FieldKey, V.PERMISSION_NAME PermissionName
+            select	[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.SYSTEM_NAME) FieldKey, V.SYSTEM_NAME PermissionName
             from	WF
 		            INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION V ON WF.PERMISSION_ID = V.PERMISSION_ID
             WHERE   V.LOGIN_ID = @LoginId
-            AND		[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.PERMISSION_NAME) in ('Search','Add','Edit','Delete','View','Maker')
+            AND		[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.SYSTEM_NAME) in ('Search','Add','Edit','Delete','View','Maker')
             ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="PermissionId" Type="System.String"  Size="200"/>
@@ -399,10 +399,48 @@
             SELECT	PERMISSION_ID PermissionId, PERMISSION_NAME PermissionName
             FROM	  SEC_VW_DISTINCT_USER_PERMISSION 
             WHERE   LOGIN_ID = @LoginId
+            ORDER BY 2
             ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
-      </Query>    
-      <Query ID="SearchMaker" DataSource="">
+      </Query>
+      <Query ID="SearchRole" DataSource="">
+        <![CDATA[
+              WITH SQLPaging
+              AS
+              (
+              SELECT TOP(@PageSize * @PageNumber) ResultNum = ROW_NUMBER() OVER (ORDER BY 
+					              CASE WHEN @SortOrder = 'Role Id' AND @SortDirection = 'asc' THEN ROLE_ID END ASC,
+					              CASE WHEN @SortOrder = 'Role Id' AND @SortDirection = 'desc' THEN ROLE_ID END DESC,
+					              CASE WHEN @SortOrder = 'Role Name' AND @SortDirection = 'asc' THEN ROLE_NAME END ASC,
+					              CASE WHEN @SortOrder = 'Role Name' AND @SortDirection = 'desc' THEN ROLE_NAME END DESC,
+					              CASE WHEN @SortOrder = 'Is System' AND @SortDirection = 'asc' THEN IS_SYSTEM END ASC,
+					              CASE WHEN @SortOrder = 'Is System' AND @SortDirection = 'desc' THEN IS_SYSTEM END DESC,
+					              CASE WHEN @SortOrder = 'Updated By' AND @SortDirection = 'asc' THEN UPDATED_BY END ASC,
+					              CASE WHEN @SortOrder = 'Updated By' AND @SortDirection = 'desc' THEN UPDATED_BY END DESC,
+					              CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'asc' THEN UPDATED_ON END ASC,
+					              CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'desc' THEN UPDATED_ON END DESC
+			              )
+				              , *
+              FROM SEC_ROLE
+              WHERE   IS_DELETED = 0
+              AND	(ROLE_ID = @RoleId OR @RoleId = 0)
+              AND	(ROLE_NAME LIKE '%'+@RoleName+'%' OR @RoleName =  '')
+              AND	(ROLE_ID IN (SELECT ROLE_ID FROM SEC_ROLE_PERMISSION WHERE PERMISSION_ID in (@RolePermissionId)) OR @RolePermissionId = -1)
+              )
+              SELECT ROLE_ID RoleId, ROLE_NAME RoleName, IS_SYSTEM IsSystem, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+              FROM SQLPaging
+              WHERE ResultNum > ((@PageNumber - 1) * @PageSize)
+              order by ResultNum
+        ]]>
+      <Param Name="RoleId" Type="System.Int32"  Size="0"/>
+      <Param Name="RoleName" Type="System.String"  Size="200"/>
+      <Param Name="RolePermissionId" Type="System.Int32"  Size="0"/>
+      <Param Name="PageSize" Type="System.Int32"  Size="0"/>
+      <Param Name="PageNumber" Type="System.Int32"  Size="0"/>
+      <Param Name="SortOrder" Type="System.String"  Size="200"/>
+      <Param Name="SortDirection" Type="System.String"  Size="200"/>
+    </Query>
+    <Query ID="SearchMaker" DataSource="">
         <![CDATA[
             WITH SQLPaging
                 AS
@@ -410,8 +448,8 @@
                 SELECT TOP(@PageSize * @PageNumber) ResultNum = ROW_NUMBER() OVER (ORDER BY 
 					                CASE WHEN @SortOrder = 'Maker Id' AND @SortDirection = 'asc' THEN MAKER_ID END ASC,
 					                CASE WHEN @SortOrder = 'Maker Id' AND @SortDirection = 'desc' THEN MAKER_ID END DESC,
-					                CASE WHEN @SortOrder = 'Permission Name' AND @SortDirection = 'asc' THEN PERMISSION_NAME END ASC,
-					                CASE WHEN @SortOrder = 'Permission Name' AND @SortDirection = 'desc' THEN PERMISSION_NAME END DESC,
+					                CASE WHEN @SortOrder = 'Permission Name' AND @SortDirection = 'asc' THEN PP.PERMISSION_NAME END ASC,
+					                CASE WHEN @SortOrder = 'Permission Name' AND @SortDirection = 'desc' THEN PP.PERMISSION_NAME END DESC,
 					                CASE WHEN @SortOrder = 'Status' AND @SortDirection = 'asc' THEN Status END ASC,
 					                CASE WHEN @SortOrder = 'Status' AND @SortDirection = 'desc' THEN Status END DESC,
 					                CASE WHEN @SortOrder = 'Created By' AND @SortDirection = 'asc' THEN M.CREATED_BY END ASC,
@@ -423,16 +461,17 @@
 					                CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'asc' THEN M.UPDATED_ON END ASC,
 					                CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'desc' THEN M.UPDATED_ON END DESC
 			                )
-				            , M.MAKER_ID, P.PERMISSION_NAME, M.STATUS, P.ACTION_URL, M.CREATED_ON, M.CREATED_BY, M.UPDATED_ON, M.UPDATED_BY
+				            , M.MAKER_ID, PP.PERMISSION_NAME, PP.SYSTEM_NAME, M.STATUS, PP.ACTION_URL, M.CREATED_ON, M.CREATED_BY, M.UPDATED_ON, M.UPDATED_BY
                 FROM MAKER_LIST M
 		             INNER JOIN SEC_PERMISSION P ON M.PERMISSION_ID = P.PERMISSION_ID
-                WHERE   IS_DELETED = 0
+                  INNER JOIN SEC_PERMISSION PP ON P.PARENT_PERMISSION_ID = PP.PERMISSION_ID
+                WHERE   M.IS_DELETED = 0
                 AND	(MAKER_ID = @MakerId OR @MakerId = 0)
                 AND	M.CREATED_BY = @LoginId
                 AND	((M.PERMISSION_ID = @SelectedPermissionId) OR @SelectedPermissionId = -1)
 	            AND	M.STATUS in ('SaveAsDraft', 'CorrectionRequired')
             )
-            SELECT MAKER_ID MakerId, Permission_Name PermissionName, Status, REPLACE(REPLACE(ACTION_URL,'{0}', Maker_ID),'{1}', PERMISSION_NAME) ActionUrl, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+            SELECT MAKER_ID MakerId, Permission_Name PermissionName, Status, REPLACE(REPLACE(ACTION_URL,'{0}', Maker_ID),'{1}', SYSTEM_NAME) ActionUrl, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
             FROM SQLPaging
             WHERE ResultNum > ((@PageNumber - 1) * @PageSize)
             order by ResultNum
@@ -447,7 +486,7 @@
       </Query>
       <Query ID="GetRoleAvailablePermissions" DataSource="">
         <![CDATA[
-              SELECT  P.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID ParentPermissionId, P.PERMISSION_NAME PermissionName
+              SELECT  P.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID ParentPermissionId, P.SYSTEM_NAME PermissionName
               FROM    SEC_PERMISSION P
               WHERE	  P.PARENT_PERMISSION_ID is null
               UNION
@@ -457,7 +496,7 @@
               SELECT	PERMISSION_ID, PARENT_PERMISSION_ID, USER_FRIENDLY_NAME
               FROM	VW_PERMISSION_HIERARCHY
               EXCEPT
-              SELECT	RP.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID, dbo.FN_GET_FRIENDLY_PERMISSION_NAME(P.PERMISSION_NAME) USER_FRIENDLY_NAME
+              SELECT	RP.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID, dbo.FN_GET_FRIENDLY_PERMISSION_NAME(P.SYSTEM_NAME) USER_FRIENDLY_NAME
               FROM	SEC_ROLE_PERMISSION RP
 		              INNER JOIN SEC_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
               WHERE   ROLE_ID = @RoleId
@@ -467,11 +506,11 @@
       </Query>
       <Query ID="GetRoleAssignedPermissions" DataSource="">
         <![CDATA[
-            SELECT  P.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID ParentPermissionId, P.PERMISSION_NAME PermissionName
+            SELECT  P.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID ParentPermissionId, P.SYSTEM_NAME PermissionName
             FROM    SEC_PERMISSION P
             WHERE	  P.PARENT_PERMISSION_ID is null
             UNION         
-            SELECT	RP.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID ParentPermissionId, dbo.FN_GET_FRIENDLY_PERMISSION_NAME(P.PERMISSION_NAME)  PermissionName
+            SELECT	RP.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID ParentPermissionId, dbo.FN_GET_FRIENDLY_PERMISSION_NAME(P.SYSTEM_NAME)  PermissionName
             FROM	  SEC_ROLE_PERMISSION RP
 		                INNER JOIN SEC_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
             WHERE   ROLE_ID = @RoleId
@@ -491,7 +530,7 @@
       <Query ID="InsertOperation">
         <![CDATA[
                 INSERT INTO OF_OPERATIONS(PARENT_OPERATION_ID,PERMISSION_ID,PERMISSION_CLASS, INPUT_PARAMS,STATUS, ERROR_CODE,CREATED_BY,UPDATED_BY)
-                VALUES (@ParentOperationId, (Select PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionName), @PermissionClass, @InputParams, @Status, @ErrorCode, @UpdatedBy, @UpdatedBy);
+                VALUES (@ParentOperationId, (Select PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @PermissionName), @PermissionClass, @InputParams, @Status, @ErrorCode, @UpdatedBy, @UpdatedBy);
                 SELECT SCOPE_IDENTITY(); 
               ]]>    
         <Param Name="ParentOperationId" Type="System.Int32"  Size="0"/>
@@ -535,12 +574,13 @@
       </Query>
       <Query ID="InsertMaker">
         <![CDATA[
-          INSERT INTO MAKER_LIST(PERMISSION_ID,DATA, STATUS, CREATED_BY,UPDATED_BY)
-          VALUES((Select PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionId),@Data, @Status,@CreatedBy,@CreatedBy);
+          INSERT INTO MAKER_LIST(PERMISSION_ID,DATA, OBJECT_ID, STATUS, IS_DELETED, CREATED_BY,UPDATED_BY)
+          VALUES((Select PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @PermissionId), @Data, @ObjectId, @Status, 0, @CreatedBy,@CreatedBy);
           SELECT SCOPE_IDENTITY(); 
-                ]]>
+        ]]>
         <Param Name="PermissionId" Type="System.String"  Size="200"/>
         <Param Name="Data" Type="System.String"  Size="-1"/>
+        <Param Name="ObjectId" Type="System.Int32"  Size="0"/>
         <Param Name="Status" Type="System.String"  Size="20"/>
         <Param Name="CreatedBy" Type="System.String"  Size="200"/>
       </Query>
@@ -549,10 +589,11 @@
           UPDATE MAKER_LIST
           SET		DATA = @Data,
 		            Status = @Status,
-                PERMISSION_ID = (Select PERMISSION_ID FROM SEC_PERMISSION WHERE PERMISSION_NAME = @PermissionId),
+                PERMISSION_ID = (Select PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @PermissionId),
 		            UPDATED_BY = @UpdatedBy,
                 UPDATED_ON = Getdate()
-          WHERE MAKER_ID = @MakerId;
+          WHERE MAKER_ID = @MakerId
+          AND   IS_DELETED = 0;
           SELECT @@ROWCOUNT;
         ]]>
         <Param Name="PermissionId" Type="System.String"  Size="200"/>
@@ -561,13 +602,39 @@
         <Param Name="UpdatedBy" Type="System.String"  Size="200"/>
         <Param Name="MakerId" Type="System.Int32"  Size="0"/>
       </Query>
+      <Query ID="DeleteMaker">
+        <![CDATA[
+            UPDATE MAKER_LIST
+            SET		IS_DELETED = 1,
+		              UPDATED_BY = @UpdatedBy,
+                  UPDATED_ON = Getdate()
+            WHERE MAKER_ID = @MakerId
+            AND   IS_DELETED = 0;
+            SELECT @@ROWCOUNT;
+          ]]>
+        <Param Name="MakerId" Type="System.Int32"  Size="0"/>
+        <Param Name="UpdatedBy" Type="System.String"  Size="200"/>
+      </Query>
       <Query ID="GetMaker">
         <![CDATA[
-          select  MAKER_ID MakerId, PERMISSION_ID PermissionId, DATA Data, STATUS Status
+          select  MAKER_ID MakerId, PERMISSION_ID PermissionId, DATA Data, OBJECT_ID ObjectId, STATUS Status
           from	MAKER_LIST
-          WHERE MAKER_ID = @MakerId 
+          WHERE MAKER_ID = @MakerId
+          AND   IS_DELETED = 0;
         ]]>
         <Param Name="MakerId" Type="System.Int32"  Size="0"/>
+      </Query>
+      <Query ID="CheckPendingMakerActivity">
+        <![CDATA[
+            select  COUNT(*) Total
+            from	MAKER_LIST
+            WHERE OBJECT_ID = @ObjectId
+            AND   PERMISSION_ID = (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @PermissionId)
+            AND   STATUS IN ('SaveAsDraft', 'CorrectionRequired','PendingApproval')
+            AND   IS_DELETED = 0;
+          ]]>
+        <Param Name="ObjectId" Type="System.Int32"  Size="0"/>
+        <Param Name="PermissionId" Type="System.String"  Size="200"/>
       </Query>
       <Query ID="SearchChecker" DataSource="">
         <![CDATA[
@@ -590,16 +657,16 @@
 					                  CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'asc' THEN M.UPDATED_ON END ASC,
 					                  CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'desc' THEN M.UPDATED_ON END DESC
 			                  )
-				              , M.MAKER_ID, P.PERMISSION_NAME, M.STATUS, P.ACTION_URL, M.CREATED_ON, M.CREATED_BY, M.UPDATED_ON, M.UPDATED_BY
+				              , M.MAKER_ID, P.PERMISSION_NAME, P.SYSTEM_NAME, M.STATUS, P.ACTION_URL, M.CREATED_ON, M.CREATED_BY, M.UPDATED_ON, M.UPDATED_BY
                   FROM MAKER_LIST M
-		               INNER JOIN SEC_PERMISSION P ON M.PERMISSION_ID = P.PERMISSION_ID
-                  WHERE   IS_DELETED = 0
+		               INNER JOIN SEC_PERMISSION P ON M.PERMISSION_ID = P.PERMISSION_ID AND P.IS_DELETED = 0
+                  WHERE   M.IS_DELETED = 0
                   AND	(MAKER_ID = @MakerId OR @MakerId = 0)
                   AND	M.CREATED_BY != @LoginId
                   AND	((M.PERMISSION_ID = @SelectedPermissionId) OR @SelectedPermissionId = -1)
 	              AND	M.STATUS in ('PendingApproval')
               )
-              SELECT MAKER_ID MakerId, Permission_Name PermissionName, Status, REPLACE(REPLACE(ACTION_URL,'{0}', Maker_ID),'{1}', PERMISSION_NAME) ActionUrl, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+              SELECT MAKER_ID MakerId, Permission_Name PermissionName, Status, REPLACE(REPLACE(ACTION_URL,'{0}', Maker_ID),'{1}', SYSTEM_NAME) ActionUrl, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
               FROM SQLPaging
               WHERE ResultNum > ((@PageNumber - 1) * @PageSize)
               order by ResultNum
@@ -619,18 +686,18 @@
               (
               SELECT	Permission_id, PARENT_PERMISSION_ID
               from	SEC_PERMISSION P
-              WHERE   P.PERMISSION_NAME = @PermissionId
+              WHERE   P.SYSTEM_NAME = @PermissionId
               UNION ALL
               SELECT	P.Permission_id, P.PARENT_PERMISSION_ID
               from	SEC_PERMISSION P
 		              INNER JOIN WF ON P.PARENT_PERMISSION_ID  = WF.Permission_id
-              WHERE	UPPER(P.PERMISSION_NAME) NOT LIKE '%.EMAIL%'
+              WHERE	UPPER(P.SYSTEM_NAME) NOT LIKE '%.EMAIL%'
               )
-              select	[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.PERMISSION_NAME) FieldKey, V.PERMISSION_NAME PermissionName
+              select	[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.SYSTEM_NAME) FieldKey, V.SYSTEM_NAME PermissionName
               from	WF
 		              INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION V ON WF.PERMISSION_ID = V.PERMISSION_ID
               WHERE   V.LOGIN_ID = @LoginId
-              AND		[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.PERMISSION_NAME) in ('Search','Add','Edit','Delete','View','Checker')
+              AND		[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.SYSTEM_NAME) in ('Search','Add','Edit','Delete','View','Checker')
               ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="PermissionId" Type="System.String"  Size="200"/>
@@ -668,11 +735,18 @@
       </Query>
       <Query ID="DeleteRolePermission" DataSource="">
         <![CDATA[
-              DELETE FROM SEC_ROLE_PERMISSION
-              WHERE  ROLE_ID = @RoleId;
-              SELECT @@ROWCOUNT;
-            ]]>
+            DELETE FROM SEC_ROLE_PERMISSION
+            WHERE  ROLE_ID = @RoleId;
+            SELECT @@ROWCOUNT;
+          ]]>
         <Param Name="RoleId" Type="System.Int32"  Size="0"/>
+      </Query>
+      <Query ID="GetGlobalErrorMapping" DataSource="">
+        <![CDATA[
+            select  ISNULL(P.SYSTEM_NAME,'') +'|'+ CAST(MP.ERROR_CODE AS VARCHAR(10)) ErrorCode, MP.DESCRIPTION Message
+            from	  SYS_ERROR_MAPPING MP
+		                LEFT OUTER JOIN SEC_PERMISSION P ON MP.PERMISSION_ID = P.PERMISSION_ID
+        ]]>
       </Query>
   </Schema>
 </root>

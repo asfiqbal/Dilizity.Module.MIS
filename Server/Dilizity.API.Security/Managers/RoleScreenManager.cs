@@ -16,7 +16,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Dilizity.API.Security.Managers
 {
-    class CommonScreenManager : IAbstractBusiness
+    class RoleScreenManager : IAbstractBusiness
     {
         private const string COMMON_SCREEN_USER_PERMISSION = "CommonScreenUserPermission";
         private const string USER_SPECFIC_PERMISSIONS = "UserSpecficPermissions";
@@ -62,7 +62,7 @@ namespace Dilizity.API.Security.Managers
                     outObject.PermissionList = PermissionList;
                 }
                 parameterBusService.Add(GlobalConstants.OUT_RESULT, outObject);
-                parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.SUCCESS);
+                parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.Success;
             }
         }
 

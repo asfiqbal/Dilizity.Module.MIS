@@ -14,11 +14,13 @@ namespace Dilizity.Business.Common
 
         public const string IN_PARAM = "IN_PARAM";
         public const string OUT_RESULT = "OUT_RESULT";
-        public const string OUT_FUNCTION_STATUS = "OUT_FUNCTION_STATUS";
+        public const string OUT_FUNCTION_ERROR_CODE = "OUT_FUNCTION_ERROR_CODE";
+
         public const string LOGIN_ID = "LOGIN_ID";
         public const string PERMISSIONS = "PERMISSIONS";
         public const string PERMISSION = "PERMISSION";
         public const string SUCCESS = "Success";
+
         public const string FAILURE = "Failure";
         public const string AUDIT = "Audit";
         public const string LOGIN_PARAM = "LoginId";
@@ -29,6 +31,11 @@ namespace Dilizity.Business.Common
         public const int SUCCESS_CODE = 0;
         public const int ERROR_CODE_INITIALIZER = -1;
         public const string MAKER_ID_PARAM = "MakerId";
+        public const string MODEL = "Model";
+        public const string GLOBAL_SYSTEM_ERROR = "Internal System Error";
+        public const string ACTION_CODE = "ACTION_CODE";
+        public const string GLOBAL_SYSTEM_ERROR_MSG = "Internal Server Error Occured! Check Server Logs";
+
 
     }
 }

@@ -44,7 +44,7 @@ namespace Dilizity.API.Security.Managers
                     Generate(menuStructure);
 
                     parameterBusService.Add(GlobalConstants.OUT_RESULT, menuStructure);
-                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.SUCCESS);
+                    parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.Success;
 
 
                 }

@@ -35,13 +35,16 @@ namespace Dilizity.API.Security.Managers
                     childOperation = new Operation(parameterBusService);
                     childOperation.PermissionClass = this.GetType().ToString();
                     childOperation.saveToDB();
-                    int roleId = Utility.ConvertStringToInt(parameterBusService.Get("RoleId").ToString());
-                    string roleName = (string)parameterBusService.Get("RoleName");
 
-                    int rolePermissionId = Utility.ConvertStringToInt(parameterBusService.Get("RolePermissionId").ToString());
-                    int pageSize = Utility.ConvertStringToInt(parameterBusService.Get("PageSize").ToString());
-                    int pageNumber = Utility.ConvertStringToInt(parameterBusService.Get("PageNumber").ToString());
-                    JObject sortInfo = (JObject)parameterBusService.Get("Sort");
+                    JObject model = (JObject)parameterBusService.Get(GlobalConstants.MODEL);
+
+                    int roleId = Utility.ConvertStringToInt(model["RoleId"].ToString());
+                    string roleName = (string)model["RoleName"];
+
+                    int rolePermissionId = Utility.ConvertStringToInt(model["RolePermissionId"].ToString());
+                    int pageSize = Utility.ConvertStringToInt(model["PageSize"].ToString());
+                    int pageNumber = Utility.ConvertStringToInt(model["PageNumber"].ToString());
+                    JObject sortInfo = (JObject)model["Sort"];
                     string sortOrder = "Role Id";
                     string sortDirection = "asc";
                     if (sortInfo.HasValues)
@@ -56,7 +59,7 @@ namespace Dilizity.API.Security.Managers
                         parameterBusService.Add(GlobalConstants.OUT_RESULT, outList.ToList<dynamic>());
                     }
 
-                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.SUCCESS);
+                    parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.Success;
 
                     childOperation.ErrorCode = GlobalErrorCodes.Success;
                     childOperation.Status = GlobalConstants.SUCCESS;
@@ -65,7 +68,7 @@ namespace Dilizity.API.Security.Managers
                 catch (Exception ex)
                 {
                     Log.Error(this.GetType(), ex.Message, ex);
-                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.FAILURE);
+                    parameterBusService.Add(GlobalConstants.OUT_FUNCTION_ERROR_CODE, GlobalErrorCodes.SystemError);
                     childOperation.ErrorCode = GlobalErrorCodes.SystemError;
                     childOperation.Status = GlobalConstants.FAILURE;
                     childOperation.saveToDB();
@@ -73,9 +76,6 @@ namespace Dilizity.API.Security.Managers
                 }
             }
         }
-
-
-
 
     }
 }

@@ -32,7 +32,7 @@ namespace Dilizity.Business.Common.Managers
                             int haveAuditPermission = (int)dataLayer.ExecuteScalarUsingKey(CHECK_PERMISSION, "LoginId", loginId, "Permission", permission);
                             if (haveAuditPermission == 1)
                             {
-                                string success = (string)parameterBusService.Get(GlobalConstants.OUT_FUNCTION_STATUS);
+                                string success = (string)parameterBusService.Get(GlobalConstants.OUT_FUNCTION_ERROR_CODE);
                                 object data = parameterBusService.Get(GlobalConstants.IN_PARAM);
                                 AuditHelper.Register(parameterBusService, loginId, permission, success, data.ToString());
 

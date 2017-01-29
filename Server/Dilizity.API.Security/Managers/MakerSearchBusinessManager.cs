@@ -35,15 +35,15 @@ namespace Dilizity.API.Security.Managers
                     childOperation = new Operation(parameterBusService);
                     childOperation.PermissionClass = this.GetType().ToString();
                     childOperation.saveToDB();
-                    int makerId = Utility.ConvertStringToInt(parameterBusService.Get("MakerId").ToString());
 
-                    int selectedPermissionId = Utility.ConvertStringToInt(parameterBusService.Get("SelectedPermissionId").ToString());
-                    int pageSize = Utility.ConvertStringToInt(parameterBusService.Get("PageSize").ToString());
-                    int pageNumber = Utility.ConvertStringToInt(parameterBusService.Get("PageNumber").ToString());
-                    JObject sortInfo = (JObject)parameterBusService.Get("Sort");
-                    string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
-                    string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
+                    JObject model = (JObject)parameterBusService.Get(GlobalConstants.MODEL);
 
+                    int makerId = Utility.ConvertStringToInt(model["MakerId"].ToString());
+
+                    int selectedPermissionId = Utility.ConvertStringToInt(model["SelectedPermissionId"].ToString());
+                    int pageSize = Utility.ConvertStringToInt(model["PageSize"].ToString());
+                    int pageNumber = Utility.ConvertStringToInt(model["PageNumber"].ToString());
+                    JObject sortInfo = (JObject)model["Sort"];
                     string sortOrder = "Maker Id";
                     string sortDirection = "asc";
                     if (sortInfo.HasValues)
@@ -52,13 +52,16 @@ namespace Dilizity.API.Security.Managers
                         sortDirection = sortInfo["order"].ToString();
                     }
 
+                    string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
+                    string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
+
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA))
                     {
                         outList = dataLayer.ExecuteUsingKey(SEARCH_MAKER, "MakerId", makerId, "LoginId", loginId, "SelectedPermissionId", selectedPermissionId, "PageSize", pageSize, "PageNumber", pageNumber, "SortOrder", sortOrder, "SortDirection", sortDirection);
                         parameterBusService.Add(GlobalConstants.OUT_RESULT, outList.ToList<dynamic>());
                     }
 
-                    parameterBusService[GlobalConstants.OUT_FUNCTION_STATUS] = GlobalConstants.SUCCESS;
+                    parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.Success;
 
                     childOperation.ErrorCode = GlobalErrorCodes.Success;
                     childOperation.Status = GlobalConstants.SUCCESS;
@@ -67,7 +70,7 @@ namespace Dilizity.API.Security.Managers
                 catch (Exception ex)
                 {
                     Log.Error(this.GetType(), ex.Message, ex);
-                    parameterBusService[GlobalConstants.OUT_FUNCTION_STATUS] = GlobalConstants.FAILURE;
+                    parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalConstants.FAILURE;
                     childOperation.ErrorCode = GlobalErrorCodes.SystemError;
                     childOperation.Status = GlobalConstants.FAILURE;
                     childOperation.saveToDB();

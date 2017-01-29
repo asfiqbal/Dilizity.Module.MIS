@@ -42,7 +42,7 @@ namespace Dilizity.API.Security.Managers
 
                 AuditHelper.Register(parameterBusService, LoginId, permissionId, GlobalConstants.SUCCESS, metaReportExecutionRequestObject.ToString());
                 parameterBusService.Add(GlobalConstants.OUT_RESULT, outList);
-                parameterBusService.Add(GlobalConstants.OUT_FUNCTION_STATUS, GlobalConstants.SUCCESS);
+                parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.Success;
             }
         }
 
