@@ -6,8 +6,8 @@
         .module('ReportingMIS')
         .controller('dilizityBackofficeCheckerController', dilizityBackofficeCheckerController);
 
-    dilizityBackofficeCheckerController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'dilizityBackofficeCheckerService', 'UniversalService', 'Notification'];
-    function dilizityBackofficeCheckerController($scope, $stateParams, $rootScope, AuthenticationService, dilizityBackofficeCheckerService, UniversalService, Notification) {
+    dilizityBackofficeCheckerController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'UniversalService', 'Notification'];
+    function dilizityBackofficeCheckerController($scope, $stateParams, $rootScope, AuthenticationService, UniversalService, Notification) {
         var vm = this;
 
         var permissionId = '';

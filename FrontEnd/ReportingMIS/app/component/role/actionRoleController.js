@@ -7,8 +7,8 @@
         .module('ReportingMIS')
         .controller('actionRoleController', actionRoleController);
 
-    actionRoleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'Notification', 'HelperService', 'dilizityBackofficeMakerService', 'dilizityBackofficeCheckerService','UniversalService'];
-    function actionRoleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, Notification, HelperService, dilizityBackofficeMakerService, dilizityBackofficeCheckerService, UniversalService) {
+    actionRoleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'Notification', 'HelperService', 'dilizityBackofficeMakerService', 'UniversalService'];
+    function actionRoleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, Notification, HelperService, dilizityBackofficeMakerService, UniversalService) {
         var vm = this;
 
         var roleId = -1;
@@ -119,7 +119,7 @@
                     var data = angular.fromJson(response.data);
 
                     if (response.data.ErrorCode == 0) {
-                        vm.roleId = data.Data.Id;
+                        roleId = data.Data.Id;
                         vm.roleName = data.Data.Name;
                         vm.availablePermissions = data.Data.AvailablePermissions;
                         vm.assignedPermissions = data.Data.AssignedPermissions;
@@ -248,14 +248,34 @@
             console.log("correctionRequired Begin");
             //vm.dataLoading = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
+            var savePermission = vm.permissionName + '.Correction';
+
             var model = CreateModel(makerStatus);
 
-            dilizityBackofficeCheckerService.CorrectionRequired(vm.permissionName, tmpUserName, model, function (response) {
-                console.log("Success!");
-                Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
-            }, function (response) {
-                Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
-            });
+            //dilizityBackofficeCheckerService.CorrectionRequired(vm.permissionName, tmpUserName, model, function (response) {
+            //    console.log("Success!");
+            //    Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+            //}, function (response) {
+            //    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+            //});
+
+            UniversalService.Do(savePermission, tmpUserName, model,
+               function (response) {
+                   console.log("Success!");
+                   var data = angular.fromJson(response.data);
+
+                   if (data.ErrorCode == 0) {
+                       Notification.success({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                   }
+                   else {
+                       Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                   }
+               },
+               function (response) {
+                   console.log("response!", response);
+                   Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+               }
+           );
             
             console.log("correctionRequired End");
         };
@@ -264,14 +284,35 @@
             console.log("reject Begin");
             //vm.dataLoading = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
+            var savePermission = vm.permissionName + '.Reject';
+
             var model = CreateModel("Rejected");
 
-            dilizityBackofficeCheckerService.Reject(vm.permissionName, tmpUserName, model, function (response) {
-                console.log("Success!");
-                Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
-            }, function (response) {
-                Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
-            });
+            //dilizityBackofficeCheckerService.Reject(vm.permissionName, tmpUserName, model, function (response) {
+            //    console.log("Success!");
+            //    Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+            //}, function (response) {
+            //    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+            //});
+
+
+            UniversalService.Do(savePermission, tmpUserName, model,
+               function (response) {
+                   console.log("Success!");
+                   var data = angular.fromJson(response.data);
+
+                   if (data.ErrorCode == 0) {
+                       Notification.success({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                   }
+                   else {
+                       Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                   }
+               },
+               function (response) {
+                   console.log("response!", response);
+                   Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+               }
+           );
 
             console.log("reject End");
         };
@@ -280,13 +321,35 @@
             console.log("approve Begin");
             //vm.dataLoading = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
+            var savePermission = vm.permissionName + '.Approve';
+
             var model = CreateModel('Approved');
-            dilizityBackofficeCheckerService.Approve(vm.permissionName, tmpUserName, model, function (response) {
-                console.log("Success!");
-                Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
-            }, function (response) {
-                Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
-            });
+
+            //dilizityBackofficeCheckerService.Approve(vm.permissionName, tmpUserName, model, function (response) {
+            //    console.log("Success!");
+            //    Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
+            //}, function (response) {
+            //    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+            //});
+
+
+            UniversalService.Do(savePermission, tmpUserName, model,
+               function (response) {
+                   console.log("Success!");
+                   var data = angular.fromJson(response.data);
+
+                   if (data.ErrorCode == 0) {
+                       Notification.success({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                   }
+                   else {
+                       Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                   }
+               },
+               function (response) {
+                   console.log("response!", response);
+                   Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+               }
+           );
 
             console.log("approve End");
         };

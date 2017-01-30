@@ -98,7 +98,6 @@
   <ItemGroup>
     <Content Include="app\component\checker\dilizityBackofficeChecker.html" />
     <Content Include="app\component\checker\dilizityBackofficeCheckerController.js" />
-    <Content Include="app\component\checker\dilizityBackofficeCheckerService.js" />
     <Content Include="app\component\shared\commonService\AuthenticationService.js" />
     <Content Include="app\config\app.routes - Copy.js" />
     <Content Include="app\config\formly.config.js" />
