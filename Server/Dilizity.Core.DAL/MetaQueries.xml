@@ -153,29 +153,17 @@
       </Query>
       <Query ID="GetWorkFlowActions" DataSource="">
         <![CDATA[
-            WITH WF ( Permission_id, PARENT_PERMISSION_ID )
-            AS
-            (
-            SELECT	Permission_id, PARENT_PERMISSION_ID  
-            from	SEC_PERMISSION P
-            WHERE   P.SYSTEM_NAME = @Permission
-            UNION ALL
-            SELECT	P.PARENT_PERMISSION_ID, WF.Permission_id
-            from	SEC_PERMISSION P
-		            INNER JOIN WF ON P.Permission_id  = WF.PARENT_PERMISSION_ID
-            WHERE   WF.Permission_id not in (SELECT PERMISSION_ID FROM WORK_FLOW_ACTION)
-            )
-            SELECT WF.Permission_id PermissionId, 
-		            FA.SYSTEM_TYPE SystemType,
-		            SYSTEM_ASSEMBLY SystemAssembly,
-		            ACTION_ORDER ActionOrder,
-		            VERSION Version,
-		            EXECUTION_BEHAVIOR ExecutionBehavior,
-                IS_ERROR_TOLERANT IsErrorTolerant
-            FROM WF
-	             INNER JOIN SEC_PERMISSION SP ON WF.Permission_id = SP.PERMISSION_ID
-	             INNER JOIN WORK_FLOW_ACTION FA ON WF.Permission_id = FA.PERMISSION_ID
-            WHERE FA.EXECUTION_BEHAVIOR = @ExecutionBehavior
+           SELECT	WFA.Permission_id PermissionId, 
+		              WFA.SYSTEM_TYPE SystemType,
+		              SYSTEM_ASSEMBLY SystemAssembly,
+		              ACTION_ORDER ActionOrder,
+		              VERSION Version,
+		              EXECUTION_BEHAVIOR ExecutionBehavior,
+		              IS_ERROR_TOLERANT IsErrorTolerant
+            FROM	WORK_FLOW_ACTION WFA
+		              INNER JOIN SEC_PERMISSION SP ON WFA.Permission_id = SP.PERMISSION_ID
+            WHERE	SP.SYSTEM_NAME = @Permission
+            AND		WFA.EXECUTION_BEHAVIOR = @ExecutionBehavior
             order by ActionOrder 
         ]]>
         <Param Name="Permission" Type="System.String"  Size="200"/>
@@ -448,8 +436,8 @@
                 SELECT TOP(@PageSize * @PageNumber) ResultNum = ROW_NUMBER() OVER (ORDER BY 
 					                CASE WHEN @SortOrder = 'Maker Id' AND @SortDirection = 'asc' THEN MAKER_ID END ASC,
 					                CASE WHEN @SortOrder = 'Maker Id' AND @SortDirection = 'desc' THEN MAKER_ID END DESC,
-					                CASE WHEN @SortOrder = 'Permission Name' AND @SortDirection = 'asc' THEN PP.PERMISSION_NAME END ASC,
-					                CASE WHEN @SortOrder = 'Permission Name' AND @SortDirection = 'desc' THEN PP.PERMISSION_NAME END DESC,
+					                CASE WHEN @SortOrder = 'Permission Name' AND @SortDirection = 'asc' THEN P.PERMISSION_NAME END ASC,
+					                CASE WHEN @SortOrder = 'Permission Name' AND @SortDirection = 'desc' THEN P.PERMISSION_NAME END DESC,
 					                CASE WHEN @SortOrder = 'Status' AND @SortDirection = 'asc' THEN Status END ASC,
 					                CASE WHEN @SortOrder = 'Status' AND @SortDirection = 'desc' THEN Status END DESC,
 					                CASE WHEN @SortOrder = 'Created By' AND @SortDirection = 'asc' THEN M.CREATED_BY END ASC,
@@ -461,10 +449,9 @@
 					                CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'asc' THEN M.UPDATED_ON END ASC,
 					                CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'desc' THEN M.UPDATED_ON END DESC
 			                )
-				            , M.MAKER_ID, PP.PERMISSION_NAME, PP.SYSTEM_NAME, M.STATUS, PP.ACTION_URL, M.CREATED_ON, M.CREATED_BY, M.UPDATED_ON, M.UPDATED_BY
+				            , M.MAKER_ID, P.PERMISSION_NAME, P.SYSTEM_NAME, M.STATUS, P.ACTION_URL, M.CREATED_ON, M.CREATED_BY, M.UPDATED_ON, M.UPDATED_BY
                 FROM MAKER_LIST M
 		             INNER JOIN SEC_PERMISSION P ON M.PERMISSION_ID = P.PERMISSION_ID
-                  INNER JOIN SEC_PERMISSION PP ON P.PARENT_PERMISSION_ID = PP.PERMISSION_ID
                 WHERE   M.IS_DELETED = 0
                 AND	(MAKER_ID = @MakerId OR @MakerId = 0)
                 AND	M.CREATED_BY = @LoginId

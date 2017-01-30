@@ -45,6 +45,8 @@ namespace Dilizity.API.Security.Managers
                     string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
                     string status = model["Status"].ToString();
                     string makerPermissionId = permissionId.Replace(".Checker", ".Maker");
+                    makerPermissionId = makerPermissionId.Replace(".Correction", "");
+
 
                     int makerId = -1;
                     string smakerId = model[GlobalConstants.MAKER_ID_PARAM].ToString();

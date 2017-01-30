@@ -129,7 +129,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\CheckerController.cs" />
     <Compile Include="Controllers\ControllerHelper.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\MakerController.cs" />
@@ -139,6 +138,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Managers\BulkDeleteRoleBusinessManager.cs" />
     <Compile Include="Managers\RoleScreenManager.cs" />
     <Compile Include="Managers\RoleAddUpdateBusinessManager.cs" />
     <Compile Include="Managers\CheckerApproveBusinessManager.cs" />

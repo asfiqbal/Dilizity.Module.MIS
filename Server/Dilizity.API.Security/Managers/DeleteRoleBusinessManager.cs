@@ -39,23 +39,16 @@ namespace Dilizity.API.Security.Managers
                     childOperation.saveToDB();
 
 
-                    JArray tmpRoleList = (JArray)parameterBusService.Get("Roles");
+                    JObject model = (JObject)parameterBusService.Get("Model");
+                    string sId = model["Id"].ToString();
 
-                    childOperation.InputParams = tmpRoleList.ToString();
+                    childOperation.InputParams = sId;
                     childOperation.saveToDB();
 
-                    List<dynamic> dynamicObject = new List<dynamic>();
-
-                    foreach (int role in tmpRoleList)
-                    {
-                        dynamic tmpObject = new ExpandoObject();
-                        tmpObject.RoleId = role;
-                        dynamicObject.Add(tmpObject);
-                    }
-
+                    int roleId = Utility.ConvertStringToInt(sId);
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                     {
-                        Success = dataLayer.ExecuteBulkNonQueryUsingKey(DELETE_ROLE, dynamicObject);
+                        Success = dataLayer.ExecuteNonQueryUsingKey(DELETE_ROLE, "RoleId", roleId);
                         if (Success <= 0)
                             throw new ApplicationBusinessException(GlobalErrorCodes.SQLError);
                     }
