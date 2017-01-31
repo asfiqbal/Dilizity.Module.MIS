@@ -10,10 +10,9 @@
     function searchRoleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, UniversalService, Notification) {
         var vm = this;
 
-        var permissionName = '';
+        
         vm.slide = false;
         vm.searchRole = searchRole;
-        vm.addRole = addRole;
         vm.loadScreenPermissionsAndInfo = loadScreenPermissionsAndInfo;
         vm.load = load;
         vm.deleteRoles = deleteRoles;
@@ -21,6 +20,7 @@
 
         vm.roleId = '';
         vm.roleName = '';
+        vm.permissionId = '';
         vm.userPermission = {};
         vm.permissionList = [];
         vm.selectedRolePermission = -1;
@@ -138,7 +138,7 @@
             console.log("loadScreenPermissionsAndInfo Begin");
             var tmpUserName = $rootScope.globals.currentUser.username;
             
-            UniversalService.Do('Dilizity.Backoffice.Role', tmpUserName, null,
+            UniversalService.Do(vm.permissionId, tmpUserName, null,
                   function (response) {
                       var data = angular.fromJson(response.data);
 
@@ -150,7 +150,7 @@
                           Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
                       }
                   }, function (response) {
-                      Notification.error({message: "You don't have permission", positionY: 'bottom', positionX: 'right'});
+                      Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
                   });
             console.log("loadScreenPermissionsAndInfo End");
         };
@@ -158,36 +158,16 @@
 
         (function initController() {
             console.log("roleController.initController -> Begin");
+            console.log("$stateParams", $stateParams);
+            vm.permissionId = $stateParams.permissionId;
             loadScreenPermissionsAndInfo();
             console.log("roleController.initController -> End");
         })();
 
-        function addRole() {
-            console.log("addRole Begin");
-            //vm.dataLoading = true;
-            var tmpUserName = $rootScope.globals.currentUser.username;
-            RoleService.Add(permissionName, tmpUserName, 1, function (response) {
-                console.log("response.data", response.data);
-                Notification.success({ message: "Role Added for Approval", positionY: 'bottom', positionX: 'right' });
-
-            },
-            function (response) {
-                console.log("response!", response);
-                if (response.status == -1) {
-                    Notification.error({ message: "Service Not Available.", positionY: 'bottom', positionX: 'right' });
-                }
-                else {
-                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
-                }
-            }
-            );
-            console.log("addRole End");
-        };
-
         function searchRole() {
             console.log("searchRole Begin");
             var tmpUserName = $rootScope.globals.currentUser.username;
-            vm.permissionName = "Dilizity.Backoffice.Role.Search";
+            var searchPermissionId = vm.permissionId + ".Search";
 
             var model = {
                 RoleId: vm.roleId,
@@ -198,7 +178,7 @@
                 Sort: $scope.sort
             }
 
-            UniversalService.Do(vm.permissionName, tmpUserName, model,
+            UniversalService.Do(searchPermissionId, tmpUserName, model,
                 function (response) {
                     console.log("Success!");
 
@@ -226,23 +206,32 @@
             angular.element('#modal').modal('hide');
             var tmpUserName = $rootScope.globals.currentUser.username;
             //Notification.error({ message: 'Error Bottom Right', positionY: 'bottom', positionX: 'right' });
-            var deletePermission = "Dilizity.Backoffice.Role.Delete";
-            console.log("permissionName", vm.permissionName);
+            var deletePermission = vm.permissionId + ".Delete.Bulk";
+            console.log("permissionId", deletePermission);
             console.log("vm.selectedRoles", vm.selectedRoles);
 
-            RoleService.Delete(deletePermission, tmpUserName, vm.selectedRoles,
+            var model = {
+                Roles: vm.selectedRoles
+            }
+
+            UniversalService.Do(deletePermission, tmpUserName, model,
                 function (response) {
                     console.log("Success!");
-                    Notification.success({ message: "Deleted Successfully.", positionY: 'bottom', positionX: 'right' });
+                    var data = angular.fromJson(response.data);
+
+                    if (data.ErrorCode == 0) {
+                        Notification.success({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                        vm.selectedRoles = [];
+                        searchRole();
+                    }
+                    else {
+                        Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                        vm.selectedRoles = [];
+                    }
                 },
                 function (response) {
                     console.log("response!", response);
-                    if (response.status == -1) {
-                        Notification.error({ message: "Service Not Available.", positionY: 'bottom', positionX: 'right' });
-                    }
-                    else {
-                        Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
-                    }
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
                 }
             );
             console.log("deleteRoles End");
