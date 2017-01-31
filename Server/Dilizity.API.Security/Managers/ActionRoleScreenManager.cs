@@ -13,6 +13,7 @@ using System.IO;
 using Dilizity.Business.Common;
 using Dilizity.Business.Common.Services;
 using Newtonsoft.Json.Linq;
+using Dilizity.Business.Common.Model;
 
 namespace Dilizity.API.Security.Managers
 {
@@ -21,6 +22,8 @@ namespace Dilizity.API.Security.Managers
         private const string GET_ROLE_AVAILABLE_PERMISSIONS = "GetRoleAvailablePermissions";
         private const string GET_ROLE_ASSIGNED_PERMISSIONS = "GetRoleAssignedPermissions";
         private const string GET_MAKER = "GetMaker";
+        private const string GET_ROLE = "GetRole";
+        
 
         /// <summary>
         /// OutObject {
@@ -55,8 +58,15 @@ namespace Dilizity.API.Security.Managers
                 {
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                     {
-                        dynamic tObject = new ExpandoObject();
                         List<PermissionTree> permissionTreeList = new List<PermissionTree>();
+
+                        dynamic roleObject = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_ROLE, GlobalConstants.ROLE_ID_PARAM, roleId);
+
+                        if (roleObject == null)
+                            throw new ApplicationBusinessException(GlobalErrorCodes.InvalidRoleId);
+
+                        outObject.Id = roleObject.RoleId;
+                        outObject.Name = roleObject.RoleName;
 
                         foreach (dynamic permission in dataLayer.ExecuteUsingKey(GET_ROLE_AVAILABLE_PERMISSIONS, GlobalConstants.ROLE_ID_PARAM, roleId))
                         {

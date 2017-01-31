@@ -19,12 +19,10 @@ using Dilizity.Business.Common.Model;
 namespace Dilizity.API.Security.Managers
 {
 
-    public class MakerSaveAsDraftBusinessManager : IAbstractBusiness
+    public class BulkDeleteRoleBusinessManager : IAbstractBusiness
     {
-        private const string UPDATE_MAKER_LIST = "UpdateMaker";
-        private const string INSERT_MAKER_LIST = "InsertMaker";
-        private const string CHECK_PENDING_MAKER_ACTIVITY = "CheckPendingMakerActivity";
-
+        private const string DELETE_ROLE = "DeleteRole";
+        private const string GET_REPORT_META_FILTERS_INFO = "GetReportMetaFiltersInfo";
 
         public void Do(BusService parameterBusService)
         {
@@ -34,50 +32,30 @@ namespace Dilizity.API.Security.Managers
 
                 try
                 {
-                    int? Success = -1;
+                    int Success = -1;
 
                     childOperation = new Operation(parameterBusService);
                     childOperation.PermissionClass = this.GetType().ToString();
                     childOperation.saveToDB();
 
                     JObject model = (JObject)parameterBusService.Get("Model");
-                    string data = model.ToString();
-                    string loginId= (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
-                    string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
-                    string parentPermissionId = permissionId.Replace(".Save", "");
+                    JArray tmpRoleList = (JArray)model["Roles"];
 
-                    string status = model["Status"].ToString();
-                    string sId = model["Id"].ToString();
-
-                    int makerId = -1;
-                    int Id = -1;
-                    string smakerId = model[GlobalConstants.MAKER_ID_PARAM].ToString();
-
-                    int.TryParse(smakerId, out makerId);
-                    int.TryParse(sId, out Id);
-
-
-                    childOperation.InputParams = data;
+                    childOperation.InputParams = tmpRoleList.ToString();
                     childOperation.saveToDB();
+
+                    List<dynamic> dynamicObject = new List<dynamic>();
+
+                    foreach (int role in tmpRoleList)
+                    {
+                        dynamic tmpObject = new ExpandoObject();
+                        tmpObject.RoleId = role;
+                        dynamicObject.Add(tmpObject);
+                    }
 
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                     {
-                        if (Id > 0)
-                        {
-                            int? anyPendingActvtySameObject = (int?)dataLayer.ExecuteScalarUsingKey(CHECK_PENDING_MAKER_ACTIVITY, "ObjectId", Id, "PermissionId", parentPermissionId);
-
-                            if (anyPendingActvtySameObject > 0)
-                                throw new ApplicationBusinessException(GlobalErrorCodes.ActivityAlreadyPending);
-                        }
-                        if (makerId > 0)
-                        {
-                            Success = (int?)dataLayer.ExecuteScalarUsingKey(UPDATE_MAKER_LIST, "MakerId", makerId, "PermissionId", parentPermissionId, "Data", data, "Status", status, "UpdatedBy", loginId);
-                        }
-                        else
-                        {
-                            Success = (int?)dataLayer.ExecuteScalarUsingKey(INSERT_MAKER_LIST, "PermissionId", parentPermissionId, "Data", data, "ObjectId", Id, "Status", status, "CreatedBy", loginId);
-                        }
-
+                        Success = dataLayer.ExecuteBulkNonQueryUsingKey(DELETE_ROLE, dynamicObject);
                         if (Success <= 0)
                             throw new ApplicationBusinessException(GlobalErrorCodes.SQLError);
                     }

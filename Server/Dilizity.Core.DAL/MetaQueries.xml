@@ -356,7 +356,7 @@
         <Param Name="Data" Type="System.String"  Size="-1"/>
         <Param Name="CreatedBy" Type="System.String"  Size="200"/>
       </Query>
-        <Query ID="CommonScreenUserPermission" DataSource="">
+        <Query ID="RoleScreenUserPermission" DataSource="">
         <![CDATA[
             WITH WF ( Permission_id, PARENT_PERMISSION_ID)
             AS
@@ -375,7 +375,7 @@
             from	WF
 		            INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION V ON WF.PERMISSION_ID = V.PERMISSION_ID
             WHERE   V.LOGIN_ID = @LoginId
-            AND		[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.SYSTEM_NAME) in ('Search','Add','Edit','Delete','View','Maker')
+            AND		[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.SYSTEM_NAME) in ('Search','Add','Edit','Delete','View','Maker', 'Bulk')
             ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="PermissionId" Type="System.String"  Size="200"/>
@@ -704,13 +704,23 @@
               SET   ROLE_NAME = @RoleName,
                     UPDATED_BY = @LoginId,
                     UPDATED_ON = Getdate()
-              WHERE ROLE_ID = @RoleId;
+              WHERE ROLE_ID = @RoleId
+              AND   IS_DELETED = 0;
               SELECT @@ROWCOUNT;
           ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="RoleName" Type="System.String"  Size="200"/>
         <Param Name="RoleId" Type="System.Int32"  Size="0"/>
-      </Query>    
+      </Query>
+      <Query ID="GetRole" DataSource="">
+        <![CDATA[
+                SELECT  ROLE_ID RoleId, ROLE_NAME RoleName
+                FROM    SEC_ROLE
+                WHERE   ROLE_ID = @RoleId
+                AND     IS_DELETED = 0;
+            ]]>
+        <Param Name="RoleId" Type="System.Int32"  Size="0"/>
+      </Query>
       <Query ID="InsertRolePermission" DataSource="">
         <![CDATA[
             Insert INTO SEC_ROLE_PERMISSION(ROLE_ID,PERMISSION_ID,CREATED_BY,UPDATED_BY)

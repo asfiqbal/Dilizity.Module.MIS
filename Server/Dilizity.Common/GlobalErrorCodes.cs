@@ -18,7 +18,11 @@ namespace Dilizity.Business.Common
         public const int PasswordCantReuse = 103;
 
         public const int ActivityAlreadyPending = 2001;
-        
+
+        //Role
+        public const int InvalidRoleId = 3001;
+
+
     }
-    
+
 }

@@ -18,7 +18,7 @@ namespace Dilizity.API.Security.Managers
 {
     class RoleScreenManager : IAbstractBusiness
     {
-        private const string COMMON_SCREEN_USER_PERMISSION = "CommonScreenUserPermission";
+        private const string COMMON_SCREEN_USER_PERMISSION = "RoleScreenUserPermission";
         private const string USER_SPECFIC_PERMISSIONS = "UserSpecficPermissions";
         private const string GET_USER = "GetUser";
 
