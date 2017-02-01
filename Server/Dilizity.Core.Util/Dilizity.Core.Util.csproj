@@ -54,6 +54,7 @@
     <Compile Include="DynamicExtensions.cs" />
     <Compile Include="FnTraceWrap.cs" />
     <Compile Include="JsonExtensions.cs" />
+    <Compile Include="JsonHelper.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="ParamEncoder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

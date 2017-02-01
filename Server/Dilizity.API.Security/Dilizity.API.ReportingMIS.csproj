@@ -139,6 +139,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Managers\BulkDeleteRoleBusinessManager.cs" />
+    <Compile Include="Managers\RoleCheckerCompareBusinessManager.cs" />
     <Compile Include="Managers\RoleScreenManager.cs" />
     <Compile Include="Managers\RoleAddUpdateBusinessManager.cs" />
     <Compile Include="Managers\CheckerApproveBusinessManager.cs" />
