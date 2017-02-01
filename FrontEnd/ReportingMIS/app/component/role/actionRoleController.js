@@ -1,4 +1,6 @@
-﻿/// <reference path="../maker/dilizityBackofficeMakerService.js" />
+﻿/// <reference path="../../app.module.js" />
+/// <reference path="../../templates/compareJSON.html" />
+/// <reference path="../maker/dilizityBackofficeMakerService.js" />
 
 (function () {
     'use strict';
@@ -7,8 +9,8 @@
         .module('ReportingMIS')
         .controller('actionRoleController', actionRoleController);
 
-    actionRoleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'Notification', 'HelperService', 'dilizityBackofficeMakerService', 'UniversalService'];
-    function actionRoleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, Notification, HelperService, dilizityBackofficeMakerService, UniversalService) {
+    actionRoleController.$inject = ['$uibModal', '$window', '$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'Notification', 'HelperService', 'dilizityBackofficeMakerService', 'UniversalService'];
+    function actionRoleController($uibModal, $window, $scope, $stateParams, $rootScope, AuthenticationService, RoleService, Notification, HelperService, dilizityBackofficeMakerService, UniversalService) {
         var vm = this;
 
         var roleId = -1;
@@ -454,6 +456,55 @@
             console.log("saveNote End");
         };
 
+        vm.compare = function (size, parentSelector) {
+            var parentElem = parentSelector ?
+              angular.element($document[0].querySelector('.x_panel' + parentSelector)) : undefined;
+            var modalInstance = $uibModal.open({
+                animation: true,
+                ariaLabelledBy: 'modal-title',
+                ariaDescribedBy: 'modal-body',
+                templateUrl: 'app/templates/compareJSON.html',
+                controller: 'compareJSONController',
+                controllerAs: 'vm',
+                size: size,
+                appendTo: parentElem,
+                resolve: {
+                    beautyHtml: function () {
+                        console.log("compare Begin");
+
+                        var jsondiffpatch = $window.jsondiffpatch;
+                        var jsonDiff = jsondiffpatch.create({
+                            objectHash: function (obj) {
+                                if (typeof obj._id !== 'undefined') {
+                                    return obj._id;
+                                }
+                                if (typeof obj.id !== 'undefined') {
+                                    return obj._id;
+                                }
+                                if (typeof obj.name !== 'undefined') {
+                                    return obj.name;
+                                }
+                                return JSON.stringify(obj);
+                            },
+                            arrays: {
+                                detectMove: true,
+                                includeValueOnMove: false
+                            },
+                            textDiff: {
+                                minLength: 60
+                            }
+                        });
+
+                        var delta = jsondiffpatch.diff(vm.availablePermissions, vm.assignedPermissions);
+                        console.log('delta', delta);
+                        var outHtml = jsondiffpatch.formatters.html.format(delta, vm.availablePermissions);
+                        console.log('outHtml', outHtml);
+                        return outHtml
+                    }
+                }
+            });
+
+        }
     }
 
 })();

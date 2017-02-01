@@ -51,7 +51,7 @@
                 NewPassword: encNewPassword
             }
 
-            UniversalService.Do(permission, username, model, successCallBack, errorCallBack);
+            UniversalService.Do(permission, loginId, model, successCallBack, errorCallBack);
 
 
             //$http.post(AppSettings.baseUrl + 'Universal/Do', { PermissionId: permission, LoginId: loginId, Model: model })
