@@ -9,8 +9,8 @@
         .module('ReportingMIS')
         .controller('actionRoleController', actionRoleController);
 
-    actionRoleController.$inject = ['$uibModal', '$window', '$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'Notification', 'HelperService', 'dilizityBackofficeMakerService', 'UniversalService'];
-    function actionRoleController($uibModal, $window, $scope, $stateParams, $rootScope, AuthenticationService, RoleService, Notification, HelperService, dilizityBackofficeMakerService, UniversalService) {
+    actionRoleController.$inject = ['$uibModal', '$window', '$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'Notification', 'HelperService', 'dilizityBackofficeMakerService', 'UniversalService', 'CommunicationService'];
+    function actionRoleController($uibModal, $window, $scope, $stateParams, $rootScope, AuthenticationService, RoleService, Notification, HelperService, dilizityBackofficeMakerService, UniversalService, CommunicationService) {
         var vm = this;
 
         var roleId = -1;
@@ -498,6 +498,7 @@
                         var delta = jsondiffpatch.diff(vm.availablePermissions, vm.assignedPermissions);
                         console.log('delta', delta);
                         var outHtml = jsondiffpatch.formatters.html.format(delta, vm.availablePermissions);
+                        CommunicationService.Set('COMPARE', outHtml);
                         console.log('outHtml', outHtml);
                         return outHtml
                     }

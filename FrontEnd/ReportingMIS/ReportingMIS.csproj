@@ -100,6 +100,7 @@
     <Content Include="app\component\checker\dilizityBackofficeCheckerController.js" />
     <Content Include="app\component\shared\commonController\compareJSONController.js" />
     <Content Include="app\component\shared\commonService\AuthenticationService.js" />
+    <Content Include="app\component\shared\commonService\CommunicationService.js" />
     <Content Include="app\config\app.routes - Copy.js" />
     <Content Include="app\config\formly.config.js" />
     <Content Include="app\controllers\homeController.js" />
