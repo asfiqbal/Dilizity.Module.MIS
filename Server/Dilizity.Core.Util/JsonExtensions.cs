@@ -36,5 +36,115 @@ namespace Dilizity.Core.Util
                 }
             }
         }
+
+        public static JToken RemoveEmptyChildren(JToken token)
+        {
+            if (token.Type == JTokenType.Object)
+            {
+                JObject copy = new JObject();
+                foreach (JProperty prop in token.Children<JProperty>())
+                {
+                    JToken child = prop.Value;
+                    if (child.HasValues)
+                    {
+                        child = RemoveEmptyChildren(child);
+                    }
+                    if (!IsEmpty(child))
+                    {
+                        //                if (child.HasValues)
+                        copy.Add(prop.Name, child);
+                    }
+                }
+                return copy;
+            }
+            else if (token.Type == JTokenType.Array)
+            {
+                JArray copy = new JArray();
+                foreach (JToken item in token.Children())
+                {
+                    JToken child = item;
+                    if (child.HasValues)
+                    {
+                        child = RemoveEmptyChildren(child);
+                    }
+                    if (!IsEmpty(child))
+                    {
+                        copy.Add(child);
+                    }
+                }
+                return copy;
+            }
+            return token;
+        }
+
+        private static bool IsEmpty(JToken token)
+        {
+            return (token.Type == JTokenType.Null);
+        }
+
+        public static void RemoveFields(JToken token, string[] fields)
+        {
+            JContainer container = token as JContainer;
+            if (container == null) return;
+
+            List<JToken> removeList = new List<JToken>();
+            foreach (JToken el in container.Children())
+            {
+                JProperty p = el as JProperty;
+                if (p != null && fields.Contains(p.Name))
+                {
+                    removeList.Add(el);
+                }
+                RemoveFields(el, fields);
+            }
+
+            foreach (JToken el in removeList)
+            {
+                el.Remove();
+            }
+        }
+
+        private static void ClearEmpty(JToken token, List<JToken> nodesToDelete)
+        {
+            JContainer container = token as JContainer;
+            if (container == null) return;
+
+            foreach (var child in container.Children())
+            {
+                var cont = child as JContainer;
+
+                if (child.Type == JTokenType.Property ||
+                    child.Type == JTokenType.Object ||
+                    child.Type == JTokenType.Array)
+                {
+                    if (child.HasValues)
+                    {
+                        ClearEmpty((JToken)cont, nodesToDelete);
+                    }
+                    else
+                    {
+                        nodesToDelete.Add(child.Parent);
+                    }
+                }
+            }
+        }
+
+        public static void DeepRemove(JToken jsonDocument)
+        {
+            var nodesToDelete = new List<JToken>();
+            var parsed = (JContainer)jsonDocument;
+
+            do
+            {
+                nodesToDelete.Clear();
+
+                ClearEmpty(parsed, nodesToDelete);
+
+                foreach (var token in nodesToDelete)
+                {
+                    token.Remove();
+                }
+            } while (nodesToDelete.Count > 0);
+        }
     }
 }

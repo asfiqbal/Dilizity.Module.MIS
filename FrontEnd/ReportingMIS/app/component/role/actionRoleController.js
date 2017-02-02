@@ -459,51 +459,78 @@
         vm.compare = function (size, parentSelector) {
             var parentElem = parentSelector ?
               angular.element($document[0].querySelector('.x_panel' + parentSelector)) : undefined;
-            var modalInstance = $uibModal.open({
-                animation: true,
-                ariaLabelledBy: 'modal-title',
-                ariaDescribedBy: 'modal-body',
-                templateUrl: 'app/templates/compareJSON.html',
-                controller: 'compareJSONController',
-                controllerAs: 'vm',
-                size: size,
-                appendTo: parentElem,
-                resolve: {
-                    beautyHtml: function () {
-                        console.log("compare Begin");
 
-                        var jsondiffpatch = $window.jsondiffpatch;
-                        var jsonDiff = jsondiffpatch.create({
-                            objectHash: function (obj) {
-                                if (typeof obj._id !== 'undefined') {
-                                    return obj._id;
-                                }
-                                if (typeof obj.id !== 'undefined') {
-                                    return obj._id;
-                                }
-                                if (typeof obj.name !== 'undefined') {
-                                    return obj.name;
-                                }
-                                return JSON.stringify(obj);
-                            },
-                            arrays: {
-                                detectMove: true,
-                                includeValueOnMove: false
-                            },
-                            textDiff: {
-                                minLength: 60
-                            }
-                        });
+            var model = {
+                RoleId: roleId,
+                MakerId: makerId
+            };
 
-                        var delta = jsondiffpatch.diff(vm.availablePermissions, vm.assignedPermissions);
-                        console.log('delta', delta);
-                        var outHtml = jsondiffpatch.formatters.html.format(delta, vm.availablePermissions);
-                        CommunicationService.Set('COMPARE', outHtml);
-                        console.log('outHtml', outHtml);
-                        return outHtml
+            var tmpUserName = $rootScope.globals.currentUser.username;
+            var outHtml = '';
+
+            var jsondiffpatch = $window.jsondiffpatch;
+            var jsonDiff = jsondiffpatch.create({
+                objectHash: function (obj) {
+                    if (typeof obj._id !== 'undefined') {
+                        return obj._id;
                     }
+                    if (typeof obj.id !== 'undefined') {
+                        return obj._id;
+                    }
+                    if (typeof obj.name !== 'undefined') {
+                        return obj.name;
+                    }
+                    return JSON.stringify(obj);
+                },
+                arrays: {
+                    detectMove: true,
+                    includeValueOnMove: false
+                },
+                textDiff: {
+                    minLength: 60
                 }
             });
+
+
+            UniversalService.Do(vm.permissionName + '.Compare', tmpUserName, model,
+               function (response) {
+                   var data = angular.fromJson(response.data);
+
+                   if (data.ErrorCode == 0) {
+                       console.log("Success!");
+                       var delta = jsondiffpatch.diff(data.Data.Old, data.Data.New);
+                       outHtml = jsondiffpatch.formatters.html.format(delta, data.Data.Old);
+                       CommunicationService.Set('COMPARE', outHtml);
+                       //console.log('outHtml', outHtml);
+
+                       var modalInstance = $uibModal.open({
+                           animation: true,
+                           ariaLabelledBy: 'modal-title',
+                           ariaDescribedBy: 'modal-body',
+                           templateUrl: 'app/templates/compareJSON.html',
+                           controller: 'compareJSONController',
+                           controllerAs: 'vm',
+                           windowClass: 'zindex',
+                           size: size,
+                           appendTo: parentElem,
+                           resolve: {
+                               beautyHtml: function () {
+                                   return outHtml;
+                               }
+                           }
+                       });
+                   }
+                   else {
+                       Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                   }
+               },
+               function (response) {
+                   console.log("response!", response);
+                   Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+               }
+            );
+
+
 
         }
     }

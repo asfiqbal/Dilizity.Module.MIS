@@ -57,71 +57,31 @@ namespace Dilizity.API.Security.Managers
                         permissionTree.Id = permission.PermissionId;
                         permissionTree.ParentId = permission.ParentPermissionId;
                         permissionTree.Permission = permission.PermissionName;
+                        permissionTree.children = new List<dynamic>();
                         PermissionList.Add(permissionTree);
                     }
 
                     Generate(PermissionList);
 
-                    foreach (dynamic permission in PermissionList)
-                    {
-                        var dict = (IDictionary<string, object>)permission;
-                        dict.Remove("Id");
-                        dict.Remove("ParentId");
-                    }
+                    string json = Newtonsoft.Json.JsonConvert.SerializeObject(PermissionList,
+                        Newtonsoft.Json.Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore
+                            });
 
-
-                    tmpObject.AssignedPermissions = PermissionList;
+                    tmpObject.AssignedPermissions = CleanseData(json);
 
                     outObject.Old = tmpObject;
 
-                    JToken jsonFromMakerObject = ReadMakerObject(makerId);
+                    string jsonString = ReadMakerObject(makerId);
 
-                    var nodesToDelete = new List<JToken>();
-                    var parsed = (JContainer)jsonFromMakerObject;
-
-                    do
-                    {
-                        nodesToDelete.Clear();
-
-                        ClearEmpty(parsed, nodesToDelete);
-
-                        foreach (var token in nodesToDelete)
-                        {
-                            token.Remove();
-                        }
-                    } while (nodesToDelete.Count > 0);
-
-                    outObject.New = JsonHelper.RemoveEmptyChildren(jsonFromMakerObject);
+                    outObject.New = CleanseData(jsonString);
                 }
-
 
 
                 parameterBusService.Add(GlobalConstants.OUT_RESULT, outObject);
                 parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.Success;
-            }
-        }
-
-        private static void ClearEmpty(JContainer container, List<JToken> nodesToDelete)
-        {
-            if (container == null) return;
-
-            foreach (var child in container.Children())
-            {
-                var cont = child as JContainer;
-
-                if (child.Type == JTokenType.Property ||
-                    child.Type == JTokenType.Object ||
-                    child.Type == JTokenType.Array)
-                {
-                    if (child.HasValues)
-                    {
-                        ClearEmpty(cont, nodesToDelete);
-                    }
-                    else
-                    {
-                        nodesToDelete.Add(child.Parent);
-                    }
-                }
             }
         }
 
@@ -150,7 +110,7 @@ namespace Dilizity.API.Security.Managers
             }
         }
 
-        private JToken ReadMakerObject(int makerId)
+        private string ReadMakerObject(int makerId)
         {
             using (FnTraceWrap tracer = new FnTraceWrap())
             {
@@ -158,39 +118,22 @@ namespace Dilizity.API.Security.Managers
                 {
                     dynamic _t = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_MAKER, GlobalConstants.MAKER_ID_PARAM, makerId);
 
-                    string jsonString = _t.Data;
-                    jsonString = jsonString.Replace("label", "Permission");
-                    JToken tObject = JToken.Parse(jsonString);
-
-                    JsonHelper.RemoveFields(tObject, new string[] { "Id", "collapsed", "MakerId", "Status", "AvailablePermissions", "selected" });
-
-                    return tObject;
+                    return _t.Data;
                 }
             }
         }
 
-        //private void removeFields(JToken token, string[] fields)
-        //{
-        //    JContainer container = token as JContainer;
-        //    if (container == null) return;
+        private JToken CleanseData(string jsonString)
+        {
+            jsonString = jsonString.Replace("label", "Permission");
+            JToken tObject = JToken.Parse(jsonString);
 
-        //    List<JToken> removeList = new List<JToken>();
-        //    foreach (JToken el in container.Children())
-        //    {
-        //        JProperty p = el as JProperty;
-        //        if (p != null && fields.Contains(p.Name))
-        //        {
-        //            removeList.Add(el);
-        //        }
-        //        removeFields(el, fields);
-        //    }
+            JsonExtensions.RemoveFields(tObject, new string[] { "Id", "ParentId", "collapsed", "MakerId", "Status", "AvailablePermissions", "selected" });
+            JsonExtensions.DeepRemove(tObject);
 
-        //    foreach (JToken el in removeList)
-        //    {
-        //        el.Remove();
-        //    }
-        //}
+            return tObject;
 
+        }
 
     }
 }
