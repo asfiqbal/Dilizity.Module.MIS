@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GlobalErrorCodes.cs" />
+    <Compile Include="Managers\ScreenPermissionManager.cs" />
     <Compile Include="Model\ApplicationBusinessException.cs" />
     <Compile Include="ErrorMappingManager.cs" />
     <Compile Include="SystemConfigurationManager.cs" />

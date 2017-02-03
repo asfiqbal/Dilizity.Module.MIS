@@ -379,7 +379,33 @@
             ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="PermissionId" Type="System.String"  Size="200"/>
-      </Query>    
+        </Query>    
+              <Query ID="GetScreenPermission" DataSource="">
+          <![CDATA[
+            WITH WF 
+            AS
+            (
+            SELECT	[Level]=1, Permission_id, PARENT_PERMISSION_ID
+            from	SEC_PERMISSION P
+            WHERE   P.SYSTEM_NAME = @PermissionId
+            UNION ALL
+            SELECT	[Level]+1, P.Permission_id, P.PARENT_PERMISSION_ID
+            from	SEC_PERMISSION P
+		            INNER JOIN WF ON P.PARENT_PERMISSION_ID  = WF.Permission_id
+            WHERE	UPPER(P.SYSTEM_NAME) NOT LIKE '%.EMAIL%'
+            AND		UPPER(P.SYSTEM_NAME) NOT LIKE '%.CHECKER%'
+            )
+            select	[Level], [dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.SYSTEM_NAME) FieldKey, V.SYSTEM_NAME PermissionName
+            from	WF
+		            INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION V ON WF.PERMISSION_ID = V.PERMISSION_ID
+            WHERE   V.LOGIN_ID = @LoginId
+            AND		V.SYSTEM_NAME != @PermissionId
+            AND		[Level] <= 3
+            ]]>
+          <Param Name="LoginId" Type="System.String"  Size="200"/>
+          <Param Name="PermissionId" Type="System.String"  Size="200"/>
+        </Query>    
+
       <Query ID="UserSpecficPermissions" DataSource="">
         <![CDATA[
             SELECT  -1 PermissionId, 'All' PermissionName

@@ -14,6 +14,7 @@ using Dilizity.Business.Common;
 using Dilizity.Business.Common.Services;
 using Newtonsoft.Json.Linq;
 using Dilizity.Business.Common.Model;
+using Dilizity.Business.Common.Managers;
 
 namespace Dilizity.API.Security.Managers
 {
@@ -56,17 +57,21 @@ namespace Dilizity.API.Security.Managers
                 }
                 else
                 {
+                    outObject.Id = 0;
+                    outObject.Name = string.Empty;
+
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                     {
                         List<PermissionTree> permissionTreeList = new List<PermissionTree>();
 
-                        dynamic roleObject = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_ROLE, GlobalConstants.ROLE_ID_PARAM, roleId);
+                        if (roleId > 0)
+                        {
+                            dynamic roleObject = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_ROLE, GlobalConstants.ROLE_ID_PARAM, roleId);
 
-                        if (roleObject == null)
-                            throw new ApplicationBusinessException(GlobalErrorCodes.InvalidRoleId);
+                            if (roleObject == null)
+                                throw new ApplicationBusinessException(GlobalErrorCodes.InvalidRoleId);
+                        }
 
-                        outObject.Id = roleObject.RoleId;
-                        outObject.Name = roleObject.RoleName;
 
                         foreach (dynamic permission in dataLayer.ExecuteUsingKey(GET_ROLE_AVAILABLE_PERMISSIONS, GlobalConstants.ROLE_ID_PARAM, roleId))
                         {
@@ -92,9 +97,15 @@ namespace Dilizity.API.Security.Managers
                         Generate(PermissionList);
 
                         outObject.AssignedPermissions = PermissionList;
+
+                        ScreenPermissionManager screenManager = new ScreenPermissionManager();
+                        screenManager.Do(parameterBusService);
+
+                        outObject.UserPermission = parameterBusService[GlobalConstants.OUT_RESULT];
+
                     }
                 }
-                parameterBusService.Add(GlobalConstants.OUT_RESULT, outObject);
+                parameterBusService[GlobalConstants.OUT_RESULT] = outObject;
                 parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.Success;
             }
         }

@@ -34,6 +34,7 @@
         vm.roleName = '';
         vm.availablePermissions = {};
         vm.assignedPermissions = [];
+        vm.userPermission = {};
         vm.notes = [];
 
         vm.permissionName = '';
@@ -125,6 +126,7 @@
                         vm.roleName = data.Data.Name;
                         vm.availablePermissions = data.Data.AvailablePermissions;
                         vm.assignedPermissions = data.Data.AssignedPermissions;
+                        vm.userPermission = data.Data.UserPermission;
                         vm.notes = data.Data.Notes;
                     }
                     else {
@@ -364,12 +366,24 @@
 
             console.log(model);
 
-            RoleService.Add(vm.permissionName, tmpUserName, model, function (response) {
-                console.log("Success!");
-                Notification.success({ message: "Role Added Successfully.", positionY: 'bottom', positionX: 'right' });
-            }, function (response) {
-                Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
-            });
+            UniversalService.Do(vm.permissionName + '.Save', tmpUserName, model,
+                function (response) {
+                    console.log("Success!");
+                    var data = angular.fromJson(response.data);
+
+                    if (data.ErrorCode == 0) {
+                        Notification.success({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                    }
+                    else {
+                        Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                    }
+                },
+                function (response) {
+                    console.log("response!", response);
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+                }
+            );
+
 
             console.log("add End");
         };

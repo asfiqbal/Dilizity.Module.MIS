@@ -30,10 +30,10 @@
                             <a ng-show="vm.isCheckerMode()" uib-tooltip="Reject" tooltip-placement="left" ng-click="vm.reject('Reject')" class="collapse-link"><i class="glyphicon glyphicon-remove"></i></a>
                         </li>
                         <li>
-                            <a ng-show="vm.permissionName=='Dilizity.Backoffice.Role.Add'" uib-tooltip="Ready for Checker Approval" tooltip-placement="left" ng-click="vm.add()" class="collapse-link"><i class="glyphicon glyphicon-saved"></i></a>
+                            <a ng-show="vm.userPermission.Save=='Dilizity.Backoffice.Role.Add.Save'" uib-tooltip="Ready for Checker Approval" tooltip-placement="left" ng-click="vm.add()" class="collapse-link"><i class="glyphicon glyphicon-saved"></i></a>
                         </li>
                         <li>
-                            <a ng-show="vm.permissionName=='Dilizity.Backoffice.Role.Edit'" uib-tooltip="Ready for Checker Approval" tooltip-placement="left" ng-click="vm.update()" class="collapse-link"><i class="glyphicon glyphicon-floppy-save"></i></a>
+                            <a ng-show="vm.userPermission.Save=='Dilizity.Backoffice.Role.Edit.Save'" uib-tooltip="Ready for Checker Approval" tooltip-placement="left" ng-click="vm.update()" class="collapse-link"><i class="glyphicon glyphicon-floppy-save"></i></a>
                         </li>
                         <li>
                             <a ng-show="vm.isMakerCheckerMode()" data-toggle="modal" data-target=".bs-example-modal-lg" uib-tooltip="Comments" tooltip-placement="left" class="collapse-link"><i class="glyphicon glyphicon-comment"></i></a>

@@ -45,7 +45,6 @@ namespace Dilizity.API.Security.Managers
                     string data = model.ToString();
                     string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
                     string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
-                    string status = model["Status"].ToString();
                     string id = model["Id"].ToString();
                     string roleName = model["Name"].ToString();
 
