@@ -14,7 +14,7 @@
         .config(config)
         .run(run);
 
-    config.$inject = ['$stateProvider', '$urlRouterProvider','$locationProvider'];
+    config.$inject = ['$stateProvider', '$urlRouterProvider', '$locationProvider'];
     function config($stateProvider, $urlRouterProvider, $locationProvider) {
         //$urlRouterProvider.otherwise('/home');
         $urlRouterProvider.otherwise('/');
@@ -58,20 +58,38 @@
         })
         .state('index.Maker', {
             url: '^/Maker/:permissionId',
-            templateUrl: 'app/component/maker/dilizityBackofficeMaker.html',
-            controller: 'dilizityBackofficeMakerController',
+            templateUrl: 'app/component/maker/maker.html',
+            controller: 'makerController',
             controllerAs: 'vm'
         })
         .state('index.Checker', {
             url: '^/Checker/:permissionId',
-            templateUrl: 'app/component/checker/dilizityBackofficeChecker.html',
-            controller: 'dilizityBackofficeCheckerController',
+            templateUrl: 'app/component/checker/checker.html',
+            controller: 'checkerController',
             controllerAs: 'vm'
         })
         .state('index.ActionRole', {
             url: '^/Role/:roleId/:makerId/:permissionName',
             templateUrl: 'app/component/role/actionRole.html',
             controller: 'actionRoleController',
+            controllerAs: 'vm'
+        })
+        .state('login', {
+            url: '^/login',
+            templateUrl: 'app/component/shared/login/login.html',
+            controller: 'loginController',
+            controllerAs: 'vm'
+        })
+        .state('changePassword', {
+            url: '^/changePassword',
+            templateUrl: 'app/component/shared/changePassword/changePassword.html',
+            controller: 'changePasswordController',
+            controllerAs: 'vm'
+        })
+        .state('logout', {
+            url: '^/logout',
+            templateUrl: '',
+            controller: 'logoutController',
             controllerAs: 'vm'
         })
         .state('index.Report1', {
@@ -83,22 +101,22 @@
         $locationProvider.html5Mode(true);
     }
 
-    run.$inject = ['$rootScope', '$location', '$state','$cookieStore', '$http'];
-    function run($rootScope, $location, $state, $cookieStore, $http) {
+    run.$inject = ['$rootScope', '$location', '$state', '$cookieStore', '$http', '$window'];
+    function run($rootScope, $location, $state, $cookieStore, $http, $window) {
         // keep user logged in after page refresh
         $rootScope.globals = $cookieStore.get('globals') || {};
         if ($rootScope.globals.currentUser) {
             $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
         }
 
-        //$rootScope.$on('$locationChangeStart', function (event, next, current) {
-        //    // redirect to login page if not logged in and trying to access a restricted page
-        //    var restrictedPage = $.inArray($location.path(), ['/login', '/register']) === -1;
-        //    var loggedIn = $rootScope.globals.currentUser;
-        //    if (restrictedPage && !loggedIn) {
-        //        $location.path('/login');
-        //    }
-        //});
+        $rootScope.$on('$locationChangeStart', function (event, next, current) {
+            // redirect to login page if not logged in and trying to access a restricted page
+            var restrictedPage = $.inArray($location.path(), ['/login', '/register']) === -1;
+            var loggedIn = $rootScope.globals.currentUser;
+            if (restrictedPage && !loggedIn) {
+                $location.path('/login');
+            }
+        });
     }
 
 })();

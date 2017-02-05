@@ -11,19 +11,34 @@
 
         vm.loadMenu = loadMenu;
         vm.fullName = "";
+        vm.picture = "";
 
         (function initController() {
-            vm.fullName = "Asif Iqbal";
         })();
 
         function loadMenu() {
             console.log("loadMenu Begin");
-            //vm.dataLoading = true;
-            MenuService.GetMenuData(vm.username, function (response) {
-                $scope.tree = angular.fromJson(response.data);
-                console.log("GetMenuData Called");
-                console.log($scope.tree);
-            });
+
+            MenuService.GetMenuData(vm.username,
+                function (response) {
+                    console.log("Success!");
+                    var data = angular.fromJson(response.data);
+
+                    if (data.ErrorCode == 0) {
+                        $scope.tree = data.Data.Menus;
+                        vm.fullName = data.Data.Name;
+                        vm.picture = data.Data.Picture;
+                    }
+                    else {
+                        Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                    }
+                },
+                function (response) {
+                    console.log("response!", response);
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+                }
+            );
+
             console.log("loadMenu End");
         };
 

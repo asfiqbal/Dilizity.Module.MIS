@@ -18,18 +18,28 @@ namespace Dilizity.API.Security.Managers
     public class MenuBusinessManager : IAbstractBusiness
     {
         private const string GET_USER_MENUS = "GetMenus";
+        private const string GET_USER = "GetUser";
+
 
         public void Do(BusService parameterBusService)
         {
             using (FnTraceWrap tracer = new FnTraceWrap())
             {
+                List<MenuTree> menuStructure = new List<MenuTree>();
+
+                dynamic outResult = new ExpandoObject();
+
+                string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
+                if (string.IsNullOrEmpty(loginId))
+                    throw new NullReferenceException("UserId can't be Null or Empty");
+
                 using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.REPORT_SCHEMA))
                 {
-                    List<MenuTree> menuStructure = new List<MenuTree>();
 
-                    string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
-                    if (string.IsNullOrEmpty(loginId))
-                        throw new NullReferenceException("UserId can't be Null or Empty");
+                    dynamic secUser = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_USER, GlobalConstants.LOGIN_PARAM, loginId);
+
+                    outResult.Name = secUser.Name;
+                    outResult.Picture = secUser.Picture;
 
                     foreach (dynamic userMenu in dataLayer.ExecuteUsingKey(GET_USER_MENUS, "LoginId", loginId))
                     {
@@ -40,14 +50,15 @@ namespace Dilizity.API.Security.Managers
                         menuTree.link = userMenu.Url;
                         menuStructure.Add(menuTree);
                     }
-
-                    Generate(menuStructure);
-
-                    parameterBusService.Add(GlobalConstants.OUT_RESULT, menuStructure);
-                    parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.Success;
-
-
                 }
+
+                Generate(menuStructure);
+
+                outResult.Menus = menuStructure;
+
+                parameterBusService.Add(GlobalConstants.OUT_RESULT, outResult);
+                parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.Success;
+
             }
         }
 

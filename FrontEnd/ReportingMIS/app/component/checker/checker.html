@@ -1,0 +1,102 @@
+﻿<div class="">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>Checker Activity Management</h3>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Search Maker Activity</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li class="dropdown">
+                            <a ng-show="vm.userPermission.Delete=='Dilizity.Backoffice.Checker.Delete'" data-toggle="modal" data-target=".bs-example-modal-sm" uib-tooltip="Delete Maker Activity" tooltip-placement="left" class="collapse-link"><i class="fa fa-trash"></i></a>
+                        </li>
+                        <li>
+                            <a ng-show="vm.userPermission.Search=='Dilizity.Backoffice.Checker.Search'" uib-tooltip="Search Checker Activity" tooltip-placement="left" ng-click="vm.searchMakerActivity()" class="collapse-link"><i class="fa fa-search"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <br />
+                    <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Maker Id
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <input class="form-control col-md-7 col-xs-12" type="text" ng-model="vm.makerId" id="makerId">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Permissions
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <select class="form-control col-md-7 col-xs-12" ng-model="vm.selectedPermissions"
+                                        ng-options="rolePermission.PermissionId as rolePermission.PermissionName for rolePermission in vm.permissionList"></select>
+
+                            </div>
+                        </div>
+                        <div class="ln_solid"></div>
+                        <div ui-grid="gridOptions" external-scopes="editClickHandler" ui-grid-selection ui-grid-pagination ui-grid-exporter class="grid"></div>
+                        <br />
+                        <div class="row">
+                            <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                                <label class="col-md-2 col-sm-2 col-xs-12 pull-left" ng-show="!gridOptions.data.length">
+                                    No Data Available
+                                </label>
+                                <label class="col-md-2 col-sm-2 col-xs-12 pull-left" ng-show="gridOptions.data.length > 0">
+                                    Showing {{ pagination.pageNumber }} to {{ pagination.getTotalPages() }}
+                                </label>
+                                <button class="btn btn-default pull-right" ng-click="pagination.previousPage()" type="button">
+                                    <span class="glyphicon glyphicon-hand-left" aria-hidden="true"></span>
+                                </button>
+                                <button class="btn btn-default pull-right" ng-click="pagination.nextPage()" type="button">
+                                    <span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel2">Maker Activities</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Following Maker Activities have been selected for Deletion!</h4>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in vm.selectedMakerActivities" >
+                                            <th scope="row">{{item}}</th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="vm.deleteRoles()">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -6,8 +6,8 @@
         .module('ReportingMIS')
         .controller('searchRoleController', searchRoleController);
 
-    searchRoleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'RoleService', 'UniversalService', 'Notification'];
-    function searchRoleController($scope, $stateParams, $rootScope, AuthenticationService, RoleService, UniversalService, Notification) {
+    searchRoleController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'UniversalService', 'Notification'];
+    function searchRoleController($scope, $stateParams, $rootScope, AuthenticationService, UniversalService, Notification) {
         var vm = this;
 
         

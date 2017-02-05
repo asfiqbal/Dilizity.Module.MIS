@@ -34,7 +34,7 @@
                     }
                     else {
                         console.log("ActionCode", data.ActionCode);
-                        $window.location = '/changePassword.html';
+                        $location.path('/changePassword');
                     }
                 }
                 else  {

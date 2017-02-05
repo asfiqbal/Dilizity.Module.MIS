@@ -257,7 +257,7 @@
       </Query>
       <Query ID="GetUser" DataSource="">
         <![CDATA[
-            SELECT  USER_ID UserId, NAME Name, LOGIN_ID LoginId, PASSWORD Password, PASSWORD_POLICY_ID PasswordPolicyId, PASSWORD_ATTEMPTS PasswordAttempts, ACCOUNT_LOCKED AccountLocked, [CHANGE_PASSWORD_ON_LOGON] ChangePasswordOnLogon, EMAIL Email, MOBILE_NUMBER MobileNumber, LAST_PASSWORD_CHANGE_DATETIME LastPasswordChangeDateTime, [LAST_LOGIN_DATETIME] LastLoginDateTime, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+            SELECT  USER_ID UserId, NAME Name, LOGIN_ID LoginId, PASSWORD Password, PASSWORD_POLICY_ID PasswordPolicyId, PASSWORD_ATTEMPTS PasswordAttempts, ACCOUNT_LOCKED AccountLocked, [CHANGE_PASSWORD_ON_LOGON] ChangePasswordOnLogon, EMAIL Email, MOBILE_NUMBER MobileNumber, LAST_PASSWORD_CHANGE_DATETIME LastPasswordChangeDateTime, [LAST_LOGIN_DATETIME] LastLoginDateTime, PICTURE Picture, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
             FROM    SEC_USER SU
             WHERE   SU.IS_DELETED = 0
             AND     SU.LOGIN_ID = @LoginId
@@ -434,7 +434,7 @@
 					              CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'asc' THEN UPDATED_ON END ASC,
 					              CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'desc' THEN UPDATED_ON END DESC
 			              )
-				              , *
+				            , *
               FROM SEC_ROLE
               WHERE   IS_DELETED = 0
               AND	(ROLE_ID = @RoleId OR @RoleId = 0)
@@ -499,23 +499,9 @@
       </Query>
       <Query ID="GetRoleAvailablePermissions" DataSource="">
         <![CDATA[
-              SELECT  P.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID ParentPermissionId, P.SYSTEM_NAME PermissionName
-              FROM    SEC_PERMISSION P
-              WHERE	  P.PARENT_PERMISSION_ID is null
-              UNION
-              SELECT	PERMISSION_ID, PARENT_PERMISSION_ID, USER_FRIENDLY_NAME
-              FROM
-              (
-              SELECT	PERMISSION_ID, PARENT_PERMISSION_ID, USER_FRIENDLY_NAME
-              FROM	VW_PERMISSION_HIERARCHY
-              EXCEPT
-              SELECT	RP.PERMISSION_ID PermissionId, P.PARENT_PERMISSION_ID, dbo.FN_GET_FRIENDLY_PERMISSION_NAME(P.SYSTEM_NAME) USER_FRIENDLY_NAME
-              FROM	SEC_ROLE_PERMISSION RP
-		              INNER JOIN SEC_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-              WHERE   ROLE_ID = @RoleId
-              ) T
+              SELECT	PERMISSION_ID PermissionId, PARENT_PERMISSION_ID ParentPermissionId, USER_FRIENDLY_NAME PermissionName
+              FROM	VW_PERMISSION_HIERARCHY;
             ]]>
-        <Param Name="RoleId" Type="System.Int32"  Size="0"/>
       </Query>
       <Query ID="GetRoleAssignedPermissions" DataSource="">
         <![CDATA[

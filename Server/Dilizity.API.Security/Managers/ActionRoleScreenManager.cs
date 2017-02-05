@@ -70,10 +70,12 @@ namespace Dilizity.API.Security.Managers
 
                             if (roleObject == null)
                                 throw new ApplicationBusinessException(GlobalErrorCodes.InvalidRoleId);
+
+                            outObject.Name = roleObject.RoleName;
+                            outObject.Id = roleObject.RoleId;
                         }
 
-
-                        foreach (dynamic permission in dataLayer.ExecuteUsingKey(GET_ROLE_AVAILABLE_PERMISSIONS, GlobalConstants.ROLE_ID_PARAM, roleId))
+                        foreach (dynamic permission in dataLayer.ExecuteUsingKey(GET_ROLE_AVAILABLE_PERMISSIONS))
                         {
                             PermissionTree permissionTree = new PermissionTree();
                             permissionTree.Id = permission.PermissionId;
@@ -82,8 +84,8 @@ namespace Dilizity.API.Security.Managers
                             permissionTreeList.Add(permissionTree);
                         }
 
-                        Generate(permissionTreeList);
-                        outObject.AvailablePermissions = permissionTreeList;
+                        Dictionary<int, PermissionTree> allpermissionTree = permissionTreeList.ToDictionary(permission => permission.Id);
+
                         List<PermissionTree> PermissionList = new List<PermissionTree>();
                         foreach (dynamic permission in dataLayer.ExecuteUsingKey(GET_ROLE_ASSIGNED_PERMISSIONS, GlobalConstants.ROLE_ID_PARAM, roleId))
                         {
@@ -94,8 +96,12 @@ namespace Dilizity.API.Security.Managers
                             PermissionList.Add(permissionTree);
                         }
 
+                        RemoveUsedPermissions(permissionTreeList, PermissionList);
+
+                        Generate(permissionTreeList);
                         Generate(PermissionList);
 
+                        outObject.AvailablePermissions = permissionTreeList;
                         outObject.AssignedPermissions = PermissionList;
 
                         ScreenPermissionManager screenManager = new ScreenPermissionManager();
@@ -145,6 +151,34 @@ namespace Dilizity.API.Security.Managers
                             tree.Remove(permission);
                         }
                     }
+                }
+            }
+        }
+
+        private void RemoveUsedPermissions(List<PermissionTree> AllPermissions, List<PermissionTree> assignedPermissions)
+        {
+            using (FnTraceWrap tracer = new FnTraceWrap())
+            {
+                Dictionary<int, PermissionTree> assignedTree = assignedPermissions.ToDictionary(permission => permission.Id);
+                Dictionary<int, PermissionTree> allPermissionTree = AllPermissions.ToDictionary(permission => permission.Id);
+
+                List<PermissionTree> toBeDeleted = new List<PermissionTree>();
+
+                foreach (PermissionTree permission in AllPermissions)
+                {
+                    if (assignedTree.ContainsKey(permission.Id))
+                    {
+                        List<PermissionTree> childs = AllPermissions.Where(child => child.ParentId == permission.Id)
+                                           .ToList();
+                        if (childs.Count <= 0)
+                            toBeDeleted.Add(permission);
+                    }
+                    
+                }
+
+                foreach (PermissionTree permission in toBeDeleted)
+                {
+                        AllPermissions.Remove(permission);
                 }
             }
         }

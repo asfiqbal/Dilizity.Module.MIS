@@ -131,13 +131,13 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ControllerHelper.cs" />
     <Compile Include="Controllers\ReportController.cs" />
-    <Compile Include="Controllers\MakerController.cs" />
     <Compile Include="Controllers\UniversalController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Managers\BulkDeleteMakerBusinessManager.cs" />
     <Compile Include="Managers\BulkDeleteRoleBusinessManager.cs" />
     <Compile Include="Managers\RoleCheckerCompareBusinessManager.cs" />
     <Compile Include="Managers\RoleScreenManager.cs" />

@@ -35,7 +35,8 @@
     "iCheck": "^1.0.2",
     "moment": "^2.17.1",
     "ngstorage": "ng-storage#^0.4.2",
-    "ui-router-states-tree": "^0.0.2"
+    "ui-router-states-tree": "^0.0.2",
+    "ui-navbar": "^0.5.2"
   },
   "resolutions": {
     "angular": "^1.5.x"

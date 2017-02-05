@@ -116,10 +116,15 @@ namespace Security.Controllers
                     dataBasService.Add(GlobalConstants.LOGIN_ID, Id);
 
                     IAbstractBusiness menuManager = new MenuBusinessManager();
-
                     menuManager.Do(dataBasService);
-                    List<MenuTree> menuStructure = (List<MenuTree>)dataBasService.Get(GlobalConstants.OUT_RESULT);
-                    return Ok(menuStructure);
+
+                    dynamic apiResponse = dataBasService.Get(GlobalConstants.OUT_RESULT);
+                    int errorCode = (int)dataBasService.Get(GlobalConstants.OUT_FUNCTION_ERROR_CODE);
+                    int actionCode = Utility.ConvertObjectToInt(dataBasService[GlobalConstants.ACTION_CODE]);
+
+                    dynamic outObject = ControllerHelper.GetDecoratedResponseObject("Dilizity.Login", errorCode, actionCode, apiResponse);
+
+                    return Ok(outObject);
                 }
             }
             catch (Exception e)
