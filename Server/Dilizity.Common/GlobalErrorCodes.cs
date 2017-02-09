@@ -12,6 +12,10 @@ namespace Dilizity.Business.Common
         public const int SystemError = 1;
         public const int UserDoNothavePermission = 2;
         public const int SQLError = 3;
+        public const int UnsecureRequest = 4;
+        public const int TokenExpired = 5;
+        public const int IssuerNotMatched = 6;
+
 
         public const int IncorrectPassword = 101;
         public const int AccountIsLocked = 102;

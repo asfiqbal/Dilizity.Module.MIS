@@ -8,6 +8,7 @@ using ilizity.Business.Common.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +17,7 @@ namespace Dilizity.API.Security.Managers
     class PermissionValidationBusinessManager : IAbstractBusiness
     {
         private const string CHECK_PERMISSION = "CheckPermission";
+        
 
         public void Do(BusService parameterBusService)
         {
@@ -27,6 +29,9 @@ namespace Dilizity.API.Security.Managers
                     childOperation = new Operation(parameterBusService);
                     childOperation.PermissionClass = typeof(PermissionValidationBusinessManager).ToString();
                     childOperation.saveToDB();
+
+                    if (!TokenManager.Validate(parameterBusService))
+                        throw new ApplicationBusinessException(GlobalErrorCodes.UnsecureRequest);
 
                     string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
 

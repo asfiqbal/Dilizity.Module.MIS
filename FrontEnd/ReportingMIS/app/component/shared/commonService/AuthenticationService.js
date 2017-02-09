@@ -28,14 +28,6 @@
 
             UniversalService.Do(permission, username, model, successCallBack, errorCallBack);
 
-            //$http.post(AppSettings.baseUrl + 'Universal/Do', { PermissionId: permission, LoginId: username, Model: model })
-            //    .then(function (response) {
-            //        successCallBack(response);
-            //    }, function (response) {
-            //        errorCallBack(response);
-            //    }
-            //);
-
             console.log("Login End");
         }
 
@@ -53,19 +45,11 @@
 
             UniversalService.Do(permission, loginId, model, successCallBack, errorCallBack);
 
-
-            //$http.post(AppSettings.baseUrl + 'Universal/Do', { PermissionId: permission, LoginId: loginId, Model: model })
-            //    .then(function (response) {
-            //        successCallBack(response);
-            //    }, function (response) {
-            //        errorCallBack(response);
-            //    }
-            //);
             console.log("ChangePassword Begin");
         }
 
-        function SetCredentials(username, password) {
-            var authdata = Base64.encode(username + ':' + password);
+        function SetCredentials(username, authdata) {
+            //var authdata = Base64.encode(username + ':' + password);
 
             $rootScope.globals = {
                 currentUser: {
@@ -73,8 +57,8 @@
                     authdata: authdata
                 }
             };
-
-            $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
+            
+            $http.defaults.headers.common['Authorization'] = 'Dilizity ' + authdata; // jshint ignore:line
             $cookieStore.put('globals', $rootScope.globals);
         }
 

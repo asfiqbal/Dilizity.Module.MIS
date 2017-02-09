@@ -51,7 +51,7 @@ namespace Dilizity.API.Security.Managers
                     dynamic secUser = null;
                     dynamic passwordPolicy = null;
                     int actionCode = -1;
-
+                    string encodedToken = string.Empty;
 
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                     {
@@ -90,6 +90,8 @@ namespace Dilizity.API.Security.Managers
                             Log.Info(typeof(AuthenticationBusinessManager), "User Password Expired");
                             actionCode = CHANGE_PASSWORD;
                         }
+
+                        encodedToken = TokenManager.Generate(parameterBusService);
                     }
                     else
                     {
@@ -109,7 +111,7 @@ namespace Dilizity.API.Security.Managers
                         throw new ApplicationBusinessException(GlobalErrorCodes.IncorrectPassword);
                     }
                         //AuditHelper.Register(parameterBusService, userCredentials.LoginId, userCredentials.PermissionId, success, userCredentials.ToString());
-                    parameterBusService.Add(GlobalConstants.OUT_RESULT, success);
+                    parameterBusService.Add(GlobalConstants.OUT_RESULT, encodedToken);
                     parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.Success;
                     parameterBusService[GlobalConstants.ACTION_CODE] = actionCode;
 

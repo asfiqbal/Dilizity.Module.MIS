@@ -249,12 +249,31 @@
           from	  [SYSTEM_CONFIGURATION]
         ]]>
       </Query>
-      <Query ID="GetAllUsers" DataSource="">
+      <Query ID="GetPermissionDetail" DataSource="">
         <![CDATA[
-          SELECT USER_ID UserId, LOGIN_ID LoginId, PASSWORD Password, PASSWORD_POLICY_ID PasswordPolicyId, PASSWORD_ATTEMPTS PasswordAttempts, ACCOUNT_LOCKED AccountLocked, IS_SYSTEM IsSystem, IS_DELETED IsDeleted, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
-          FROM	 [SEC_USER]
-        ]]>
+            select  PERMISSION_ID PermissionId,
+                    PARENT_PERMISSION_ID ParentPermissionId,
+                    PERMISSION_NAME PermissionName,
+                    CAN_ADD CanAdd,
+                    CAN_UPDATE CanUpdate,
+                    CAN_DELETE CanDelete,
+                    CAN_VIEW CanView,
+                    CAN_MAKE CanMake,
+                    CAN_CHECK CanCheck,
+                    CAN_EXECUTE CanExecute,
+                    ACTION_URL ActionUrl,
+                    DISABLE_TOKEN_VALIDATION DisableTokenValidation
+            from	  [SEC_PERMISSION]
+            WHERE   SYSTEM_NAME = @PermissionId
+          ]]>
+        <Param Name="PermissionId" Type="System.String"  Size="200"/>
       </Query>
+      <Query ID="GetAllUsers" DataSource="">
+          <![CDATA[
+            SELECT USER_ID UserId, LOGIN_ID LoginId, PASSWORD Password, PASSWORD_POLICY_ID PasswordPolicyId, PASSWORD_ATTEMPTS PasswordAttempts, ACCOUNT_LOCKED AccountLocked, IS_SYSTEM IsSystem, IS_DELETED IsDeleted, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+            FROM	 [SEC_USER]
+          ]]>
+        </Query>
       <Query ID="GetUser" DataSource="">
         <![CDATA[
             SELECT  USER_ID UserId, NAME Name, LOGIN_ID LoginId, PASSWORD Password, PASSWORD_POLICY_ID PasswordPolicyId, PASSWORD_ATTEMPTS PasswordAttempts, ACCOUNT_LOCKED AccountLocked, [CHANGE_PASSWORD_ON_LOGON] ChangePasswordOnLogon, EMAIL Email, MOBILE_NUMBER MobileNumber, LAST_PASSWORD_CHANGE_DATETIME LastPasswordChangeDateTime, [LAST_LOGIN_DATETIME] LastLoginDateTime, PICTURE Picture, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy

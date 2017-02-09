@@ -27,7 +27,8 @@
 
                 var data = angular.fromJson(response.data);
                 if (data.ErrorCode == 0) {
-                    AuthenticationService.SetCredentials(vm.username, vm.password);
+                    var token = data.ErrorCode.Data;
+                    AuthenticationService.SetCredentials(vm.username, token);
                     if (data.ActionCode <= 0) {
                         Notification.success({ message: "Login Successfull", positionY: 'bottom', positionX: 'right' });
                         $window.location = '/index.html';

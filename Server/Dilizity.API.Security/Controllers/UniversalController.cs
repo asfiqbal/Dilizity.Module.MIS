@@ -37,6 +37,7 @@ namespace Dilizity.API.Security.Controllers
                     string permissionId = jobject[GlobalConstants.PERMISSION_PARAM].ToString();
                     dataBasService.Add(GlobalConstants.PERMISSION, permissionId);
 
+                    dataBasService.Add(GlobalConstants.HTTP_HEADERS, Request.Headers);
 
                     JToken modelToken = jobject[GlobalConstants.MODEL];
 
