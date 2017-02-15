@@ -14,6 +14,7 @@
 
         service.SetCredentials = SetCredentials;
         service.ClearCredentials = ClearCredentials;
+        service.GetSecurityToken = GetSecurityToken;
 
         return service;
 
@@ -57,16 +58,34 @@
                     authdata: authdata
                 }
             };
+
+            console.log("authdata", authdata);
+
             
-            $http.defaults.headers.common['Authorization'] = 'Dilizity ' + authdata; // jshint ignore:line
+            $http.defaults.headers.common['Authorization'] = AppSettings.tokenScheme + ' ' + authdata; // jshint ignore:line
             $cookieStore.put('globals', $rootScope.globals);
         }
 
         function ClearCredentials() {
             $rootScope.globals = {};
             $cookieStore.remove('globals');
-            $http.defaults.headers.common.Authorization = 'Basic';
+            $http.defaults.headers.common.Authorization = AppSettings.tokenScheme;
         }
+
+        function GetSecurityToken(successCallBack, errorCallBack) {
+            console.log("GetSecurityToken Begin");
+
+            $http.get(AppSettings.baseUrl + 'Security/GetSecurityToken')
+                .then(function (response) {
+                    successCallBack(response);
+                }, function (response) {
+                    errorCallBack(response);
+                }
+            );
+
+            console.log("GetSecurityToken End");
+        }
+
     }
 
     // Base64 encoding service used by AuthenticationService

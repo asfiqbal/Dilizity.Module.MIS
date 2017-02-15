@@ -17,6 +17,7 @@ using Dilizity.Business.Common.Services;
 using Dilizity.Business.Common.Managers;
 using Dilizity.API.Security.Controllers;
 using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
 
 namespace Security.Controllers
 {
@@ -135,6 +136,8 @@ namespace Security.Controllers
 
         }
 
+        [HttpGet]
+        [ActionName("GetSideMenus")]
         public IHttpActionResult GetSideMenus(string Id)
         {
             try
@@ -156,6 +159,47 @@ namespace Security.Controllers
             {
                 Log.Debug(typeof(SecurityController), "{0}", e.Message);
                 return Content(HttpStatusCode.InternalServerError, GlobalConstants.GLOBAL_SYSTEM_ERROR_MSG);
+            }
+
+        }
+
+        [HttpGet]
+        [ActionName("GetSecurityToken")]
+        public HttpResponseMessage GetSecurityToken()
+        {
+            try
+            {
+                using (FnTraceWrap tracer = new FnTraceWrap())
+                {
+                    BusService dataBasService = new BusService();
+
+                    string token = TokenManager.GenerateCSRFToken(dataBasService);
+                    Log.Debug(typeof(SecurityController), "{0}", token);
+
+                    HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
+                    response.Headers.AddCookies(new CookieHeaderValue[]
+                    {
+                        new CookieHeaderValue("XSRF-TOKEN", token)
+                        //new CookieHeaderValue("test", token)
+                    });
+
+                    //response.Headers.AddCookies(new[]
+                    //                    {
+                    //                        new CookieHeaderValue("test", "asd")
+                    //                        {
+                    //                            Expires = DateTime.Now.AddDays(1),
+                    //                            Domain = null,
+                    //                            Path = "/"
+                    //                        }
+                    //                    });
+
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Debug(typeof(SecurityController), "{0}", e.Message);
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
 
         }

@@ -15,6 +15,7 @@
             // reset login status
             vm.permission = 'Dilizity.Login';
             AuthenticationService.ClearCredentials();
+            getSecurityToken();
         })();
 
         function login() {
@@ -27,15 +28,24 @@
 
                 var data = angular.fromJson(response.data);
                 if (data.ErrorCode == 0) {
-                    var token = data.ErrorCode.Data;
+                    var token = data.Data;
+                    console.log("token", token);
+
+                    if (!token) {
+                        Notification.error({ message: 'Invalid Token Received!', positionY: 'bottom', positionX: 'right' });
+                        return;
+                    }
+
                     AuthenticationService.SetCredentials(vm.username, token);
                     if (data.ActionCode <= 0) {
                         Notification.success({ message: "Login Successfull", positionY: 'bottom', positionX: 'right' });
-                        $window.location = '/index.html';
+                        $state.go('index');
+                        //$window.location = '/index.html';
                     }
                     else {
                         console.log("ActionCode", data.ActionCode);
-                        $location.path('/changePassword');
+                        //$location.path('/changePassword');
+                        $state.go('changePassword');
                     }
                 }
                 else  {
@@ -49,6 +59,19 @@
             console.log("Login End");
 
         };
+
+        function getSecurityToken() {
+            console.log("getSecurityToken Begin");
+
+            AuthenticationService.GetSecurityToken(function (response) {
+                console.log("Success!");
+            }, function (response) {
+                Notification.error({ message: "Internal Server Error Occurred!, Check Server Logs.", positionY: 'bottom', positionX: 'right' });
+            });
+            console.log("getSecurityToken End");
+
+        };
+
     }
 
 })();

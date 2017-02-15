@@ -83,7 +83,7 @@ namespace Dilizity.API.Security.Managers
                 }
                 catch (JWT.SignatureVerificationException ex)
                 {
-                    outValue = true;
+                    outValue = false;
                     Log.Error(typeof(TokenManager), ex.Message, ex);
                 }
 
@@ -97,6 +97,8 @@ namespace Dilizity.API.Security.Managers
 
             IEnumerable<string> headerValues = headers.GetValues("Authorization");
             string token = headerValues.FirstOrDefault();
+            Log.Error(typeof(TokenManager), "Token: "+ token);
+
             string tokenScheme = System.Configuration.ConfigurationManager.AppSettings["TokenScheme"];
 
             token = token.Replace(tokenScheme + " ", string.Empty);
@@ -129,6 +131,17 @@ namespace Dilizity.API.Security.Managers
         {
             return unixEpoch.AddSeconds(unixTime);
         }
+
+        public static string GenerateCSRFToken(BusService parameterBusService)
+        {
+            using (FnTraceWrap tracer = new FnTraceWrap())
+            {
+                string token = Utility.Encrypt(Guid.NewGuid().ToString(), false);
+
+                return token;
+            }
+        }
+
 
     }
 }

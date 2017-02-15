@@ -46,7 +46,7 @@ namespace Dilizity.Business.Common.Managers
                             string subject = templateObject.Subject;
                             MessagingTemplateHelper mtHelper = new MessagingTemplateHelper();
                             templateBody = mtHelper.Resolve(templateBody, childOperation.ParentOperationId.ToString());
-                            string encryptBody = Utility.Encrypt(templateBody, true);
+                            string encryptBody = Utility.Encrypt(templateBody, false);
                             dataLayer.DelayExecuteNonQueryUsingKey(INSERT_NOTIFICATION, "OperationId", op.OperationId, "NotificationType", "SMS", "From", fromMobileNo, "To", secUser.MobileNumber, "CC", "", "Subject", subject, "Body", encryptBody, "Status", "Pending", "CreatedBy", loginId);
                         }
                         dataLayer.DelayExecuteBulk();

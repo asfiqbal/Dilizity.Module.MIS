@@ -1445,6 +1445,7 @@
     <Content Include="bower_components\angular-formly\package.json" />
     <Content Include="bower_components\angular-formly\PATRONS.md" />
     <Content Include="bower_components\angular-formly\README.md" />
+    <None Include="Properties\PublishProfiles\IIS.pubxml" />
     <None Include="scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="scripts\angular.treeview.js" />
     <Content Include="scripts\api-check.js" />

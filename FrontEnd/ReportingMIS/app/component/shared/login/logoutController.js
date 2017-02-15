@@ -12,16 +12,17 @@
         vm.logout = logout;
 
         (function initController() {
-            // reset login status
+            console.log("logout Begin");
             AuthenticationService.ClearCredentials();
+            logout();
+            console.log("logout End");
         })();
 
         function logout() {
             console.log("logout Begin");
-            $location.path('/login');
-
+            //$location.path('/login');
+            $state.go('login');
             console.log("logout End");
-
         };
     }
 

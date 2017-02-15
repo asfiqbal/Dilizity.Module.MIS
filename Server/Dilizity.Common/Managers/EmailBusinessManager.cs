@@ -46,7 +46,7 @@ namespace Dilizity.Business.Common.Managers
                             string subject = templateObject.Subject;
                             MessagingTemplateHelper mtHelper = new MessagingTemplateHelper();
                             templateBody = mtHelper.Resolve(templateBody, op.OperationId.ToString());
-                            string encryptBody = Utility.Encrypt(templateBody, true);
+                            string encryptBody = Utility.Encrypt(templateBody, false);
                             dataLayer.DelayExecuteNonQueryUsingKey(INSERT_NOTIFICATION, "OperationId", op.OperationId, "NotificationType", "Email", "From", fromEmailAddress, "To", secUser.Email, "CC", "", "Subject", subject, "Body", encryptBody, "Status", "Pending", "CreatedBy", loginId);
                             //EmailManager.Instance.Send(secUser.Email, subject, templateBody);
                         }
