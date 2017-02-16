@@ -1,6 +1,7 @@
-/****** Object:  UserDefinedFunction [dbo].[FN_GET_FRIENDLY_PERMISSION_NAME]    Script Date: 1/7/2017 2:12:31 PM ******/
-DROP FUNCTION [dbo].[FN_GET_FRIENDLY_PERMISSION_NAME]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[FN_GET_FRIENDLY_PERMISSION_NAME]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+DROP FUNCTION [FN_GET_FRIENDLY_PERMISSION_NAME]
 GO
+
 
 /****** Object:  UserDefinedFunction [dbo].[FN_GET_FRIENDLY_PERMISSION_NAME]    Script Date: 1/7/2017 2:12:32 PM ******/
 SET ANSI_NULLS ON

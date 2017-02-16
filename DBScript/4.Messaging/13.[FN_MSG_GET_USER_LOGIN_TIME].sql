@@ -1,5 +1,5 @@
-/****** Object:  UserDefinedFunction [dbo].[[FN_MSG_GET_USER_LOGIN_TIME]]    Script Date: 12/8/2016 4:40:59 PM ******/
-DROP FUNCTION [dbo].[FN_MSG_GET_USER_LOGIN_TIME]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[FN_MSG_GET_USER_LOGIN_TIME]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+DROP FUNCTION [FN_MSG_GET_USER_LOGIN_TIME]
 GO
 
 /****** Object:  UserDefinedFunction [dbo].[[FN_MSG_GET_USER_LOGIN_TIME]]    Script Date: 12/8/2016 4:40:59 PM ******/

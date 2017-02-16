@@ -72,11 +72,23 @@
             $http.defaults.headers.common.Authorization = AppSettings.tokenScheme;
         }
 
+        function readCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
         function GetSecurityToken(successCallBack, errorCallBack) {
             console.log("GetSecurityToken Begin");
 
             $http.get(AppSettings.baseUrl + 'Security/GetSecurityToken')
                 .then(function (response) {
+                    $http.defaults.headers.common['X-XSRF-Token'] = readCookie('XSRF-TOKEN');
                     successCallBack(response);
                 }, function (response) {
                     errorCallBack(response);

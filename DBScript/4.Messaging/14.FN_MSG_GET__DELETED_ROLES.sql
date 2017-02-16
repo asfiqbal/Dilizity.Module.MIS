@@ -1,4 +1,5 @@
-DROP FUNCTION FN_MSG_GET_DELETED_ROLES
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[FN_MSG_GET_DELETED_ROLES]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+DROP FUNCTION [FN_MSG_GET_DELETED_ROLES]
 GO
 -- =============================================
 -- Author:		<Author,,Name>

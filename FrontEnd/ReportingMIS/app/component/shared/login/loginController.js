@@ -40,11 +40,9 @@
                     if (data.ActionCode <= 0) {
                         Notification.success({ message: "Login Successfull", positionY: 'bottom', positionX: 'right' });
                         $state.go('index');
-                        //$window.location = '/index.html';
                     }
                     else {
                         console.log("ActionCode", data.ActionCode);
-                        //$location.path('/changePassword');
                         $state.go('changePassword');
                     }
                 }

@@ -39,6 +39,6 @@
     "ui-navbar": "^0.5.2"
   },
   "resolutions": {
-    "angular": "^1.5.x"
+    "angular": "1.6.2"
   }
 }

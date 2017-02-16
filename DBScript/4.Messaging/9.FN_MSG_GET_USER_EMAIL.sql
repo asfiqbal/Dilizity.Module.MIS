@@ -1,16 +1,17 @@
-/****** Object:  UserDefinedFunction [dbo].[FN_MSG_GET_USER_EMAIL]    Script Date: 12/8/2016 4:40:34 PM ******/
-DROP FUNCTION [dbo].[FN_MSG_GET_USER_EMAIL]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[FN_MSG_GET_USER_EMAIL]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+DROP FUNCTION [FN_MSG_GET_USER_EMAIL]
 GO
 
-/****** Object:  UserDefinedFunction [dbo].[FN_MSG_GET_USER_EMAIL]    Script Date: 12/8/2016 4:40:34 PM ******/
+/****** Object:  UserDefinedFunction [FN_MSG_GET_USER_EMAIL]    Script Date: 2/14/2017 9:28:54 PM ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[FN_MSG_GET_USER_EMAIL]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+BEGIN
+execute dbo.sp_executesql @statement = N'
 
-
-CREATE FUNCTION [dbo].[FN_MSG_GET_USER_EMAIL]
+CREATE FUNCTION [FN_MSG_GET_USER_EMAIL]
 (
 	@OperationId as INT
 )
@@ -26,8 +27,8 @@ BEGIN
 	RETURN @Result
 END
 
-
+' 
+END
 
 GO
-
 

@@ -68,7 +68,7 @@ namespace Dilizity.API.Security.Managers
                         permissionObject = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_PERMISSION_DETAIL, "PermissionId", permissionId);
                     }
 
-                    if (permissionObject.DisableTokenValidation > 0)
+                    if (permissionObject.DisableTokenValidation <= 0)
                     {
                         string token = ReadAuthorizationHeader(parameterBusService);
                         string key = System.Configuration.ConfigurationManager.AppSettings["SecurityKey"];
@@ -97,7 +97,7 @@ namespace Dilizity.API.Security.Managers
 
             IEnumerable<string> headerValues = headers.GetValues("Authorization");
             string token = headerValues.FirstOrDefault();
-            Log.Error(typeof(TokenManager), "Token: "+ token);
+            Log.Error(typeof(TokenManager), "Token: " + token);
 
             string tokenScheme = System.Configuration.ConfigurationManager.AppSettings["TokenScheme"];
 
@@ -141,6 +141,7 @@ namespace Dilizity.API.Security.Managers
                 return token;
             }
         }
+
 
 
     }
