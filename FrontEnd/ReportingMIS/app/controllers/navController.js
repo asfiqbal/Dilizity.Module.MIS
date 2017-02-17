@@ -25,6 +25,7 @@
                     var data = angular.fromJson(response.data);
 
                     if (data.ErrorCode == 0) {
+                        console.log("data.Data.Menus", data.Data.Menus);
                         $scope.tree = data.Data.Menus;
                         vm.fullName = data.Data.Name;
                         vm.picture = data.Data.Picture;

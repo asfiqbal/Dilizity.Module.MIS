@@ -36,3 +36,4 @@ XCOPY ReportingMIS\styles Production\styles\ /s /i /y
 XCOPY ReportingMIS\views Production\views\ /s /i /y
 XCOPY ReportingMIS\index.html Production\ /s /i /y
 XCOPY ReportingMIS\favicon.ico Production\ /s /i /y
+XCOPY ReportingMIS\web.config Production\ /s /i /y

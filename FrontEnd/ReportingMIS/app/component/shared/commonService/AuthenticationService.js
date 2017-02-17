@@ -5,8 +5,8 @@
         .module('ReportingMIS')
         .factory('AuthenticationService', AuthenticationService);
 
-    AuthenticationService.$inject = ['$http', '$cookieStore', '$rootScope', '$timeout', 'AppSettings', 'UniversalService'];
-    function AuthenticationService($http, $cookieStore, $rootScope, $timeout, AppSettings, UniversalService) {
+    AuthenticationService.$inject = ['$http', '$cookieStore', '$rootScope', '$timeout', 'AppSettings', 'UniversalService', '$cookies'];
+    function AuthenticationService($http, $cookieStore, $rootScope, $timeout, AppSettings, UniversalService, $cookies) {
         var service = {};
 
         service.Login = Login;
@@ -69,18 +69,8 @@
         function ClearCredentials() {
             $rootScope.globals = {};
             $cookieStore.remove('globals');
+            $cookies.remove("XSRF-TOKEN");
             $http.defaults.headers.common.Authorization = AppSettings.tokenScheme;
-        }
-
-        function readCookie(name) {
-            var nameEQ = name + "=";
-            var ca = document.cookie.split(';');
-            for (var i = 0; i < ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-            }
-            return null;
         }
 
         function GetSecurityToken(successCallBack, errorCallBack) {
@@ -88,7 +78,10 @@
 
             $http.get(AppSettings.baseUrl + 'Security/GetSecurityToken')
                 .then(function (response) {
-                    $http.defaults.headers.common['X-XSRF-Token'] = readCookie('XSRF-TOKEN');
+                    var xsrfCookie = $cookies.get('XSRF-TOKEN');
+                    console.log("Security Cookie", xsrfCookie);
+
+                    $http.defaults.headers.common['X-XSRF-Token'] = '12345678';
                     successCallBack(response);
                 }, function (response) {
                     errorCallBack(response);

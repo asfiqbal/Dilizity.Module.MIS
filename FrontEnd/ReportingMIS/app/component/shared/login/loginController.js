@@ -15,7 +15,7 @@
             // reset login status
             vm.permission = 'Dilizity.Login';
             AuthenticationService.ClearCredentials();
-            getSecurityToken();
+            //getSecurityToken();
         })();
 
         function login() {
@@ -58,17 +58,17 @@
 
         };
 
-        function getSecurityToken() {
-            console.log("getSecurityToken Begin");
+        //function getSecurityToken() {
+        //    console.log("getSecurityToken Begin");
 
-            AuthenticationService.GetSecurityToken(function (response) {
-                console.log("Success!");
-            }, function (response) {
-                Notification.error({ message: "Internal Server Error Occurred!, Check Server Logs.", positionY: 'bottom', positionX: 'right' });
-            });
-            console.log("getSecurityToken End");
+        //    AuthenticationService.GetSecurityToken(function (response) {
+        //        console.log("Success!");
+        //    }, function (response) {
+        //        Notification.error({ message: "Internal Server Error Occurred!, Check Server Logs.", positionY: 'bottom', positionX: 'right' });
+        //    });
+        //    console.log("getSecurityToken End");
 
-        };
+        //};
 
     }
 
