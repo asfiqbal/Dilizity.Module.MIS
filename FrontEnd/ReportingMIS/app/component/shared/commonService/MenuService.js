@@ -16,7 +16,7 @@
         function GetMenuData(username, successCallBack, errorCallBack) {
 
             var tmpUserName = $rootScope.globals.currentUser.username;
-            $http.get(AppSettings.baseUrl + '/Security/GetMenus/' + tmpUserName)
+            $http.get(AppSettings.baseUrl + 'Security/GetMenus/' + tmpUserName)
                 .then(function (response) {
                     successCallBack(response);
                 }, function (response) {

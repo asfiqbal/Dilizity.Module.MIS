@@ -5,8 +5,8 @@
         .module('ReportingMIS')
         .controller('navController', navController);
 
-    navController.$inject = ['$rootScope', '$scope', '$http', 'MenuService', 'FlashService'];
-    function navController($rootScope, $scope, $http, MenuService, FlashService) {
+    navController.$inject = ['$rootScope', '$scope', '$http', 'MenuService', 'Notification'];
+    function navController($rootScope, $scope, $http, MenuService, Notification) {
         var vm = this;
 
         vm.loadMenu = loadMenu;

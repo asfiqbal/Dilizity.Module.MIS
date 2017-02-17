@@ -86,6 +86,11 @@ namespace Dilizity.API.Security.Managers
                     outValue = false;
                     Log.Error(typeof(TokenManager), ex.Message, ex);
                 }
+                catch (JWT.TokenExpiredException ex)
+                {
+                    outValue = false;
+                    Log.Error(typeof(TokenManager), ex.Message, ex);
+                }
 
                 return outValue;
             }

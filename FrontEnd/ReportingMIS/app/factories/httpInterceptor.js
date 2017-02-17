@@ -3,7 +3,7 @@
 
     angular
         .module('ReportingMIS')
-        .factory('httpInterceptor', function ($q, $rootScope, $log) {
+        .factory('httpInterceptor', function ($q, $rootScope, $log, $injector) {
 
             var numLoadings = 0;
 
@@ -22,6 +22,12 @@
                     if ((--numLoadings) === 0) {
                         // Hide loader
                         $rootScope.$broadcast("loader_hide");
+                    }
+
+                    //Session validation
+                    if (response.data.ErrorCode == 4) {
+                        $injector.get('$state').go('login');
+                        console.log("Session invalidated", loggedIn);
                     }
 
                     return response || $q.when(response);
