@@ -1,0 +1,138 @@
+﻿<div class="">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>User Management</h3>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Search User</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            <a ng-show="vm.userPermission.Add=='Dilizity.Backoffice.User.Add'" uib-tooltip="Add User" tooltip-placement="left" ui-sref="index.ActionUser({ userId: 0, makerId:0, permissionName: 'Dilizity.Backoffice.User.Add' })" class="collapse-link"><i class="fa fa-plus"></i></a>
+                            <a ng-show="vm.userPermission.Add=='Dilizity.Backoffice.User.Add.Maker'" uib-tooltip="Add User [Maker]" tooltip-placement="left" ui-sref="index.ActionUser({ userId: 0, makerId:0, permissionName: 'Dilizity.Backoffice.User.Add.Maker' })" class="collapse-link"><i class="fa fa-plus"></i></a>
+                        </li>
+                        <li class="dropdown">
+                            <a ng-show="vm.userPermission.Bulk=='Dilizity.Backoffice.User.Delete.Bulk'" data-toggle="modal" data-target=".bs-example-modal-sm" uib-tooltip="Delete User" tooltip-placement="left" class="collapse-link"><i class="fa fa-trash"></i></a>
+                        </li>
+                        <li>
+                            <a ng-show="vm.userPermission.Search=='Dilizity.Backoffice.User.Search'" uib-tooltip="Search User" tooltip-placement="left" ng-click="vm.searchUser()" class="collapse-link"><i class="fa fa-search"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <!--<div class="alert alert-dismissible fade in" ng-class="'alert-' + (alert.type || 'warning')" ng-repeat="alert in alerts" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        {{alert.msg}}
+                    </div>-->
+                    <br />
+                    <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                User Id
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <input class="form-control col-md-7 col-xs-12" type="text" ng-model="vm.userId" id="userId">
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                User Name
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <input class="form-control col-md-7 col-xs-12" type="text" ng-model="vm.userName" id="userName">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Login Id
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <input class="form-control col-md-7 col-xs-12" type="text" ng-model="vm.loginId" id="loginId">
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Mobile Number
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <input class="form-control col-md-7 col-xs-12" type="text" ng-model="vm.mobileNumber" id="mobileNumber">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Email Address
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <input class="form-control col-md-7 col-xs-12" type="text" ng-model="vm.email" id="email">
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Roles
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <select class="form-control col-md-7 col-xs-12" ng-model="vm.selectedRole"
+                                        ng-options="role.RoleId as role.RoleName for role in vm.roleList"></select>
+
+                            </div>
+                        </div>
+                        <div class="ln_solid"></div>
+                        <div ui-grid="gridOptions" external-scopes="vm.userPermission" ui-grid-selection ui-grid-pagination ui-grid-exporter class="grid"></div>
+                        <br />
+                        <div class="row">
+                            <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                                <label class="col-md-2 col-sm-2 col-xs-12 pull-left" ng-show="!gridOptions.data.length">
+                                    No Data Available
+                                </label>
+                                <label class="col-md-2 col-sm-2 col-xs-12 pull-left" ng-show="gridOptions.data.length > 0">
+                                    Showing {{ pagination.pageNumber }} to {{ pagination.getTotalPages() }}
+                                </label>
+                                <button class="btn btn-default pull-right" ng-click="pagination.previousPage()" type="button">
+                                    <span class="glyphicon glyphicon-hand-left" aria-hidden="true"></span>
+                                </button>
+                                <button class="btn btn-default pull-right" ng-click="pagination.nextPage()" type="button">
+                                    <span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel2">Delete Users</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Following Users have been selected for Deletion!</h4>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in vm.selectedUsers" >
+                                            <th scope="row">{{item}}</th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="vm.deleteUsers()">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+

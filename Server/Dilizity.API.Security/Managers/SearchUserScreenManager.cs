@@ -16,10 +16,10 @@ using Newtonsoft.Json.Linq;
 
 namespace Dilizity.API.Security.Managers
 {
-    class RoleScreenManager : IAbstractBusiness
+    class SearchUserScreenManager : IAbstractBusiness
     {
-        private const string COMMON_SCREEN_USER_PERMISSION = "ScreenUserPermission";
-        private const string USER_SPECFIC_PERMISSIONS = "UserSpecficPermissions";
+        private const string SCREEN_USER_PERMISSION = "ScreenUserPermission";
+        private const string USER_SPECFIC_ROLES = "UserSpecficRoles";
         private const string GET_USER = "GetUser";
 
         /// <summary>
@@ -28,8 +28,8 @@ namespace Dilizity.API.Security.Managers
         ///     {Add: 'Dilizity.Backoffice.Role.Add'},
         ///     {Edit: 'Dilizity.Backoffice.Role.Edit'}
         ///     ]
-        ///     PermissionList:[
-        ///     {PermissionId:1, PermissionName:'Dilizity'}
+        ///     RoleList:[
+        ///     {RoleId:1, RoleName:'Admin'}
         ///     ]
         /// }
         /// </summary>
@@ -46,7 +46,7 @@ namespace Dilizity.API.Security.Managers
                     dynamic tObject = new ExpandoObject();
                     var recordMembers = (IDictionary<string, object>)tObject;
                     
-                    foreach (dynamic permission in dataLayer.ExecuteUsingKey(COMMON_SCREEN_USER_PERMISSION, GlobalConstants.LOGIN_PARAM, LoginId, GlobalConstants.PERMISSION_PARAM, permissionId))
+                    foreach (dynamic permission in dataLayer.ExecuteUsingKey(SCREEN_USER_PERMISSION, GlobalConstants.LOGIN_PARAM, LoginId, GlobalConstants.PERMISSION_PARAM, permissionId))
                     {
                         if (permission.FieldKey == "Maker")
                             ResolvePermission(permission.PermissionName, recordMembers);
@@ -54,12 +54,12 @@ namespace Dilizity.API.Security.Managers
                             recordMembers[permission.FieldKey] = permission.PermissionName;
                     }
                     outObject.UserPermission = tObject;
-                    List<dynamic> PermissionList = new List<dynamic>();
-                    foreach (dynamic permission in dataLayer.ExecuteUsingKey(USER_SPECFIC_PERMISSIONS, GlobalConstants.LOGIN_PARAM, LoginId))
+                    List<dynamic> RoleList = new List<dynamic>();
+                    foreach (dynamic role in dataLayer.ExecuteUsingKey(USER_SPECFIC_ROLES, GlobalConstants.LOGIN_PARAM, LoginId))
                     {
-                        PermissionList.Add(permission);
+                        RoleList.Add(role);
                     }
-                    outObject.PermissionList = PermissionList;
+                    outObject.RoleList = RoleList;
                 }
                 parameterBusService.Add(GlobalConstants.OUT_RESULT, outObject);
                 parameterBusService[GlobalConstants.OUT_FUNCTION_ERROR_CODE] = GlobalErrorCodes.Success;

@@ -14,6 +14,7 @@
         (function initController() {
             // reset login status
             vm.permission = 'Dilizity.Login';
+            vm.dataLoading = false;
             AuthenticationService.ClearCredentials();
             //getSecurityToken();
         })();

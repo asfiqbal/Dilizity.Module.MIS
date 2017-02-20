@@ -9,6 +9,7 @@
     <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
     <meta http-equiv="pragma" content="no-cache" />
     <title>ReportingMIS - Home</title>
+    <base href="/">
 
     <link rel="stylesheet" type="text/css" href="styles/LoginStyle.css">
     <link rel="stylesheet" type="text/css" href="styles/ui-layout.css" />
@@ -23,14 +24,10 @@
     <link rel="stylesheet" type="text/css" href="styles/angular.treeview.css">
     <link rel="stylesheet" type="text/css" href="bower_components/angular-ui-notification/dist/angular-ui-notification.css">
 
-    <!-- endbower -->
-    <!-- endbuild -->
-    <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/custom.css">
 
     <script src="scripts/jquery-2.0.3.js"></script>
-    <!--<script src="bower_components/jquery/dist/jquery.js"></script>-->
     <script src="scripts/angular.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="scripts/angular-animate.js"></script>
@@ -44,19 +41,14 @@
     <script src="scripts/angular-messages.js"></script>
     <script src="bower_components/ui-router-states-tree/ui-router-states-tree.js"></script>
     <script src="bower_components/angular-ui-notification/dist/angular-ui-notification.js"></script>
-    <!--<script src="bower_components/angular-ui-grid/ui-grid.js"></script>-->
-    <!--<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>-->
     <script src="bower_components/jsondiffpatch/public/build/jsondiffpatch.js"></script>
     <script src="bower_components/jsondiffpatch/public/build/jsondiffpatch-formatters.js"></script>
     <script src="scripts/api-check.js"></script>
     <script src="scripts/ui-navbar.js"></script>
     <script src="scripts/formly.js"></script>
 
-    <!--<script src="scripts/api-check.js"></script>-->
     <script src="scripts/angular-ui/ui-bootstrap-tpls-2.3.1.js"></script>
     <script src="scripts/ui-grid.js"></script>
-    <!--<script src="scripts/ui-navbar.js"></script>-->
-    <!--<script src="scripts/formly.js"></script>-->
     <script src="scripts/angular-formly-templates-bootstrap.js"></script>
     <script src="scripts/select.js"></script>
     <script src="scripts/angular.treeview.js"></script>
@@ -78,26 +70,24 @@
     <script src="app/component/shared/commonService/UniversalService.js"></script>
     <script src="app/component/shared/commonService/CommunicationService.js"></script>
 
-
     <script src="app/services/userServiceMock.js"></script>
     <script src="app/component/shared/login/loginController.js"></script>
     <script src="app/component/shared/login/logoutController.js"></script>
     <script src="app/component/shared/changePassword/changePasswordController.js"></script>
-    <script src="app/controllers/homeController.js"></script>
-    <script src="app/controllers/navController.js"></script>
-    <script src="app/controllers/layoutController.js"></script>
+    <!--<script src="app/controllers/homeController.js"></script>-->
+    <script src="app/component/shared/navigation/navController.js"></script>
+    <script src="app/component/shared/layout/layoutController.js"></script>
     <script src="app/controllers/metaReportController.js"></script>
     <script src="app/component/shared/sidebar/sidebarController.js"></script>
     <script src="app/component/role/searchRoleController.js"></script>
     <script src="app/component/role/actionRoleController.js"></script>
+    <script src="app/component/user/searchUserController.js"></script>
     <script src="app/component/maker/makerController.js"></script>
     <script src="app/component/checker/checkerController.js"></script>
     <script src="app/component/shared/commonController/compareJSONController.js"></script>
 
 
     <script src="scripts/custom.js"></script>
-    <!--<base href="/">-->
-    <base href="/ReportingMIS/">
 </head>
 <body class="nav-md">
     <div ui-view></div>

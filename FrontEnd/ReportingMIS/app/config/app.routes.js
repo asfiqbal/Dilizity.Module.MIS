@@ -15,12 +15,12 @@
             url: '/',
             views: {
                 '@': {
-                    templateUrl: 'views/layout.html',
+                    templateUrl: 'app/component/shared/layout/layout.html',
                     controller: 'layoutController',
                     controllerAs: 'vm'
                 },
                 'nav@index': {
-                    templateUrl: 'views/nav.html',
+                    templateUrl: 'app/component/shared/navigation/nav.html',
                     controller: 'navController',
                     controllerAs: 'vm'
                 },
@@ -30,7 +30,7 @@
                     controllerAs: 'vm'
                 },
                 "@index": {
-                    templateUrl: 'views/welcome.html',
+                    templateUrl: 'app/component/shared/layout/welcome.html',
                     //controller: 'sidebarController',
                     //controllerAs: 'vm'
                 },
@@ -46,6 +46,12 @@
             url: '^/Role/:permissionId',
             templateUrl: 'app/component/role/searchRole.html',
             controller: 'searchRoleController',
+            controllerAs: 'vm'
+        })
+        .state('index.User', {
+            url: '^/User/:permissionId',
+            templateUrl: 'app/component/user/searchUser.html',
+            controller: 'searchUserController',
             controllerAs: 'vm'
         })
         .state('index.Maker', {
@@ -64,6 +70,12 @@
             url: '^/Role/:roleId/:makerId/:permissionName',
             templateUrl: 'app/component/role/actionRole.html',
             controller: 'actionRoleController',
+            controllerAs: 'vm'
+        })
+        .state('index.ActionUser', {
+            url: '^/User/:userId/:makerId/:permissionName',
+            templateUrl: 'app/component/user/actionUser.html',
+            controller: 'actionUserController',
             controllerAs: 'vm'
         })
         .state('login', {
@@ -103,12 +115,25 @@
 
         $rootScope.$on('$locationChangeStart', function (event, next, current) {
             // redirect to login page if not logged in and trying to access a restricted page
-            var restrictedPage = $.inArray($location.path(), ['/login', '/register']) === -1;
-            var loggedIn = $rootScope.globals.currentUser.username;
-            console.log("loggedIn", loggedIn);
-            if (restrictedPage && !loggedIn) {
-                //$location.path('/login');
-                $state.go('login');
+            try{
+                var restrictedPage = $.inArray($location.path(), ['/login', '/register']) === -1;
+                //var currentUser = $rootScope.globals.currentUser;
+                //console.log("currentUser", currentUser);
+                //if (currentUser == null) {
+                //    console.log("currentUser == null", true);;
+                //    //$state.go('login');
+                //    $location.path('/login');
+                //}
+                var loggedIn = $rootScope.globals.currentUser.username;
+                console.log("loggedIn", loggedIn);
+                if (restrictedPage && !loggedIn) {
+                    $location.path('/login');
+                    //$state.go('login');
+                }
+            }
+            catch (err) {
+                console.log("$locationChangeStart Exception", err);
+                $location.path('/login');
             }
         });
     }

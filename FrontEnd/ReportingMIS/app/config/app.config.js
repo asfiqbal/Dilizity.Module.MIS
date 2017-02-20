@@ -7,7 +7,7 @@
            ver: '1.0.0.0', language: 'en',
            production: false,
            tokenScheme: 'Dilizity',
-           baseUrl: 'http://win-f9p1psc1jmq/ReportingAPI/api/'
+           baseUrl: 'http://localhost:54341/api/'
        })
        .config(function (NotificationProvider, $httpProvider) {
 

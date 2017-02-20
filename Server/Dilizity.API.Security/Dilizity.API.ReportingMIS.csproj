@@ -140,6 +140,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Managers\UserSearchBusinessManager.cs" />
+    <Compile Include="Managers\SearchUserScreenManager.cs" />
     <Compile Include="Managers\TokenManager.cs" />
     <Compile Include="Managers\BulkDeleteMakerBusinessManager.cs" />
     <Compile Include="Managers\BulkDeleteRoleBusinessManager.cs" />

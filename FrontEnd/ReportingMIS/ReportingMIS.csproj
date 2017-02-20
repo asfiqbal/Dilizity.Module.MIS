@@ -98,6 +98,11 @@
   <ItemGroup>
     <Content Include="app\component\checker\checker.html" />
     <Content Include="app\component\checker\checkerController.js" />
+    <Content Include="app\component\user\actionUser.html" />
+    <Content Include="app\component\user\actionUserController.js" />
+    <Content Include="app\component\user\UserService.js" />
+    <Content Include="app\component\user\searchUser.html" />
+    <Content Include="app\component\user\searchUserController.js" />
     <Content Include="app\component\shared\changePassword\changePassword.html" />
     <Content Include="app\component\shared\commonController\compareJSONController.js" />
     <Content Include="app\component\shared\commonService\AuthenticationService.js" />
@@ -106,13 +111,13 @@
     <Content Include="app\config\formly.config.js" />
     <Content Include="app\controllers\homeController.js" />
     <Content Include="app\component\shared\changePassword\changePasswordController.js" />
-    <Content Include="app\controllers\layoutController.js" />
+    <Content Include="app\component\shared\layout\layoutController.js" />
     <Content Include="app\component\role\actionRoleController.js" />
     <Content Include="app\component\role\searchRoleController.js" />
     <Content Include="app\component\maker\makerController.js" />
     <Content Include="app\component\shared\sidebar\SidebarService.js" />
     <Content Include="app\component\shared\sidebar\sidebarController.js" />
-    <Content Include="app\controllers\navController.js" />
+    <Content Include="app\component\shared\navigation\navController.js" />
     <Content Include="app\component\shared\login\loginController.js" />
     <Content Include="app\controllers\metaReportController.js" />
     <Content Include="app\directives\loader.js" />
@@ -367,7 +372,7 @@
     <Content Include="favicon.ico" />
     <Content Include="scripts\ui-navbar.js" />
     <Content Include="styles\angular.treeview.css" />
-    <Content Include="styles\bootstrap.css" />
+    <None Include="styles\bootstrap.css" />
     <Content Include="styles\Custom.css" />
     <Content Include="styles\font-awesome.css" />
     <Content Include="styles\select.css" />
@@ -381,6 +386,8 @@
     <Content Include="styles\ui-grid.woff" />
     <Content Include="styles\ui-grid.ttf" />
     <Content Include="styles\ui-grid.eot" />
+    <Content Include="styles\bootstrap.css.map" />
+    <Content Include="styles\bootstrap.min.css.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -394,7 +401,7 @@
     <Content Include="app\config\app.config.js" />
     <Content Include="app\app.module.js" />
     <Content Include="app\config\app.routes.js" />
-    <Content Include="styles\bootstrap.min.css" />
+    <None Include="styles\bootstrap.min.css" />
     <Content Include="styles\main.css" />
     <Content Include="styles\ui-bootstrap-csp.css" />
     <Content Include="styles\ui-grid.css" />
@@ -402,22 +409,17 @@
     <Content Include="styles\ui-grid.svg" />
     <Content Include="index.html" />
     <Content Include="styles\ui-layout.css" />
-    <Content Include="views\alertTemplate.html" />
     <Content Include="app\component\shared\login\login.html" />
-    <Content Include="views\layout.html" />
+    <Content Include="app\component\shared\layout\layout.html" />
     <Content Include="app\component\role\actionRole.html" />
     <Content Include="app\component\maker\maker.html" />
     <Content Include="app\component\role\searchRole.html" />
     <Content Include="views\metaReport.html" />
     <Content Include="app\component\shared\sidebar\sidebar.html" />
-    <Content Include="views\welcome.html" />
-    <Content Include="views\header.html" />
-    <Content Include="views\footer.html" />
-    <Content Include="views\homeView.html" />
+    <Content Include="app\component\shared\layout\welcome.html" />
     <Content Include="scripts\ui-grid.js" />
     <Content Include="scripts\ui-grid.min.js" />
-    <Content Include="views\nav.html" />
-    <Content Include="views\report2.html" />
+    <Content Include="app\component\shared\navigation\nav.html" />
     <Content Include="views\report1.html" />
     <Content Include="Web.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
