@@ -1,7 +1,7 @@
 ﻿<div class="">
     <div class="page-title">
         <div class="title_left">
-            <h3>Role Management</h3>
+            <h3>User Management</h3>
         </div>
     </div>
     <div class="clearfix"></div>
@@ -32,16 +32,16 @@
                                 <a ng-show="vm.isCheckerMode()" uib-tooltip="Reject" tooltip-placement="left" ng-click="vm.doAction('Reject', '.Reject', dilizityForm)" class="collapse-link"><i class="glyphicon glyphicon-remove"></i></a>
                             </li>
                             <li>
-                                <a ng-show="vm.userPermission.Save=='Dilizity.Backoffice.Role.Add.Save'" uib-tooltip="Save" tooltip-placement="left" ng-click="vm.doAction(null, '.Save', dilizityForm)" class="collapse-link"><i class="glyphicon glyphicon-saved"></i></a>
+                                <a ng-show="vm.userPermission.Save=='Dilizity.Backoffice.User.Add.Save'" uib-tooltip="Save" tooltip-placement="left" ng-click="vm.doAction(null, '.Save', dilizityForm)" class="collapse-link"><i class="glyphicon glyphicon-saved"></i></a>
                             </li>
                             <li>
-                                <a ng-show="vm.userPermission.Save=='Dilizity.Backoffice.Role.Edit.Save'" uib-tooltip="Save" tooltip-placement="left" ng-click="vm.doAction(null, '.Save', dilizityForm)" class="collapse-link"><i class="glyphicon glyphicon-floppy-save"></i></a>
+                                <a ng-show="vm.userPermission.Save=='Dilizity.Backoffice.User.Edit.Save'" uib-tooltip="Save" tooltip-placement="left" ng-click="vm.doAction(null, '.Save', dilizityForm)" class="collapse-link"><i class="glyphicon glyphicon-floppy-save"></i></a>
                             </li>
                             <li>
                                 <a ng-show="vm.isMakerCheckerMode()" data-toggle="modal" data-target=".bs-example-modal-lg" uib-tooltip="Comments" tooltip-placement="left" class="collapse-link"><i class="glyphicon glyphicon-comment"></i></a>
                             </li>
                             <li>
-                                <a ng-show="vm.permissionName=='Dilizity.Backoffice.Role.Edit.Checker'" uib-tooltip="Compare" tooltip-placement="left" ng-click="vm.compare('lg')" class="collapse-link"><i class="glyphicon glyphicon-sunglasses"></i></a>
+                                <a ng-show="vm.permissionName=='Dilizity.Backoffice.User.Edit.Checker'" uib-tooltip="Compare" tooltip-placement="left" ng-click="vm.compare('lg')" class="collapse-link"><i class="glyphicon glyphicon-sunglasses"></i></a>
                             </li>
                         </ul>
                         <div class="clearfix"></div>
@@ -50,55 +50,132 @@
                         <br />
                         <div class="form-group">
                             <label class="control-label col-md-2 col-sm-2 col-xs-12" for="first-name">
-                                Role Name <span class="required">*</span>
+                                User Name <span class="required">*</span>
                             </label>
-                            <div class="col-md-3 col-sm-3 col-xs-12">
-                                <input type="text" ng-model="vm.roleName" id="roleName" class="form-control col-md-7 col-xs-12" required>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <input type="text" ng-model="vm.userName" id="userName" class="form-control col-md-7 col-xs-12" required>
                                 <div ng-messages="dilizityForm.roleName.$error.required">
-                                    <p ng-message="required">Role Name is required.</p>
+                                    <p ng-message="required">User Name is required.</p>
                                 </div>
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Login Id
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <input class="form-control col-md-7 col-xs-12" type="text" ng-model="vm.loginId" id="loginId">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-2 col-sm-2 col-xs-12" for="last-name">
-                                Permissions <span class="required">*</span>
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Email
                             </label>
                             <div class="col-md-4 col-sm-4 col-xs-12">
-                                <div data-angular-treeview="true"
-                                     data-tree-id="allPermissionsTree"
-                                     data-tree-model="vm.availablePermissions"
-                                     data-node-id="Id"
-                                     data-node-label="label"
-                                     data-node-children="children"
-                                     ng-click="vm.printParent($event);">
-                                </div>
+                                <input class="form-control col-md-7 col-xs-12" type="email" ng-model="vm.email" id="email">
                             </div>
-
-                            <div class="col-md-1 col-sm-1 col-xs-12">
-                                <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="vm.copyPermissions(allPermissionsTree, assignedPermissionsTree, vm.availablePermissions, vm.assignedPermissions )">
-                                    <span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="vm.movePermissions(allPermissionsTree, assignedPermissionsTree, vm.availablePermissions, vm.assignedPermissions)">
-                                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="vm.movePermissions(assignedPermissionsTree, allPermissionsTree, vm.assignedPermissions, vm.availablePermissions )">
-                                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="vm.RemovePermissions(assignedPermissionsTree, vm.assignedPermissions )">
-                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                </button>
-                            </div>
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Mobile Number
+                            </label>
                             <div class="col-md-4 col-sm-4 col-xs-12">
-                                <div data-angular-treeview="true"
-                                     data-tree-id="assignedPermissionsTree"
-                                     data-tree-model="vm.assignedPermissions"
-                                     data-node-id="Id"
-                                     data-node-label="label"
-                                     data-node-children="children">
-                                </div>
+                                <input class="form-control col-md-7 col-xs-12" type="text" ng-model="vm.mobilenumber" id="mobilenumber">
                             </div>
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Password
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <input class="form-control col-md-7 col-xs-12" type="password" ng-model="vm.password" id="password">
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Password Policy
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <ui-select ng-model="ctrl.country.selected" theme="selectize" ng-disabled="ctrl.disabled" title="Choose a country" append-to-body="true">
+                                    <ui-select-match placeholder="Select or search a country in the list...">{{$select.selected.name}}</ui-select-match>
+                                    <ui-select-choices repeat="country in ctrl.countries | filter: $select.search">
+                                        <span ng-bind-html="country.name | highlight: $select.search"></span>
+                                        <small ng-bind-html="country.code | highlight: $select.search"></small>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Password Attempts
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <input class="form-control col-md-7 col-xs-12" type="number" min="1" max="5" ng-model="vm.passwordAttempts" id="passwordAttempts">
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Account Locked
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <ul class="to_do">
+                                    <li>
+                                        <p>
+                                            <input type="checkbox" class="flat">Yes
+                                        </p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Change Password On Logon
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <ul class="to_do">
+                                    <li>
+                                        <p>
+                                            <input type="checkbox" class="flat">Yes
+                                        </p>
+                                    </li>
+                                </ul>
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Manger
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <ui-select ng-model="ctrl.country.selected" theme="selectize" ng-disabled="ctrl.disabled" title="Choose a country" append-to-body="true">
+                                    <ui-select-match placeholder="Select or search a country in the list...">{{$select.selected.name}}</ui-select-match>
+                                    <ui-select-choices repeat="country in ctrl.countries | filter: $select.search">
+                                        <span ng-bind-html="country.name | highlight: $select.search"></span>
+                                        <small ng-bind-html="country.code | highlight: $select.search"></small>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                User Roles
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <ui-select ng-model="ctrl.country.selected" theme="selectize" ng-disabled="ctrl.disabled" title="Choose a country" append-to-body="true">
+                                    <ui-select-match placeholder="Select or search a country in the list...">{{$select.selected.name}}</ui-select-match>
+                                    <ui-select-choices repeat="country in ctrl.countries | filter: $select.search">
+                                        <span ng-bind-html="country.name | highlight: $select.search"></span>
+                                        <small ng-bind-html="country.code | highlight: $select.search"></small>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Picture
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <input class="form-control col-md-7 col-xs-12" type="file" id="fileInput">
+                                <div class="cropArea">
+                                    <img-crop image="myImage" result-image="myCroppedImage"></img-crop>
+                                </div>
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">
+                                Cropped Image:
+                            </label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <img ng-src="{{myCroppedImage}}" />
+                            </div>
+                        </div>
                 </form>
                 <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog modal-lg">

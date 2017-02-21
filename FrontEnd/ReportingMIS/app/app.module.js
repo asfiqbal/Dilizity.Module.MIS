@@ -21,7 +21,9 @@
             'formlyBootstrap',
             'ui.select',
             'angularTreeview',
-            'ui-notification'])
+            'ui-notification',
+            'angularFileUpload',
+            'ngImgCrop'])
     
 })();
 

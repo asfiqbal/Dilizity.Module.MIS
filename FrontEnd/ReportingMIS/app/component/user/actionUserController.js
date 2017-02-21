@@ -3,10 +3,10 @@
 
     angular
         .module('ReportingMIS')
-        .controller('actionRoleController', actionRoleController);
+        .controller('actionUserController', actionUserController);
 
-    actionRoleController.$inject = ['$uibModal', '$window', '$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'Notification', 'HelperService', 'UniversalService', 'CommunicationService'];
-    function actionRoleController($uibModal, $window, $scope, $stateParams, $rootScope, AuthenticationService, Notification, HelperService, UniversalService, CommunicationService) {
+    actionUserController.$inject = ['$uibModal', '$window', '$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'Notification', 'HelperService', 'UniversalService', 'CommunicationService'];
+    function actionUserController($uibModal, $window, $scope, $stateParams, $rootScope, AuthenticationService, Notification, HelperService, UniversalService, CommunicationService) {
         var vm = this;
 
         var roleId = -1;
@@ -129,7 +129,7 @@
         };
 
         (function initController() {
-            console.log("actionRoleController.initController -> Begin");
+            console.log("actionUserController.initController -> Begin");
             console.log("$stateParams.roleId", $stateParams.roleId);
             console.log("$stateParams.permissionName", $stateParams.permissionName);
 
@@ -154,7 +154,7 @@
 
             loadScreenPermissionsAndInfo();
    
-            console.log("actionRoleController.initController -> End");
+            console.log("actionUserController.initController -> End");
         })();
 
         function doAction(actionStats, additionalPermission, form) {
