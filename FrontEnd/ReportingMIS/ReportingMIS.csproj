@@ -98,9 +98,12 @@
   <ItemGroup>
     <Content Include="app\component\checker\checker.html" />
     <Content Include="app\component\checker\checkerController.js" />
+    <Content Include="app\component\passwordPolicy\actionPasswordPolicy.html" />
+    <Content Include="app\component\passwordPolicy\actionPasswordPolicyController.js" />
+    <Content Include="app\component\passwordPolicy\searchPasswordPolicy.html" />
+    <Content Include="app\component\passwordPolicy\searchPasswordPolicyController.js" />
     <Content Include="app\component\user\actionUser.html" />
     <Content Include="app\component\user\actionUserController.js" />
-    <Content Include="app\component\user\UserService.js" />
     <Content Include="app\component\user\searchUser.html" />
     <Content Include="app\component\user\searchUserController.js" />
     <Content Include="app\component\shared\changePassword\changePassword.html" />

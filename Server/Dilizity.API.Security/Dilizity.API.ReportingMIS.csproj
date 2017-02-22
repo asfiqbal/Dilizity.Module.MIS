@@ -140,6 +140,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Managers\SearchPasswordPolicyScreenManager.cs" />
     <Compile Include="Managers\UserSearchBusinessManager.cs" />
     <Compile Include="Managers\SearchUserScreenManager.cs" />
     <Compile Include="Managers\TokenManager.cs" />

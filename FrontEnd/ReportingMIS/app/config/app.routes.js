@@ -54,6 +54,12 @@
             controller: 'searchUserController',
             controllerAs: 'vm'
         })
+        .state('index.PasswordPolicy', {
+            url: '^/PasswordPolicy/:permissionId',
+            templateUrl: 'app/component/passwordPolicy/searchPasswordPolicy.html',
+            controller: 'searchPasswordPolicyController',
+            controllerAs: 'vm'
+        })
         .state('index.Maker', {
             url: '^/Maker/:permissionId',
             templateUrl: 'app/component/maker/maker.html',
