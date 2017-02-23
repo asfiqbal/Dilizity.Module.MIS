@@ -15,6 +15,8 @@
             'ui.grid.selection',
             'ui.grid.exporter',
             'ui.grid.pagination',
+            'ui.grid.resizeColumns',
+            'ui.grid.moveColumns',
             'ui.bootstrap',
             'ui.navbar',
             'formly',

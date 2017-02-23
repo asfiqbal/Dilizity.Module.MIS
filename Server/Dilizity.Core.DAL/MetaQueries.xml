@@ -835,5 +835,36 @@
 		                LEFT OUTER JOIN SEC_PERMISSION P ON MP.PERMISSION_ID = P.PERMISSION_ID
         ]]>
       </Query>
+      <Query ID="SearchPasswordPolicy" DataSource="">
+        <![CDATA[
+            WITH SQLPaging
+            AS
+            (
+            SELECT TOP(@PageSize * @PageNumber) ResultNum = ROW_NUMBER() OVER (ORDER BY 
+					            CASE WHEN @SortOrder = 'Id' AND @SortDirection = 'asc' THEN PASSWORD_POLICY_ID END ASC,
+					            CASE WHEN @SortOrder = 'Id' AND @SortDirection = 'desc' THEN PASSWORD_POLICY_ID END DESC,
+					            CASE WHEN @SortOrder = 'Change Password On Login' AND @SortDirection = 'asc' THEN FIRST_LOGIN_CHANGE_PASSWORD END ASC,
+					            CASE WHEN @SortOrder = 'Change Password On Login' AND @SortDirection = 'desc' THEN FIRST_LOGIN_CHANGE_PASSWORD END DESC,
+					            CASE WHEN @SortOrder = 'Default Password Attempts' AND @SortDirection = 'asc' THEN DEFAULT_PASSWORD_ATTEMPTS END ASC,
+					            CASE WHEN @SortOrder = 'Default Password Attempts' AND @SortDirection = 'desc' THEN DEFAULT_PASSWORD_ATTEMPTS END DESC
+			            )
+			            , *
+            FROM	SEC_PASSWORD_POLICY P
+            WHERE   IS_DELETED = 0
+            AND		(P.PASSWORD_POLICY_ID = @Id OR @Id = 0)
+            AND		(P.POLICY_NAME LIKE '%'+@Name+'%' OR @Name =  '')
+            )
+            SELECT	PASSWORD_POLICY_ID Id, POLICY_NAME Name, FIRST_LOGIN_CHANGE_PASSWORD FirstLoginChangePassword, DEFAULT_PASSWORD_ATTEMPTS DefaultPasswordAttempts, ACCOUNT_LOCK_ON_FAILED_ATTEMPTS AccountLockOnFailedAttempt, Is_2FA_ENABLED TwoFAEnabled, SINGLE_SIGNON SSO
+            FROM SQLPaging
+            WHERE ResultNum > ((@PageNumber - 1) * @PageSize)
+            order by ResultNum
+        ]]>
+        <Param Name="Id" Type="System.Int32"  Size="0"/>
+        <Param Name="Name" Type="System.String"  Size="200"/>
+        <Param Name="PageSize" Type="System.Int32"  Size="0"/>
+        <Param Name="PageNumber" Type="System.Int32"  Size="0"/>
+        <Param Name="SortOrder" Type="System.String"  Size="200"/>
+        <Param Name="SortDirection" Type="System.String"  Size="200"/>
+      </Query>
   </Schema>
 </root>

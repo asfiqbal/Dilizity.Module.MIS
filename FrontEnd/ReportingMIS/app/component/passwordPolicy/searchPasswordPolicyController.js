@@ -55,19 +55,20 @@
             enableGridMenu: true,
             enableSelectAll: true,
             multiSelect: true,
+            enableColumnResizing: true,
             enablePaginationControls: false,
             useExternalPagination: true,
             useExternalSorting: true,
             columnDefs:[ 
-              {name:'Id',field:'Id'},
-              {name:'Name',field:'Name'},
-              {name:'Login Id', field: 'LoginId' },
-              {name:'Mobile Number', field: 'MobileNumber' },
-              {name:'Email', field: 'Email' },
-              {name:'Account Locked', field: 'AccountLocked' },
-              {name:'Updated By', field: 'UpdatedBy' },
-              {name:'Updated On', field: 'UpdatedOn' },
-              {name:'Action', cellTemplate: '<div>'+
+              { name: 'Id', field: 'Id'},
+              { name: 'Name', field: 'Name'},
+              { name: 'Change Password On Login', field: 'FirstLoginChangePassword' },
+              { name: 'Default Password Attempts', field: 'DefaultPasswordAttempts' },
+              { name: 'Account Lock On Failed Attempt', field: 'AccountLockOnFailedAttempt' },
+              { name: '2 FA Enabled', field: 'TwoFAEnabled' },
+              { name: 'SSO', field: 'SSO' },
+              { name: 'SSO', field: 'SSO' },
+              { name: 'Action', cellTemplate: '<div>'+
                                                 '<ul class="nav navbar-right panel_toolbox">'+
 	                                                '<li>'+
                                                 		'<a ng-show="grid.appScope.vm.userPermission.View===\'Dilizity.Backoffice.PasswordPolicy.View\'" uib-tooltip="View Password Policy" tooltip-placement="left" ui-sref="index.ActionPasswordPolicy({ id: row.entity.Id, makerId: 0, permissionName: \'Dilizity.Backoffice.PasswordPolicy.View\' })" class="pull-right"><i class="fa fa-eye"></i></a>' +
