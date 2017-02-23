@@ -14,7 +14,32 @@
 
         vm.title = '';
         vm.newMessage = '';
-
+        vm.selectedPasswordPolicy = null;
+        vm.managerList = [];
+        vm.selectConfigManager = {
+            maxItems: 1,
+            optgroupField: 'department',
+            labelField: 'name',
+            searchField: ['name'],
+            render: {
+                optgroup_header: function (data, escape) {
+                    return '<div class="optgroup-header">' + escape(data.label) + ' <span class="scientific">' + escape(data.label_scientific) + '</span></div>';
+                }
+            },
+            optgroups: [
+                { value: 'PIT', label: 'PIT', label_scientific: 'PIT' },
+                { value: 'Support', label: 'Support', label_scientific: 'Support' },
+                { value: 'Operations', label: 'Operations', label_scientific: 'Operations' }
+            ]
+        };
+        vm.selectConfigRoles = {
+            create: true,
+            onChange: function (value) {
+                console.log('onChange', value)
+            },
+            // maxItems: 1,
+            // required: true,
+        }
 
         vm.doAction = doAction;
         vm.isMakerCheckerMode = isMakerCheckerMode;
@@ -23,8 +48,9 @@
 
         vm.loadScreenPermissionsAndInfo = loadScreenPermissionsAndInfo;
         vm.roleName = '';
-        vm.availablePermissions = {};
-        vm.assignedPermissions = [];
+        vm.availableRoles = {};
+        vm.assignedRoles = [];
+        vm.passwordPolicy = [];
         vm.userPermission = {};
         vm.notes = [];
 
@@ -110,8 +136,8 @@
                     if (response.data.ErrorCode == 0) {
                         roleId = data.Data.Id;
                         vm.roleName = data.Data.Name;
-                        vm.availablePermissions = data.Data.AvailablePermissions;
-                        vm.assignedPermissions = data.Data.AssignedPermissions;
+                        vm.availableRoles = data.Data.availableRoles;
+                        vm.assignedRoles = data.Data.assignedRoles;
                         vm.userPermission = data.Data.UserPermission;
                         vm.notes = data.Data.Notes;
                     }
@@ -148,11 +174,27 @@
             console.log("makerId", makerId);
 
             var arr = vm.permissionName.split(".");
-            vm.title = arr[arr.length - 1] + ' Role';
+            vm.title = arr[arr.length - 1] + ' User';
             console.log("vm.title", vm.title);
 
 
             loadScreenPermissionsAndInfo();
+
+            vm.passwordPolicy = [
+                { id:1, name:'Admin Policy' },
+                { id:2, name:'Secure Policy' }
+            ];
+
+            vm.managerList = [
+                 { department: 'PIT', value: 1, name: "Zia" },
+                 { department: 'Support', value: 2, name: "Razi" },
+                 { department: 'Operations', value: 3, name: "Danish" }
+            ];
+
+            vm.availableRoles = [
+                 { value: 1, text: "Admin" },
+                 { value: 2, text: "Secure" }
+            ];
    
             console.log("actionUserController.initController -> End");
         })();
@@ -202,8 +244,8 @@
                     "MakerId": makerId,
                     "Name": vm.roleName,
                     "Status": makerStatus,
-                    "AvailablePermissions": vm.availablePermissions,
-                    "AssignedPermissions": vm.assignedPermissions,
+                    "availableRoles": vm.availableRoles,
+                    "assignedRoles": vm.assignedRoles,
                     "Notes": vm.notes
                 };
             }
@@ -212,8 +254,8 @@
                 model = {
                     "Id": roleId,
                     "Name": vm.roleName,
-                    "AvailablePermissions": vm.availablePermissions,
-                    "AssignedPermissions": vm.assignedPermissions
+                    "availableRoles": vm.availableRoles,
+                    "assignedRoles": vm.assignedRoles
                 };
             }
 
@@ -239,13 +281,13 @@
         function validateForm(form) {
             console.log("form", form);
             console.log("form.$valid", form.$valid);
-            console.log("vm.assignedPermissions.length", vm.assignedPermissions.length);
+            console.log("vm.assignedRoles.length", vm.assignedRoles.length);
 
             if (!form.$valid) {
                 if (!vm.roleName)  {
                     Notification.error({ message: 'Role Name is Required', positionY: 'bottom', positionX: 'right' });
                 }
-                if (vm.assignedPermissions.length < 2) {
+                if (vm.assignedRoles.length < 2) {
                     Notification.error({ message: 'Permissions are not correctly defined', positionY: 'bottom', positionX: 'right' });
                 }
 

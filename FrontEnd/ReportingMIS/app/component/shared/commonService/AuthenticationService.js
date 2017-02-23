@@ -63,13 +63,15 @@
 
             
             $http.defaults.headers.common['Authorization'] = AppSettings.tokenScheme + ' ' + authdata; // jshint ignore:line
-            $cookieStore.put('globals', $rootScope.globals);
+            //$cookieStore.put('globals', $rootScope.globals);
+            sessionStorage.globals = $rootScope.globals;
         }
 
         function ClearCredentials() {
             $rootScope.globals = {};
             $cookieStore.remove('globals');
             $cookies.remove("XSRF-TOKEN");
+            delete sessionStorage.globals;
             $http.defaults.headers.common.Authorization = AppSettings.tokenScheme;
         }
 

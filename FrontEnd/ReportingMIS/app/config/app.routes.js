@@ -83,8 +83,7 @@
             templateUrl: 'app/component/passwordPolicy/actionPasswordPolicy.html',
             controller: 'actionPasswordPolicyController',
             controllerAs: 'vm'
-        })
-        .state('index.ActionUser', {
+        }).state('index.ActionUser', {
             url: '^/User/:userId/:makerId/:permissionName',
             templateUrl: 'app/component/user/actionUser.html',
             controller: 'actionUserController',
@@ -104,7 +103,6 @@
         })
         .state('logout', {
             url: '^/logout',
-            templateUrl: '',
             controller: 'logoutController',
             controllerAs: 'vm'
         })
@@ -120,9 +118,17 @@
     run.$inject = ['$rootScope', '$location', '$state', '$cookieStore', '$http', '$window'];
     function run($rootScope, $location, $state, $cookieStore, $http, $window) {
         // keep user logged in after page refresh
-        $rootScope.globals = $cookieStore.get('globals') || {};
-        if ($rootScope.globals.currentUser) {
-            $http.defaults.headers.common['Authorization'] = 'Dilizity ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
+        $rootScope.globals = sessionStorage.globals;
+        //$rootScope.globals = $cookieStore.get('globals') || {};
+
+        if (!$rootScope.globals) {
+            console.log("$rootScope.globals", !$rootScope.globals);
+            $location.path('/login');
+        }
+        else {
+            if ($rootScope.globals.currentUser) {
+                $http.defaults.headers.common['Authorization'] = 'Dilizity ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
+            }
         }
 
         $rootScope.$on('$locationChangeStart', function (event, next, current) {

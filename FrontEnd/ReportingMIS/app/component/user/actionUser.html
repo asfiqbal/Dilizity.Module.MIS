@@ -90,13 +90,10 @@
                                 Password Policy
                             </label>
                             <div class="col-md-4 col-sm-4 col-xs-12">
-                                <ui-select ng-model="ctrl.country.selected" theme="selectize" ng-disabled="ctrl.disabled" title="Choose a country" append-to-body="true">
-                                    <ui-select-match placeholder="Select or search a country in the list...">{{$select.selected.name}}</ui-select-match>
-                                    <ui-select-choices repeat="country in ctrl.countries | filter: $select.search">
-                                        <span ng-bind-html="country.name | highlight: $select.search"></span>
-                                        <small ng-bind-html="country.code | highlight: $select.search"></small>
-                                    </ui-select-choices>
-                                </ui-select>
+                                <select class="form-control selectpicker" ng-model="vm.selectedPasswordPolicy">
+                                    <option ng-repeat="option in vm.passwordPolicy" value="0">Please Select</option>
+                                    <option ng-repeat="option in vm.passwordPolicy" value="{{option.id}}">{{option.name}}</option>
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
@@ -136,13 +133,7 @@
                                 Manger
                             </label>
                             <div class="col-md-4 col-sm-4 col-xs-12">
-                                <ui-select ng-model="ctrl.country.selected" theme="selectize" ng-disabled="ctrl.disabled" title="Choose a country" append-to-body="true">
-                                    <ui-select-match placeholder="Select or search a country in the list...">{{$select.selected.name}}</ui-select-match>
-                                    <ui-select-choices repeat="country in ctrl.countries | filter: $select.search">
-                                        <span ng-bind-html="country.name | highlight: $select.search"></span>
-                                        <small ng-bind-html="country.code | highlight: $select.search"></small>
-                                    </ui-select-choices>
-                                </ui-select>
+                                <selectize placeholder='Select Manger' options='vm.managerList' config="vm.selectConfigManager" ng-model="vm.selectedManger" required='true'></selectize>
                             </div>
                         </div>
                         <div class="form-group">
@@ -150,13 +141,7 @@
                                 User Roles
                             </label>
                             <div class="col-md-4 col-sm-4 col-xs-12">
-                                <ui-select ng-model="ctrl.country.selected" theme="selectize" ng-disabled="ctrl.disabled" title="Choose a country" append-to-body="true">
-                                    <ui-select-match placeholder="Select or search a country in the list...">{{$select.selected.name}}</ui-select-match>
-                                    <ui-select-choices repeat="country in ctrl.countries | filter: $select.search">
-                                        <span ng-bind-html="country.name | highlight: $select.search"></span>
-                                        <small ng-bind-html="country.code | highlight: $select.search"></small>
-                                    </ui-select-choices>
-                                </ui-select>
+                                <selectize placeholder='Select Roles' options='vm.availableRoles' config="vm.selectConfigRoles" ng-model="vm.selectedRoles" required='true'></selectize>
                             </div>
                         </div>
                         <div class="form-group">

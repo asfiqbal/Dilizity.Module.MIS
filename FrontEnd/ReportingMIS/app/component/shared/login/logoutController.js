@@ -21,7 +21,7 @@
         function logout() {
             console.log("logout Begin");
             //$location.path('/login');
-            $state.go('login');
+            $location.path('/login');
             console.log("logout End");
         };
     }

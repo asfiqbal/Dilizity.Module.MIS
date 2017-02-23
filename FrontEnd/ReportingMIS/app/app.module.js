@@ -25,7 +25,8 @@
             'angularTreeview',
             'ui-notification',
             'angularFileUpload',
-            'ngImgCrop'])
+            'ngImgCrop',
+            'selectize'])
     
 })();
 
