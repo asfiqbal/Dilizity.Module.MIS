@@ -12,6 +12,9 @@
         var roleId = -1;
         var makerId = -1;
 
+        vm.myImage = '';
+        vm.myCroppedImage = '';
+
         vm.title = '';
         vm.newMessage = '';
         vm.selectedPasswordPolicy = null;
@@ -69,6 +72,17 @@
             }
             return tree;
         }
+
+        var handleFileSelect = function (evt) {
+            var file = evt.currentTarget.files[0];
+            var reader = new FileReader();
+            reader.onload = function (evt) {
+                $scope.$apply(function ($scope) {
+                    vm.myImage = evt.target.result;
+                });
+            };
+            reader.readAsDataURL(file);
+        };
 
         vm.movePermissions = function (sourceTree, targetTree, sourceModel, targetModel) {
             console.log('movePermissions Begin');
@@ -196,6 +210,8 @@
                  { value: 2, text: "Secure" }
             ];
    
+            angular.element(document.querySelector('#fileInput')).on('change', handleFileSelect);
+
             console.log("actionUserController.initController -> End");
         })();
 

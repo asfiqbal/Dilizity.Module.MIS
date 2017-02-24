@@ -123,6 +123,7 @@
     <Content Include="app\component\shared\navigation\navController.js" />
     <Content Include="app\component\shared\login\loginController.js" />
     <Content Include="app\controllers\metaReportController.js" />
+    <Content Include="app\directives\uploadfile.js" />
     <Content Include="app\directives\loader.js" />
     <Content Include="app\factories\httpInterceptor.js" />
     <Content Include="app\services\HelperService.js" />
@@ -232,7 +233,7 @@
     <Content Include="images\cancel.png" />
     <Content Include="images\envelope.png" />
     <Content Include="images\favicon.ico" />
-	<Content Include="scripts\selectize.js" />
+    <Content Include="scripts\selectize.js" />
     <Content Include="images\file.png" />
     <Content Include="images\folder-closed.png" />
     <Content Include="images\folder.png" />
@@ -247,7 +248,7 @@
     <Content Include="scripts\angular-messages.js" />
     <Content Include="scripts\angular-resource.js" />
     <Content Include="scripts\angular-sanitize.js" />
-	<Content Include="scripts\angular-selectize.js" />
+    <Content Include="scripts\angular-selectize.js" />
     <Content Include="scripts\angular-touch.js" />
     <Content Include="scripts\angular-ui-router.js" />
     <Content Include="scripts\angular-ui\ui-bootstrap-tpls-2.3.1.js" />
@@ -384,7 +385,7 @@
     <Content Include="styles\font-awesome.css" />
     <Content Include="styles\ng-img-crop.css" />
     <Content Include="styles\select.css" />
-	<Content Include="styles\selectize.css" />
+    <Content Include="styles\selectize.css" />
     <Content Include="styles\sidebar.css" />
     <Content Include="styles\ui-navbar.css" />
     <Content Include="styles\LoginStyle.css" />

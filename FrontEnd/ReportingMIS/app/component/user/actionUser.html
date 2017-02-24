@@ -43,6 +43,9 @@
                             <li>
                                 <a ng-show="vm.permissionName=='Dilizity.Backoffice.User.Edit.Checker'" uib-tooltip="Compare" tooltip-placement="left" ng-click="vm.compare('lg')" class="collapse-link"><i class="glyphicon glyphicon-sunglasses"></i></a>
                             </li>
+                            <li>
+                                <a uploadfile tooltip-placement="left" class="collapse-link"><i class="glyphicon glyphicon-picture"></i></a>
+                            </li>
                         </ul>
                         <div class="clearfix"></div>
                     </div>
@@ -149,16 +152,16 @@
                                 Picture
                             </label>
                             <div class="col-md-4 col-sm-4 col-xs-12">
-                                <input class="form-control col-md-7 col-xs-12" type="file" id="fileInput">
-                                <div class="cropArea">
-                                    <img-crop image="myImage" result-image="myCroppedImage"></img-crop>
+                                <input type="file" id="fileInput" style="display: none;" >
+                                <div class="col-md-4 col-sm-4 col-xs-12 cropArea">
+                                    <img-crop image="vm.myImage" result-image="vm.myCroppedImage"></img-crop>
                                 </div>
                             </div>
                             <label class="control-label col-md-2 col-sm-2 col-xs-12">
                                 Cropped Image:
                             </label>
-                            <div class="col-md-4 col-sm-4 col-xs-12">
-                                <img ng-src="{{myCroppedImage}}" />
+                            <div class="col-md-4 col-sm-4 col-xs-12 cropArea">
+                                <img ng-src="{{vm.myCroppedImage}}" />
                             </div>
                         </div>
                 </form>
