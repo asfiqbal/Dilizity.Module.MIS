@@ -276,7 +276,7 @@
         </Query>
       <Query ID="GetUser" DataSource="">
         <![CDATA[
-            SELECT  USER_ID UserId, NAME Name, LOGIN_ID LoginId, PASSWORD Password, PASSWORD_POLICY_ID PasswordPolicyId, PASSWORD_ATTEMPTS PasswordAttempts, ACCOUNT_LOCKED AccountLocked, [CHANGE_PASSWORD_ON_LOGON] ChangePasswordOnLogon, EMAIL Email, MOBILE_NUMBER MobileNumber, LAST_PASSWORD_CHANGE_DATETIME LastPasswordChangeDateTime, [LAST_LOGIN_DATETIME] LastLoginDateTime, PICTURE Picture, CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+            SELECT  USER_ID UserId, NAME Name, LOGIN_ID LoginId, PASSWORD Password, PASSWORD_POLICY_ID PasswordPolicyId, PASSWORD_ATTEMPTS PasswordAttempts, ACCOUNT_LOCKED AccountLocked, [CHANGE_PASSWORD_ON_LOGON] ChangePasswordOnLogon, EMAIL Email, MOBILE_NUMBER MobileNumber, LAST_PASSWORD_CHANGE_DATETIME LastPasswordChangeDateTime, [LAST_LOGIN_DATETIME] LastLoginDateTime, PICTURE Picture, [MANAGER_ID] ManagerId, [DEPARTMENT_ID] DepartmentId,CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
             FROM    SEC_USER SU
             WHERE   SU.IS_DELETED = 0
             AND     SU.LOGIN_ID = @LoginId
@@ -375,56 +375,55 @@
         <Param Name="Data" Type="System.String"  Size="-1"/>
         <Param Name="CreatedBy" Type="System.String"  Size="200"/>
       </Query>
-        <Query ID="ScreenUserPermission" DataSource="">
+      <Query ID="ScreenUserPermission" DataSource="">
+      <![CDATA[
+          WITH WF ( Permission_id, PARENT_PERMISSION_ID)
+          AS
+          (
+          SELECT	Permission_id, PARENT_PERMISSION_ID
+          from	SEC_PERMISSION P
+          WHERE   P.SYSTEM_NAME = @PermissionId
+          UNION ALL
+          SELECT	P.Permission_id, P.PARENT_PERMISSION_ID
+          from	SEC_PERMISSION P
+		          INNER JOIN WF ON P.PARENT_PERMISSION_ID  = WF.Permission_id
+          WHERE	UPPER(P.SYSTEM_NAME) NOT LIKE '%.EMAIL%'
+          AND		UPPER(P.SYSTEM_NAME) NOT LIKE '%.CHECKER%'
+          )
+          select	[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.SYSTEM_NAME) FieldKey, V.SYSTEM_NAME PermissionName
+          from	WF
+		          INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION V ON WF.PERMISSION_ID = V.PERMISSION_ID
+          WHERE   V.LOGIN_ID = @LoginId
+          AND		[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.SYSTEM_NAME) in ('Search','Add','Edit','Delete','View','Maker', 'Bulk')
+          ]]>
+      <Param Name="LoginId" Type="System.String"  Size="200"/>
+      <Param Name="PermissionId" Type="System.String"  Size="200"/>
+      </Query>    
+      <Query ID="GetScreenPermission" DataSource="">
         <![CDATA[
-            WITH WF ( Permission_id, PARENT_PERMISSION_ID)
-            AS
-            (
-            SELECT	Permission_id, PARENT_PERMISSION_ID
-            from	SEC_PERMISSION P
-            WHERE   P.SYSTEM_NAME = @PermissionId
-            UNION ALL
-            SELECT	P.Permission_id, P.PARENT_PERMISSION_ID
-            from	SEC_PERMISSION P
-		            INNER JOIN WF ON P.PARENT_PERMISSION_ID  = WF.Permission_id
-            WHERE	UPPER(P.SYSTEM_NAME) NOT LIKE '%.EMAIL%'
-            AND		UPPER(P.SYSTEM_NAME) NOT LIKE '%.CHECKER%'
-            )
-            select	[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.SYSTEM_NAME) FieldKey, V.SYSTEM_NAME PermissionName
-            from	WF
-		            INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION V ON WF.PERMISSION_ID = V.PERMISSION_ID
-            WHERE   V.LOGIN_ID = @LoginId
-            AND		[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.SYSTEM_NAME) in ('Search','Add','Edit','Delete','View','Maker', 'Bulk')
-            ]]>
+          WITH WF 
+          AS
+          (
+          SELECT	[Level]=1, Permission_id, PARENT_PERMISSION_ID
+          from	SEC_PERMISSION P
+          WHERE   P.SYSTEM_NAME = @PermissionId
+          UNION ALL
+          SELECT	[Level]+1, P.Permission_id, P.PARENT_PERMISSION_ID
+          from	SEC_PERMISSION P
+		          INNER JOIN WF ON P.PARENT_PERMISSION_ID  = WF.Permission_id
+          WHERE	UPPER(P.SYSTEM_NAME) NOT LIKE '%.EMAIL%'
+          AND		UPPER(P.SYSTEM_NAME) NOT LIKE '%.CHECKER%'
+          )
+          select	[Level], [dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.SYSTEM_NAME) FieldKey, V.SYSTEM_NAME PermissionName
+          from	WF
+		          INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION V ON WF.PERMISSION_ID = V.PERMISSION_ID
+          WHERE   V.LOGIN_ID = @LoginId
+          AND		V.SYSTEM_NAME != @PermissionId
+          AND		[Level] <= 3
+          ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="PermissionId" Type="System.String"  Size="200"/>
-        </Query>    
-              <Query ID="GetScreenPermission" DataSource="">
-          <![CDATA[
-            WITH WF 
-            AS
-            (
-            SELECT	[Level]=1, Permission_id, PARENT_PERMISSION_ID
-            from	SEC_PERMISSION P
-            WHERE   P.SYSTEM_NAME = @PermissionId
-            UNION ALL
-            SELECT	[Level]+1, P.Permission_id, P.PARENT_PERMISSION_ID
-            from	SEC_PERMISSION P
-		            INNER JOIN WF ON P.PARENT_PERMISSION_ID  = WF.Permission_id
-            WHERE	UPPER(P.SYSTEM_NAME) NOT LIKE '%.EMAIL%'
-            AND		UPPER(P.SYSTEM_NAME) NOT LIKE '%.CHECKER%'
-            )
-            select	[Level], [dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.SYSTEM_NAME) FieldKey, V.SYSTEM_NAME PermissionName
-            from	WF
-		            INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION V ON WF.PERMISSION_ID = V.PERMISSION_ID
-            WHERE   V.LOGIN_ID = @LoginId
-            AND		V.SYSTEM_NAME != @PermissionId
-            AND		[Level] <= 3
-            ]]>
-          <Param Name="LoginId" Type="System.String"  Size="200"/>
-          <Param Name="PermissionId" Type="System.String"  Size="200"/>
-        </Query>    
-
+      </Query>    
       <Query ID="UserSpecficPermissions" DataSource="">
         <![CDATA[
             SELECT  -1 PermissionId, 'All' PermissionName, 'AAAAAAA' as OrderClause
@@ -443,7 +442,7 @@
             SELECT	UR.ROLE_ID RoleId, R.ROLE_NAME RoleName, R.ROLE_NAME as OrderClause
             FROM	SEC_USER_ROLE UR
 		            INNER JOIN SEC_ROLE R ON UR.ROLE_ID = R.ROLE_ID
-            WHERE   R.CREATED_BY = 'Admin' OR R.CREATED_BY = 'System'
+            WHERE   R.CREATED_BY = @LoginId OR R.CREATED_BY = 'System'
             order by 3
         ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
@@ -491,32 +490,33 @@
             AS
             (
             SELECT TOP(@PageSize * @PageNumber) ResultNum = ROW_NUMBER() OVER (ORDER BY 
-					            CASE WHEN @SortOrder = 'User Id' AND @SortDirection = 'asc' THEN USER_ID END ASC,
-					            CASE WHEN @SortOrder = 'User Id' AND @SortDirection = 'desc' THEN USER_ID END DESC,
-					            CASE WHEN @SortOrder = 'User Name' AND @SortDirection = 'asc' THEN NAME END ASC,
-					            CASE WHEN @SortOrder = 'User Name' AND @SortDirection = 'desc' THEN NAME END DESC,
-					            CASE WHEN @SortOrder = 'MobileNumber' AND @SortDirection = 'asc' THEN MOBILE_NUMBER END ASC,
-					            CASE WHEN @SortOrder = 'MobileNumber' AND @SortDirection = 'desc' THEN MOBILE_NUMBER END DESC,
-					            CASE WHEN @SortOrder = 'Email' AND @SortDirection = 'asc' THEN EMAIL END ASC,
-					            CASE WHEN @SortOrder = 'Email' AND @SortDirection = 'desc' THEN EMAIL END DESC,
-					            CASE WHEN @SortOrder = 'Account Locked' AND @SortDirection = 'asc' THEN Account_Locked END ASC,
-					            CASE WHEN @SortOrder = 'Account Locked' AND @SortDirection = 'desc' THEN Account_Locked END DESC,
-					            CASE WHEN @SortOrder = 'Updated By' AND @SortDirection = 'asc' THEN UPDATED_BY END ASC,
-					            CASE WHEN @SortOrder = 'Updated By' AND @SortDirection = 'desc' THEN UPDATED_BY END DESC,
-					            CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'asc' THEN UPDATED_ON END ASC,
-					            CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'desc' THEN UPDATED_ON END DESC
+					            CASE WHEN @SortOrder = 'User Id' AND @SortDirection = 'asc' THEN U.USER_ID END ASC,
+					            CASE WHEN @SortOrder = 'User Id' AND @SortDirection = 'desc' THEN U.USER_ID END DESC,
+					            CASE WHEN @SortOrder = 'User Name' AND @SortDirection = 'asc' THEN U.NAME END ASC,
+					            CASE WHEN @SortOrder = 'User Name' AND @SortDirection = 'desc' THEN U.NAME END DESC,
+					            CASE WHEN @SortOrder = 'MobileNumber' AND @SortDirection = 'asc' THEN U.MOBILE_NUMBER END ASC,
+					            CASE WHEN @SortOrder = 'MobileNumber' AND @SortDirection = 'desc' THEN U.MOBILE_NUMBER END DESC,
+					            CASE WHEN @SortOrder = 'Email' AND @SortDirection = 'asc' THEN U.EMAIL END ASC,
+					            CASE WHEN @SortOrder = 'Email' AND @SortDirection = 'desc' THEN U.EMAIL END DESC,
+					            CASE WHEN @SortOrder = 'Account Locked' AND @SortDirection = 'asc' THEN U.Account_Locked END ASC,
+					            CASE WHEN @SortOrder = 'Account Locked' AND @SortDirection = 'desc' THEN U.Account_Locked END DESC,
+					            CASE WHEN @SortOrder = 'Updated By' AND @SortDirection = 'asc' THEN U.UPDATED_BY END ASC,
+					            CASE WHEN @SortOrder = 'Updated By' AND @SortDirection = 'desc' THEN U.UPDATED_BY END DESC,
+					            CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'asc' THEN U.UPDATED_ON END ASC,
+					            CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'desc' THEN U.UPDATED_ON END DESC
 			            )
 			            , *
             FROM SEC_USER U
-            WHERE   IS_DELETED = 0
+                  LEFT OUTER JOIN SEC_USER M ON U.MANAGER_ID = M.USER_ID AND M.IS_DELETED = 0
+            WHERE   U.IS_DELETED = 0
             AND	(U.[USER_ID] = @UserId OR @UserId = 0)
-            AND	(NAME LIKE '%'+@UserName+'%' OR @UserName =  '')
-            AND	(LOGIN_ID LIKE '%'+@LoginId+'%' OR @LoginId =  '')
-            AND	(MOBILE_NUMBER LIKE '%'+@MobileNumber+'%' OR @MobileNumber =  '')
-            AND	(EMAIL LIKE '%'+@Email+'%' OR @Email =  '')
+            AND	(U.NAME LIKE '%'+@UserName+'%' OR @UserName =  '')
+            AND	(U.LOGIN_ID LIKE '%'+@LoginId+'%' OR @LoginId =  '')
+            AND	(U.MOBILE_NUMBER LIKE '%'+@MobileNumber+'%' OR @MobileNumber =  '')
+            AND	(U.EMAIL LIKE '%'+@Email+'%' OR @Email =  '')
             AND	(U.USER_ID IN (SELECT USER_ID FROM SEC_USER_ROLE WHERE ROLE_ID = @RoleId)  OR @RoleId = -1)
             )
-            SELECT USER_ID UserId, Name UserName, LOGIN_ID LoginId, MOBILE_NUMBER MobileNumber, EMAIL Email, ACCOUNT_LOCKED AccountLocked, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+            SELECT USER_ID UserId, Name UserName, LOGIN_ID LoginId, MOBILE_NUMBER MobileNumber, EMAIL Email, ACCOUNT_LOCKED AccountLocked, ISNULL(M.NAME, 'None') ManagerName, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
             FROM SQLPaging
             WHERE ResultNum > ((@PageNumber - 1) * @PageSize)
             order by ResultNum
@@ -555,7 +555,7 @@
 			                    )
 				                , M.MAKER_ID, P.PERMISSION_NAME, P.SYSTEM_NAME, M.STATUS, P.ACTION_URL, M.CREATED_ON, M.CREATED_BY, M.UPDATED_ON, M.UPDATED_BY
                     FROM MAKER_LIST M
-		                 INNER JOIN SEC_PERMISSION P ON M.PERMISSION_ID = P.PERMISSION_ID
+		                  INNER JOIN SEC_PERMISSION P ON M.PERMISSION_ID = P.PERMISSION_ID
                     WHERE   M.IS_DELETED = 0
                     AND	(MAKER_ID = @MakerId OR @MakerId = 0)
                     AND	M.CREATED_BY = @LoginId
@@ -802,6 +802,13 @@
         <Param Name="RoleName" Type="System.String"  Size="200"/>
         <Param Name="RoleId" Type="System.Int32"  Size="0"/>
       </Query>
+      <Query ID="GetAllRoles" DataSource="">
+        <![CDATA[
+                  SELECT  ROLE_ID Id, ROLE_NAME Name
+                  FROM    SEC_ROLE
+                  WHERE   IS_DELETED = 0;
+              ]]>
+      </Query>
       <Query ID="GetRole" DataSource="">
         <![CDATA[
                 SELECT  ROLE_ID RoleId, ROLE_NAME RoleName
@@ -865,6 +872,100 @@
         <Param Name="PageNumber" Type="System.Int32"  Size="0"/>
         <Param Name="SortOrder" Type="System.String"  Size="200"/>
         <Param Name="SortDirection" Type="System.String"  Size="200"/>
+      </Query>
+      <Query ID="GetPasswordPolicies" DataSource="">
+        <![CDATA[
+          SELECT	P.PASSWORD_POLICY_ID Id, P.POLICY_NAME Name
+          FROM	SEC_PASSWORD_POLICY P
+        ]]>
+      </Query>
+      <Query ID="GetManagers" DataSource="">
+        <![CDATA[
+          SELECT  USER_ID Id, Name, ISNULL(D.DEPARTMENT_NAME, 'None') Department
+          from	SEC_USER U
+		          LEFT OUTER JOIN SEC_DEPARTMENT D ON U.DEPARTMENT_ID = D.DEPARTMENT_ID
+          WHERE	(U.USER_ID != @Id or @Id = 0)
+        ]]>
+        <Param Name="Id" Type="System.Int32"  Size="0"/>
+      </Query>
+      <Query ID="GetUserRoleById" DataSource="">
+        <![CDATA[
+          select	UR.ROLE_ID Id, R.ROLE_NAME Name
+          FROM	SEC_USER_ROLE UR
+		          INNER JOIN SEC_ROLE R ON UR.ROLE_ID = R.ROLE_ID AND R.IS_DELETED = 0
+          WHERE	UR.USER_ID = @Id
+          ]]>
+        <Param Name="Id" Type="System.Int32"  Size="0"/>
+      </Query>
+      <Query ID="GetUserById" DataSource="">
+        <![CDATA[
+          select	USER_ID Id,	Name, Picture, LOGIN_ID LoginId, PASSWORD_POLICY_ID PasswordPolicyId, PASSWORD_ATTEMPTS PasswordAttempts,
+		              ACCOUNT_LOCKED AccountLocked, Email, MOBILE_NUMBER MobileNumber, MANAGER_ID ManagerId, DEPARTMENT_ID DepartmentId
+          from	SEC_USER
+          WHERE	IS_DELETED = 0
+          AND		IS_SYSTEM = 0
+          AND		USER_ID = @Id
+        ]]>
+        <Param Name="Id" Type="System.Int32"  Size="0"/>
+      </Query>
+      <Query ID="GetAllDepartments" DataSource="">
+        <![CDATA[
+          select	DEPARTMENT_ID Id, DEPARTMENT_NAME Name
+          from	SEC_DEPARTMENT
+          WHERE	IS_DELETED = 0
+        ]]>
+      </Query>
+      <Query ID="InsertUser" DataSource="">
+        <![CDATA[
+            INSERT INTO SEC_USER(NAME,PICTURE,LOGIN_ID,PASSWORD,PASSWORD_POLICY_ID,PASSWORD_ATTEMPTS,ACCOUNT_LOCKED,CHANGE_PASSWORD_ON_LOGON,EMAIL,MOBILE_NUMBER,IS_SYSTEM,IS_DELETED,CREATED_BY,UPDATED_BY,MANAGER_ID,DEPARTMENT_ID)
+            VALUES (@Name, @Picture,@UserLoginId,@Password,@PasswordPolicyId,@PasswordAttempts,@AccountLocked,@ChangePasswordOnLogon,@Email,@MobileNumber, 0, 0, @LoginId, @LoginId, @ManagerId, @DepartmentId);
+            SELECT SCOPE_IDENTITY(); 
+        ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="Name" Type="System.String"  Size="200"/>
+        <Param Name="Picture" Type="System.String"  Size="200"/>
+        <Param Name="UserLoginId" Type="System.String"  Size="200"/>
+        <Param Name="Password" Type="System.String"  Size="200"/>
+        <Param Name="Email" Type="System.String"  Size="200"/>
+        <Param Name="MobileNumber" Type="System.String"  Size="200"/>
+        <Param Name="PasswordPolicyId" Type="System.c"  Size="0"/>
+        <Param Name="PasswordAttempts" Type="System.Int32"  Size="0"/>
+        <Param Name="AccountLocked" Type="System.Int32"  Size="0"/>
+        <Param Name="ChangePasswordOnLogon" Type="System.Int32"  Size="0"/>
+        <Param Name="ManagerId" Type="System.ManagerId"  Size="0"/>
+        <Param Name="DepartmentId" Type="System.ManagerId"  Size="0"/>
+      </Query>
+      <Query ID="UpdateUser" DataSource="">
+        <![CDATA[
+          UPDATE  SEC_USER
+          SET     NAME = @Name,
+                  PICTURE = @Picture,
+                  PASSWORD_POLICY_ID = @PasswordPolicyId,
+                  PASSWORD_ATTEMPTS = @PasswordAttempt,
+                  ACCOUNT_LOCKED = @AccountLocked,
+                  EMAIL = @Email,
+                  MOBILE_NUMBER = @MobileNumber,
+                  MANAGER_ID = @ManagerId,
+                  DEPARTMENT_ID = @DepartmentId,
+                  UPDATED_ON = GetDate(),
+                  UPDATED_BY = @LoginId
+          WHERE   IS_DELETED = 0
+          AND     USER_ID = @Id;
+          SELECT @@ROWCOUNT;
+        ]]>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="Name" Type="System.String"  Size="200"/>
+        <Param Name="Picture" Type="System.String"  Size="200"/>
+        <Param Name="UserLoginId" Type="System.String"  Size="200"/>
+        <Param Name="Password" Type="System.String"  Size="200"/>
+        <Param Name="Email" Type="System.String"  Size="200"/>
+        <Param Name="MobileNumber" Type="System.String"  Size="200"/>
+        <Param Name="PasswordPolicyId" Type="System.c"  Size="0"/>
+        <Param Name="PasswordAttempts" Type="System.Int32"  Size="0"/>
+        <Param Name="AccountLocked" Type="System.Int32"  Size="0"/>
+        <Param Name="ChangePasswordOnLogon" Type="System.Int32"  Size="0"/>
+        <Param Name="ManagerId" Type="System.ManagerId"  Size="0"/>
+        <Param Name="DepartmentId" Type="System.ManagerId"  Size="0"/>
       </Query>
   </Schema>
 </root>

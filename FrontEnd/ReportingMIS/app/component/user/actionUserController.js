@@ -9,21 +9,39 @@
     function actionUserController($uibModal, $window, $scope, $stateParams, $rootScope, AuthenticationService, Notification, HelperService, UniversalService, CommunicationService) {
         var vm = this;
 
-        var roleId = -1;
+        var id = -1;
         var makerId = -1;
 
         vm.myImage = '';
         vm.myCroppedImage = '';
+        vm.loginId = '';
+        vm.email = '';
+        vm.mobilenumber = '';
+        vm.passwordAttempts = 0;
+        vm.selectedPasswordPolicy = 0;
+        vm.selectedManger = 0;
+        vm.selectedDepartment = 0;
+        vm.accountLocked = 0;
+        vm.name = '';
+        vm.availableRoles = {};
+        vm.assignedRoles = [];
+        vm.passwordPolicy = [];
+        vm.departments = [];
+        vm.userPermission = {};
+        vm.departments = [];
+        vm.notes = [];
+
+        vm.permissionName = '';
 
         vm.title = '';
         vm.newMessage = '';
-        vm.selectedPasswordPolicy = null;
         vm.managerList = [];
         vm.selectConfigManager = {
             maxItems: 1,
-            optgroupField: 'department',
-            labelField: 'name',
-            searchField: ['name'],
+            optgroupField: 'Department',
+            valueField: 'Id',
+            labelField: 'Name',
+            searchField: ['Name'],
             render: {
                 optgroup_header: function (data, escape) {
                     return '<div class="optgroup-header">' + escape(data.label) + ' <span class="scientific">' + escape(data.label_scientific) + '</span></div>';
@@ -37,9 +55,11 @@
         };
         vm.selectConfigRoles = {
             create: true,
+            valueField: 'Id',
+            labelField: 'Name',
             onChange: function (value) {
                 console.log('onChange', value)
-            },
+            }
             // maxItems: 1,
             // required: true,
         }
@@ -50,14 +70,7 @@
         vm.isCheckerMode = isCheckerMode;
 
         vm.loadScreenPermissionsAndInfo = loadScreenPermissionsAndInfo;
-        vm.roleName = '';
-        vm.availableRoles = {};
-        vm.assignedRoles = [];
-        vm.passwordPolicy = [];
-        vm.userPermission = {};
-        vm.notes = [];
 
-        vm.permissionName = '';
 
         vm.deleteTreeItem = function (tree, id) {
             for (var i = 0; i < tree.length; i++) {
@@ -138,7 +151,7 @@
 
 
             var model = {
-                RoleId: roleId,
+                Id: id,
                 MakerId: makerId
             }
 
@@ -148,10 +161,22 @@
                     var data = angular.fromJson(response.data);
 
                     if (response.data.ErrorCode == 0) {
-                        roleId = data.Data.Id;
-                        vm.roleName = data.Data.Name;
-                        vm.availableRoles = data.Data.availableRoles;
-                        vm.assignedRoles = data.Data.assignedRoles;
+                        id = data.Data.Id;
+                        vm.name = data.Data.Name;
+                        vm.email = data.Data.Email;
+                        vm.mobilenumber = data.Data.MobileNumber;
+                        vm.myCroppedImage = data.Data.Picture;
+                        vm.passwordAttempts = data.Data.PasswordAttempts;
+                        vm.accountLocked = data.Data.AccountLocked;
+                        vm.selectedPasswordPolicy = data.Data.PasswordPolicyId;
+                        vm.selectedManger = data.Data.ManagerId;
+                        vm.selectedDepartment = data.Data.DepartmentId;
+                        vm.selectedRoles = data.Data.AssignedRoles;
+                        vm.passwordPolicy = data.Data.PasswordPolicies;
+                        vm.managerList = data.Data.Managers;
+                        vm.departments = data.Data.Departments;
+                        vm.availableRoles = data.Data.Roles;
+                        vm.assignedRoles = data.Data.AssignedRoles;
                         vm.userPermission = data.Data.UserPermission;
                         vm.notes = data.Data.Notes;
                     }
@@ -170,14 +195,14 @@
 
         (function initController() {
             console.log("actionUserController.initController -> Begin");
-            console.log("$stateParams.roleId", $stateParams.roleId);
+            console.log("$stateParams.id", $stateParams.id);
             console.log("$stateParams.permissionName", $stateParams.permissionName);
 
-            roleId = parseInt($stateParams.roleId);
-            if (!HelperService.IsNumber(roleId)) {
-                roleId = 0;
+            id = parseInt($stateParams.id);
+            if (!HelperService.IsNumber(id)) {
+                id = 0;
             }
-            console.log("roleId", roleId);
+            console.log("id", id);
 
             vm.permissionName = $stateParams.permissionName;
             makerId = parseInt($stateParams.makerId);
@@ -194,22 +219,6 @@
 
             loadScreenPermissionsAndInfo();
 
-            vm.passwordPolicy = [
-                { id:1, name:'Admin Policy' },
-                { id:2, name:'Secure Policy' }
-            ];
-
-            vm.managerList = [
-                 { department: 'PIT', value: 1, name: "Zia" },
-                 { department: 'Support', value: 2, name: "Razi" },
-                 { department: 'Operations', value: 3, name: "Danish" }
-            ];
-
-            vm.availableRoles = [
-                 { value: 1, text: "Admin" },
-                 { value: 2, text: "Secure" }
-            ];
-   
             angular.element(document.querySelector('#fileInput')).on('change', handleFileSelect);
 
             console.log("actionUserController.initController -> End");
@@ -227,6 +236,9 @@
 
             var model = CreateModel(actionStats);
 
+            console.log("model", model);
+
+            
             UniversalService.Do(actionPermission, tmpUserName, model,
                 function (response) {
                     console.log("Success!");
@@ -256,22 +268,39 @@
 
             if (isMakerCheckerMode()) {
                 model = {
-                    "Id": roleId,
+                    "Id": id,
                     "MakerId": makerId,
-                    "Name": vm.roleName,
+                    "Name": vm.name,
                     "Status": makerStatus,
-                    "availableRoles": vm.availableRoles,
-                    "assignedRoles": vm.assignedRoles,
+                    "LoginId": vm.loginId,
+                    "Email": vm.email,
+                    "MobileNumber": vm.mobilenumber,
+                    "PasswordAttempts": vm.passwordAttempts,
+                    "SelectedPasswordPolicy": vm.selectedPasswordPolicy,
+                    "AccountLocked": vm.accountLocked,
+                    "SelectedManager": vm.selectedManger,
+                    "SelectedDepartment": vm.selectedDepartment,
+                    "AssignedRoles": vm.assignedRoles,
+                    "Picture": vm.myCroppedImage,
                     "Notes": vm.notes
                 };
             }
             else {
 
                 model = {
-                    "Id": roleId,
-                    "Name": vm.roleName,
-                    "availableRoles": vm.availableRoles,
-                    "assignedRoles": vm.assignedRoles
+                    "Id": id,
+                    "Name": vm.name,
+                    "LoginId": vm.loginId,
+                    "Email": vm.email,
+                    "MobileNumber": vm.mobilenumber,
+                    "PasswordAttempts": vm.passwordAttempts,
+                    "SelectedPasswordPolicy": vm.selectedPasswordPolicy,
+                    "SelectedPasswordPolicy": vm.accountLocked,
+                    "AccountLocked": vm.accountLocked,
+                    "SelectedManager": vm.selectedManger,
+                    "SelectedDepartment":vm.selectedDepartment,
+                    "AssignedRoles": vm.assignedRoles,
+                    "Picture": vm.myCroppedImage,
                 };
             }
 
@@ -300,11 +329,23 @@
             console.log("vm.assignedRoles.length", vm.assignedRoles.length);
 
             if (!form.$valid) {
-                if (!vm.roleName)  {
-                    Notification.error({ message: 'Role Name is Required', positionY: 'bottom', positionX: 'right' });
+                if (!vm.name)  {
+                    Notification.error({ message: 'User Name is Required', positionY: 'bottom', positionX: 'right' });
                 }
-                if (vm.assignedRoles.length < 2) {
-                    Notification.error({ message: 'Permissions are not correctly defined', positionY: 'bottom', positionX: 'right' });
+                if (vm.assignedRoles.length < 1) {
+                    Notification.error({ message: 'Roles are not correctly assigned', positionY: 'bottom', positionX: 'right' });
+                }
+                if (!vm.email) {
+                    Notification.error({ message: 'Email is required', positionY: 'bottom', positionX: 'right' });
+                }
+                if (!vm.mobilenumber) {
+                    Notification.error({ message: 'Mobile Number is required', positionY: 'bottom', positionX: 'right' });
+                }
+                if (vm.passwordAttempts < 1) {
+                    Notification.error({ message: 'Password Attempts is required', positionY: 'bottom', positionX: 'right' });
+                }
+                if (vm.selectedPasswordPolicy < 1) {
+                    Notification.error({ message: 'Password Policy is required', positionY: 'bottom', positionX: 'right' });
                 }
 
                 return false;
@@ -340,7 +381,7 @@
               angular.element($document[0].querySelector('.x_panel' + parentSelector)) : undefined;
 
             var model = {
-                RoleId: roleId,
+                id: id,
                 MakerId: makerId
             };
 

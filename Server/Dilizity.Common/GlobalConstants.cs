@@ -36,6 +36,7 @@ namespace Dilizity.Business.Common
         public const string ACTION_CODE = "ACTION_CODE";
         public const string GLOBAL_SYSTEM_ERROR_MSG = "Internal Server Error Occured! Check Server Logs";
         public const string HTTP_HEADERS = "HTTP_HEADERS";
+        public const string ID = "Id";
 
 
     }

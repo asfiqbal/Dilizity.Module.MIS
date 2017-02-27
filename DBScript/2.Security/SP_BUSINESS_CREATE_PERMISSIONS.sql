@@ -1,5 +1,12 @@
-/****** Object:  StoredProcedure [dbo].[SP_BUSINESS_CREATE_PERMISSIONS]    Script Date: 2/22/2017 8:21:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_BUSINESS_CREATE_PERMISSIONS]    Script Date: 2/26/2017 11:55:59 PM ******/
 DROP PROCEDURE [dbo].[SP_BUSINESS_CREATE_PERMISSIONS]
+GO
+
+/****** Object:  StoredProcedure [dbo].[SP_BUSINESS_CREATE_PERMISSIONS]    Script Date: 2/26/2017 11:55:59 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
 GO
 
 -- =============================================
@@ -97,6 +104,23 @@ BEGIN
 	SELECT @RootPermission+N'.Delete.Checker.Reject', @PermissionFriendlyName+N'.Delete.Checker.Reject', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Delete.Checker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 	UNION ALL
 	SELECT @RootPermission+N'.Delete.Checker.Correction', @PermissionFriendlyName+N'.Delete.Checker.Correction', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Delete.Checker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+
+
+	INSERT INTO SEC_ROLE_PERMISSION(ROLE_ID,PERMISSION_ID,CREATED_BY,UPDATED_BY)
+	SELECT (SELECT ROLE_ID FROM SEC_ROLE WHERE ROLE_NAME = 'Admin'), P.PERMISSION_ID, 'System', 'System'
+	FROM SEC_PERMISSION P
+		 LEFT OUTER JOIN SEC_ROLE_PERMISSION RP ON P.PERMISSION_ID = RP.PERMISSION_ID
+	WHERE RP.PERMISSION_ID IS NULL
+	AND	 P.SYSTEM_NAME NOT LIKE '%Maker%'
+	AND	 P.SYSTEM_NAME NOT LIKE '%Checker%'
+	UNION ALL
+	SELECT (SELECT ROLE_ID FROM SEC_ROLE WHERE ROLE_NAME = 'Secure'),P.PERMISSION_ID, 'System', 'System'
+	FROM SEC_PERMISSION P
+		 LEFT OUTER JOIN SEC_ROLE_PERMISSION RP ON P.PERMISSION_ID = RP.PERMISSION_ID
+	WHERE RP.PERMISSION_ID IS NULL
+	AND	 P.SYSTEM_NAME NOT LIKE '%Maker%'
+	AND	 P.SYSTEM_NAME NOT LIKE '%Checker%'
+	;
     
 	
 END
