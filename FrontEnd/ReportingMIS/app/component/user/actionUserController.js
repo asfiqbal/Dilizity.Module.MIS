@@ -300,7 +300,7 @@
                     "SelectedManager": vm.selectedManger,
                     "SelectedDepartment":vm.selectedDepartment,
                     "AssignedRoles": vm.assignedRoles,
-                    "Picture": vm.myCroppedImage,
+                    "Picture": vm.myCroppedImage
                 };
             }
 

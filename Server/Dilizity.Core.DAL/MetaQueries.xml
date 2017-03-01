@@ -341,7 +341,7 @@
       </Query>
       <Query ID="GetUserPasswordPolicy" DataSource="">
         <![CDATA[
-              SELECT  SP.PASSWORD_POLICY_ID PasswordPolicyId, SP.POLICY_NAME PolicyName, SP.LENGTH_RULE LengthRule, SP.EXPIRY_RULE ExpiryRule, SP.NUMBER_CANT_REUSE NumberCantReuse, SP.COMPLEXITY_RULE ComplexityRule, SP.FIRST_LOGIN_CHANGE_PASSWORD FirstLoginChangePassword, SP.IS_SYSTEM IsSystem, SP.IS_DELETED IsDeleted, SP.IS_EMAIL_SENT_ON_LOGON IsEmailSentOnLogon, SP.IS_SMS_SENT_ON_LOGON IsSMSSentOnLogon, SP.IS_2FA_ENABLED Is2FAEnabled, SP.DEFAULT_PASSWORD_ATTEMPTS DefaultPasswordAttempts, SP.ACCOUNT_LOCK_ON_FAILED_ATTEMPTS AccountLockOnFailedAttempts, SP.IS_CAPTCHA_ENABLED IsCaptchaEnabled, SP.CREATED_ON CreatedOn, SP.CREATED_BY CreatedBy, SP.UPDATED_ON UpdatedOn, SP.UPDATED_BY UpdatedBy
+              SELECT  SP.PASSWORD_POLICY_ID PasswordPolicyId, SP.POLICY_NAME PolicyName, SP.LENGTH_RULE LengthRule, SP.EXPIRY_RULE ExpiryRule, SP.NUMBER_CANT_REUSE NumberCantReuse, SP.COMPLEXITY_RULE ComplexityRule, SP.FIRST_LOGIN_CHANGE_PASSWORD FirstLoginChangePassword, SP.IS_SYSTEM IsSystem, SP.IS_DELETED IsDeleted, SP.IS_2FA_ENABLED Is2FAEnabled, SP.DEFAULT_PASSWORD_ATTEMPTS DefaultPasswordAttempts, SP.ACCOUNT_LOCK_ON_FAILED_ATTEMPTS AccountLockOnFailedAttempts, SP.IS_CAPTCHA_ENABLED IsCaptchaEnabled, SP.CREATED_ON CreatedOn, SP.CREATED_BY CreatedBy, SP.UPDATED_ON UpdatedOn, SP.UPDATED_BY UpdatedBy
               FROM	  SEC_USER SU 
 		                  INNER JOIN SEC_PASSWORD_POLICY SP ON SU.PASSWORD_POLICY_ID = SP.PASSWORD_POLICY_ID AND SP.IS_DELETED = 0
               WHERE   SU.LOGIN_ID = @LoginId
@@ -879,6 +879,24 @@
           FROM	SEC_PASSWORD_POLICY P
         ]]>
       </Query>
+      <Query ID="GetPasswordPolicyById" DataSource="">
+        <![CDATA[
+            SELECT	LENGTH_RULE LengthRule,
+                    EXPIRY_RULE ExpiryRule,
+                    NUMBER_CANT_REUSE NumberCantReuse,
+                    COMPLEXITY_RULE ComplexityRule,
+                    FIRST_LOGIN_CHANGE_PASSWORD FirstLoginChangePassword,
+                    DEFAULT_PASSWORD_ATTEMPTS DefaultPasswordAttempts,
+                    ACCOUNT_LOCK_ON_FAILED_ATTEMPTS AccountLockOnFailedAttempts,
+                    IS_2FA_ENABLED Is2FAEnabled,
+                    IS_CAPTCHA_ENABLED IsCaptchEnabled,
+                    SINGLE_SIGNON  SingleSignon
+            FROM	  SEC_PASSWORD_POLICY P
+            WHERE   P.PASSWORD_POLICY_ID = @Id
+            AND     IS_DELETED = 0;
+          ]]>
+        <Param Name="Id" Type="System.Int32"  Size="0"/>
+      </Query>
       <Query ID="GetManagers" DataSource="">
         <![CDATA[
           SELECT  USER_ID Id, Name, ISNULL(D.DEPARTMENT_NAME, 'None') Department
@@ -917,23 +935,23 @@
       </Query>
       <Query ID="InsertUser" DataSource="">
         <![CDATA[
-            INSERT INTO SEC_USER(NAME,PICTURE,LOGIN_ID,PASSWORD,PASSWORD_POLICY_ID,PASSWORD_ATTEMPTS,ACCOUNT_LOCKED,CHANGE_PASSWORD_ON_LOGON,EMAIL,MOBILE_NUMBER,IS_SYSTEM,IS_DELETED,CREATED_BY,UPDATED_BY,MANAGER_ID,DEPARTMENT_ID)
-            VALUES (@Name, @Picture,@UserLoginId,@Password,@PasswordPolicyId,@PasswordAttempts,@AccountLocked,@ChangePasswordOnLogon,@Email,@MobileNumber, 0, 0, @LoginId, @LoginId, @ManagerId, @DepartmentId);
+            INSERT INTO SEC_USER(NAME,LOGIN_ID,PASSWORD,PASSWORD_POLICY_ID,PASSWORD_ATTEMPTS,ACCOUNT_LOCKED,CHANGE_PASSWORD_ON_LOGON,EMAIL,MOBILE_NUMBER,IS_SYSTEM,IS_DELETED,CREATED_BY,UPDATED_BY,MANAGER_ID,DEPARTMENT_ID, PICTURE)
+            VALUES (@Name, @UserLoginId,@Password,@PasswordPolicyId,@PasswordAttempts,@AccountLocked,@ChangePasswordOnLogon,@Email,@MobileNumber, 0, 0, @LoginId, @LoginId, @ManagerId, @DepartmentId, @Picture);
             SELECT SCOPE_IDENTITY(); 
         ]]>
-        <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="Name" Type="System.String"  Size="200"/>
-        <Param Name="Picture" Type="System.String"  Size="200"/>
-        <Param Name="UserLoginId" Type="System.String"  Size="200"/>
-        <Param Name="Password" Type="System.String"  Size="200"/>
-        <Param Name="Email" Type="System.String"  Size="200"/>
-        <Param Name="MobileNumber" Type="System.String"  Size="200"/>
-        <Param Name="PasswordPolicyId" Type="System.c"  Size="0"/>
+        <Param Name="UserLoginId" Type="System.String"  Size="100"/>
+        <Param Name="LoginId" Type="System.String"  Size="100"/>
+        <Param Name="Password" Type="System.String"  Size="100"/>
+        <Param Name="PasswordPolicyId" Type="System.Int32"  Size="0"/>
         <Param Name="PasswordAttempts" Type="System.Int32"  Size="0"/>
         <Param Name="AccountLocked" Type="System.Int32"  Size="0"/>
         <Param Name="ChangePasswordOnLogon" Type="System.Int32"  Size="0"/>
-        <Param Name="ManagerId" Type="System.ManagerId"  Size="0"/>
-        <Param Name="DepartmentId" Type="System.ManagerId"  Size="0"/>
+        <Param Name="Email" Type="System.String"  Size="100"/>
+        <Param Name="MobileNumber" Type="System.String"  Size="20"/>
+        <Param Name="ManagerId" Type="System.Int32"  Size="0"/>
+        <Param Name="DepartmentId" Type="System.Int32"  Size="0"/>
+        <Param Name="Picture" Type="System.String"  Size="-1"/>
       </Query>
       <Query ID="UpdateUser" DataSource="">
         <![CDATA[
@@ -953,19 +971,45 @@
           AND     USER_ID = @Id;
           SELECT @@ROWCOUNT;
         ]]>
+        <Param Name="Id" Type="System.Int32"  Size="0"/>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="Name" Type="System.String"  Size="200"/>
         <Param Name="Picture" Type="System.String"  Size="200"/>
-        <Param Name="UserLoginId" Type="System.String"  Size="200"/>
-        <Param Name="Password" Type="System.String"  Size="200"/>
         <Param Name="Email" Type="System.String"  Size="200"/>
         <Param Name="MobileNumber" Type="System.String"  Size="200"/>
-        <Param Name="PasswordPolicyId" Type="System.c"  Size="0"/>
+        <Param Name="PasswordPolicyId" Type="System.Int32"  Size="0"/>
         <Param Name="PasswordAttempts" Type="System.Int32"  Size="0"/>
         <Param Name="AccountLocked" Type="System.Int32"  Size="0"/>
-        <Param Name="ChangePasswordOnLogon" Type="System.Int32"  Size="0"/>
-        <Param Name="ManagerId" Type="System.ManagerId"  Size="0"/>
-        <Param Name="DepartmentId" Type="System.ManagerId"  Size="0"/>
+        <Param Name="ManagerId" Type="System.Int32"  Size="0"/>
+        <Param Name="DepartmentId" Type="System.Int32"  Size="0"/>
+      </Query>
+      <Query ID="InsertUserRole" DataSource="">
+        <![CDATA[
+            Insert INTO SEC_USER_ROLE(USER_ID, ROLE_ID, CREATED_BY, UPDATED_BY)
+            VALUES ((SELECT USER_ID FROM SEC_USER WHERE LOGIN_ID = @UserLoginId), @RoleId, @LoginId, @LoginId);
+            SELECT SCOPE_IDENTITY(); 
+          ]]>
+        <Param Name="UserLoginId" Type="System.String"  Size="100"/>
+        <Param Name="RoleId" Type="System.Int32"  Size="0"/>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+      </Query>
+      <Query ID="DeleteUserRole" DataSource="">
+        <![CDATA[
+              DELETE FROM SEC_USER_ROLE
+              WHERE  USER_ID = @Id;
+              SELECT @@ROWCOUNT;
+            ]]>
+        <Param Name="Id" Type="System.Int32"  Size="0"/>
+      </Query>
+      <Query ID="DeleteUser">
+        <![CDATA[
+                UPDATE SEC_USER
+                SET IS_DELETED = 1
+                WHERE ROLE_ID = @RoleId
+                AND   IS_DELETED = 0;
+                SELECT @@ROWCOUNT;
+              ]]>
+        <Param Name="RoleId" Type="System.Int32"  Size="0"/>
       </Query>
   </Schema>
 </root>

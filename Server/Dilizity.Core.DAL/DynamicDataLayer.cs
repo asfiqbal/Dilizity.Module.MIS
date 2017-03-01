@@ -7,6 +7,7 @@ using System.Diagnostics.Contracts;
 using System.Dynamic;
 using Dilizity.Core.Util;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace Dilizity.Core.DAL
 {
@@ -449,7 +450,9 @@ namespace Dilizity.Core.DAL
                     SqlParamDTO sqlParamDt = SqlParam.Value;
                     object tObject = tmpParams[name];
                     string sObject = Utility.ObjectToString(tObject, sqlParamDt.DBType);
-                    template = template.Replace("@" + name, (string)sObject);
+                    //template = template.Replace("@" + name, (string)sObject);
+                    string expression = string.Format(@"@\b{0}\b", name);
+                    template = Regex.Replace(template, expression, (string)sObject);
                 }
                 sqlCollection.Append(template);
             }

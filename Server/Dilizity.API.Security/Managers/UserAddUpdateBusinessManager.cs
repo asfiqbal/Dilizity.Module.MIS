@@ -26,6 +26,8 @@ namespace Dilizity.API.Security.Managers
         private const string UPDATE_USER = "UpdateUser";
         private const string DELETE_USER_ROLE = "DeleteUserRole";
         private const string DELETE_USER = "DeleteUser";
+        private const string GET_PASSWORD_POLICY_BY_ID = "GetPasswordPolicyById";
+        
 
 
         public void Do(BusService parameterBusService)
@@ -44,6 +46,10 @@ namespace Dilizity.API.Security.Managers
 
                     JObject model = (JObject)parameterBusService.Get("Model");
                     string data = model.ToString();
+
+                    childOperation.InputParams = data;
+                    childOperation.saveToDB();
+
                     string loginId = (string)parameterBusService.Get(GlobalConstants.LOGIN_ID);
                     string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION);
                     int Id = Utility.ConvertObjectToInt(model["Id"]);
@@ -57,15 +63,21 @@ namespace Dilizity.API.Security.Managers
                     int selectedDepartment = Utility.ConvertObjectToInt(model["SelectedDepartment"]);
                     JArray assignedRoles = (JArray)model["AssignedRoles"];
                     string picture = model["Picture"].ToString();
+                    string mobileNumber = model["MobileNumber"].ToString();
+                    dynamic passwordPolicy = null;
 
-                    childOperation.InputParams = data;
-                    childOperation.saveToDB();
+                    using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
+                    {
+                        passwordPolicy = dataLayer.ExecuteAndGetSingleRowUsingKey(GET_PASSWORD_POLICY_BY_ID, "Id", selectedPasswordPolicy);
+                    }
 
+                    string password = System.Web.Security.Membership.GeneratePassword(passwordPolicy.LengthRule, passwordPolicy.ComplexityRule);
+                    string encryptedPassword = Utility.Encrypt(password, false);
 
                     if (Id > 0)
-                        Success = UpdateUser(loginId, name, Id, userLoginId, email, passwordAttempts, selectedPasswordPolicy, accountLocked, selectedManager, picture, assignedRoles);
+                        Success = UpdateUser(loginId, name, Id, userLoginId, email, mobileNumber, passwordPolicy.DefaultPasswordAttempts, selectedPasswordPolicy, accountLocked, selectedManager, selectedDepartment, picture, assignedRoles);
                     else
-                        Success = InsertUser(loginId, name, Id, userLoginId, email, passwordAttempts, selectedPasswordPolicy, accountLocked, selectedManager, picture, assignedRoles);
+                        Success = InsertUser(loginId, name, Id, userLoginId, encryptedPassword, email, mobileNumber, passwordPolicy.FirstLoginChangePassword, passwordAttempts, selectedPasswordPolicy, accountLocked, selectedManager, selectedDepartment, picture, assignedRoles);
 
 
                     parameterBusService[GlobalConstants.OUT_RESULT] = Success;
@@ -96,17 +108,18 @@ namespace Dilizity.API.Security.Managers
             }
         }
 
-        private static int? InsertUser(string loginId, string name, int Id, string userLoginId, string email, int passwordAttempts, int selectedPasswordPolicy, int accountLocked, int selectedManager, string picture, JArray assignedRoles)
+        private static int? InsertUser(string loginId, string name, int Id, string userLoginId, string password, string email, string mobileNumber, int changePasswordOnLogon, int passwordAttempts, int passwordPolicy, int accountLocked, int managerId, int departmentId, string picture, JArray assignedRoles)
         {
             int? Success;
             using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA, true, true))
             {
-                dataLayer.DelayExecuteNonQueryUsingKey(INSERT_USER, "UserName", name, "LoginId", loginId);
+                dataLayer.DelayExecuteNonQueryUsingKey(INSERT_USER, "LoginId", loginId, "Name", name, "Picture", picture, "UserLoginId", userLoginId, "Password", password, "Email", email, "MobileNumber", mobileNumber, "PasswordPolicyId", passwordPolicy, "PasswordAttempts", passwordAttempts, "ChangePasswordOnLogon", changePasswordOnLogon, "AccountLocked", accountLocked, "ManagerId", managerId, "DepartmentId", departmentId);
 
-                foreach (JToken token in assignedRoles.FindTokens("Id"))
+                int[] roles = assignedRoles.Select(jv => (int)jv).ToArray();
+
+                foreach (int roleId in roles)
                 {
-                    Console.WriteLine(token.Path + ": " + token.ToString());
-                    dataLayer.DelayExecuteNonQueryUsingKey(INSERT_USER_ROLE, "PermissionId", token.ToString(), "RoleName", roleName, "LoginId", loginId);
+                    dataLayer.DelayExecuteNonQueryUsingKey(INSERT_USER_ROLE, "UserLoginId", userLoginId, "RoleId", roleId, "LoginId", loginId);
                 }
 
                 Success = dataLayer.DelayExecuteBulk();
@@ -119,18 +132,19 @@ namespace Dilizity.API.Security.Managers
             return Success;
         }
 
-        private static int? UpdateUser(string loginId, string name, int Id, string userLoginId, string email, int passwordAttempts, int selectedPasswordPolicy, int accountLocked, int selectedManager, string picture, JArray assignedRoles)
+        private static int? UpdateUser(string loginId, string name, int Id, string userLoginId, string email, string mobileNumber, int passwordAttempts, int passwordPolicy, int accountLocked, int managerId, int departmentId, string picture, JArray assignedRoles)
         {
             int? Success;
             using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA, true, true))
             {
-                dataLayer.DelayExecuteNonQueryUsingKey(UPDATE_USER, "RoleName", name, "LoginId", loginId, "RoleId", Id);
-                dataLayer.DelayExecuteNonQueryUsingKey(DELETE_USER_ROLE, "RoleId", Id);
+                dataLayer.DelayExecuteNonQueryUsingKey(UPDATE_USER, "Id", Id, "LoginId", loginId, "Name", name, "Picture", picture, "Email", email, "MobileNumber", mobileNumber, "PasswordPolicyId", passwordPolicy, "PasswordAttempts", passwordAttempts, "AccountLocked", accountLocked, "ManagerId", managerId, "DepartmentId", departmentId);
+                dataLayer.DelayExecuteNonQueryUsingKey(DELETE_USER_ROLE, "Id", Id);
 
-                foreach (JToken token in assignedRoles.FindTokens("Id"))
+                int[] roles = assignedRoles.Select(jv => (int)jv).ToArray();
+
+                foreach (int roleId in roles)
                 {
-                    Console.WriteLine(token.Path + ": " + token.ToString());
-                    dataLayer.DelayExecuteNonQueryUsingKey(INSERT_USER_ROLE, "PermissionId", token.ToString(), "RoleName", name, "LoginId", loginId);
+                    dataLayer.DelayExecuteNonQueryUsingKey(INSERT_USER_ROLE, "Id", Id, "RoleId", roleId, "LoginId", loginId);
                 }
 
                 Success = dataLayer.DelayExecuteBulk();
