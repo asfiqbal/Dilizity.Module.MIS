@@ -119,10 +119,10 @@ namespace Dilizity.API.Security.Managers
                         }
                         outObject.Departments = departments;
 
-                        List<dynamic> assignedRoles = new List<dynamic>();
+                        List<int> assignedRoles = new List<int>();
                         foreach (dynamic role in dataLayer.ExecuteUsingKey(GET_USER_ROLE_BY_ID, GlobalConstants.ID, Id))
                         {
-                            assignedRoles.Add(role);
+                            assignedRoles.Add(role.Id);
                         }
 
                         outObject.AssignedRoles = assignedRoles;

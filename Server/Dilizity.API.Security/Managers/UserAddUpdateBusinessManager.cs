@@ -75,7 +75,7 @@ namespace Dilizity.API.Security.Managers
                     string encryptedPassword = Utility.Encrypt(password, false);
 
                     if (Id > 0)
-                        Success = UpdateUser(loginId, name, Id, userLoginId, email, mobileNumber, passwordPolicy.DefaultPasswordAttempts, selectedPasswordPolicy, accountLocked, selectedManager, selectedDepartment, picture, assignedRoles);
+                        Success = UpdateUser(loginId, name, Id, userLoginId, email, mobileNumber, passwordAttempts, selectedPasswordPolicy, accountLocked, selectedManager, selectedDepartment, picture, assignedRoles);
                     else
                         Success = InsertUser(loginId, name, Id, userLoginId, encryptedPassword, email, mobileNumber, passwordPolicy.FirstLoginChangePassword, passwordAttempts, selectedPasswordPolicy, accountLocked, selectedManager, selectedDepartment, picture, assignedRoles);
 
@@ -144,7 +144,7 @@ namespace Dilizity.API.Security.Managers
 
                 foreach (int roleId in roles)
                 {
-                    dataLayer.DelayExecuteNonQueryUsingKey(INSERT_USER_ROLE, "Id", Id, "RoleId", roleId, "LoginId", loginId);
+                    dataLayer.DelayExecuteNonQueryUsingKey(INSERT_USER_ROLE, "UserLoginId", userLoginId, "RoleId", roleId, "LoginId", loginId);
                 }
 
                 Success = dataLayer.DelayExecuteBulk();

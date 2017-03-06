@@ -84,7 +84,7 @@
             controller: 'actionPasswordPolicyController',
             controllerAs: 'vm'
         }).state('index.ActionUser', {
-            url: '^/User/:userId/:makerId/:permissionName',
+            url: '^/User/:id/:makerId/:permissionName',
             templateUrl: 'app/component/user/actionUser.html',
             controller: 'actionUserController',
             controllerAs: 'vm'

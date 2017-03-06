@@ -57,15 +57,12 @@
                             </label>
                             <div class="col-md-4 col-sm-4 col-xs-12">
                                 <input type="text" ng-model="vm.name" id="name" class="form-control col-md-7 col-xs-12" required>
-                                <div ng-messages="dilizityForm.name.$error.required">
-                                    <p ng-message="required">Name is required.</p>
-                                </div>
                             </div>
                             <label class="control-label col-md-2 col-sm-2 col-xs-12">
                                 Login Id
                             </label>
                             <div class="col-md-4 col-sm-4 col-xs-12">
-                                <input class="form-control col-md-7 col-xs-12" type="text" ng-model="vm.loginId" id="loginId">
+                                <input class="form-control col-md-7 col-xs-12" type="text" ng-model="vm.loginId" id="loginId" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -73,13 +70,13 @@
                                 Email
                             </label>
                             <div class="col-md-4 col-sm-4 col-xs-12">
-                                <input class="form-control col-md-7 col-xs-12" type="email" ng-model="vm.email" id="email">
+                                <input class="form-control col-md-7 col-xs-12" type="email" ng-model="vm.email" id="email" required>
                             </div>
                             <label class="control-label col-md-2 col-sm-2 col-xs-12">
                                 Mobile Number
                             </label>
                             <div class="col-md-4 col-sm-4 col-xs-12">
-                                <input class="form-control col-md-7 col-xs-12" type="text" ng-model="vm.mobilenumber" id="mobilenumber">
+                                <input class="form-control col-md-7 col-xs-12" type="text" ng-model="vm.mobilenumber" id="mobilenumber" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -87,14 +84,13 @@
                                 Password Attempts
                             </label>
                             <div class="col-md-4 col-sm-4 col-xs-12">
-                                <input class="form-control col-md-7 col-xs-12" type="number" min="1" max="5" ng-model="vm.passwordAttempts" id="passwordAttempts">
+                                <input class="form-control col-md-7 col-xs-12" type="number" min="1" max="5" ng-model="vm.passwordAttempts" id="passwordAttempts" required>
                             </div>
                             <label class="control-label col-md-2 col-sm-2 col-xs-12">
                                 Password Policy
                             </label>
                             <div class="col-md-4 col-sm-4 col-xs-12">
-                                <select class="form-control selectpicker" ng-model="vm.selectedPasswordPolicy">
-                                    <option ng-repeat="option in vm.passwordPolicy" value="{{option.Id}}">{{option.Name}}</option>
+                                <select class="form-control selectpicker" ng-model="vm.selectedPasswordPolicy" ng-options="Policy.Id as Policy.Name for Policy in vm.passwordPolicy">
                                 </select>
                             </div>
                         </div>
@@ -106,7 +102,7 @@
                                 <ul class="to_do">
                                     <li>
                                         <p>
-                                            <input type="checkbox" class="flat" ng-model="vm.accountLocked">Yes
+                                            <input type="checkbox" class="flat" ng-model="vm.accountLocked" id="accountLock">Yes
                                         </p>
                                     </li>
                                 </ul>
@@ -115,8 +111,7 @@
                                 Department
                             </label>
                             <div class="col-md-4 col-sm-4 col-xs-12">
-                                <select class="form-control selectpicker" ng-model="vm.selectedDepartment">
-                                    <option ng-repeat="option in vm.departments" value="{{option.Id}}">{{option.Name}}</option>
+                                <select class="form-control selectpicker" ng-model="vm.selectedDepartment" ng-options="Department.Id as Department.Name for Department in vm.departments">
                                 </select>
                             </div>
 

@@ -505,7 +505,7 @@
 					            CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'asc' THEN U.UPDATED_ON END ASC,
 					            CASE WHEN @SortOrder = 'Updated On' AND @SortDirection = 'desc' THEN U.UPDATED_ON END DESC
 			            )
-			            , *
+			            , U.USER_ID , U.Name, U.LOGIN_ID, U.MOBILE_NUMBER, U.EMAIL, U.ACCOUNT_LOCKED, ISNULL(M.NAME, 'None') ManagerName, U.UPDATED_ON, U.UPDATED_BY
             FROM SEC_USER U
                   LEFT OUTER JOIN SEC_USER M ON U.MANAGER_ID = M.USER_ID AND M.IS_DELETED = 0
             WHERE   U.IS_DELETED = 0
@@ -516,7 +516,7 @@
             AND	(U.EMAIL LIKE '%'+@Email+'%' OR @Email =  '')
             AND	(U.USER_ID IN (SELECT USER_ID FROM SEC_USER_ROLE WHERE ROLE_ID = @RoleId)  OR @RoleId = -1)
             )
-            SELECT USER_ID UserId, Name UserName, LOGIN_ID LoginId, MOBILE_NUMBER MobileNumber, EMAIL Email, ACCOUNT_LOCKED AccountLocked, ISNULL(M.NAME, 'None') ManagerName, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+            SELECT USER_ID UserId, Name UserName, LOGIN_ID LoginId, MOBILE_NUMBER MobileNumber, EMAIL Email, ACCOUNT_LOCKED AccountLocked, ManagerName, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
             FROM SQLPaging
             WHERE ResultNum > ((@PageNumber - 1) * @PageSize)
             order by ResultNum
@@ -959,7 +959,7 @@
           SET     NAME = @Name,
                   PICTURE = @Picture,
                   PASSWORD_POLICY_ID = @PasswordPolicyId,
-                  PASSWORD_ATTEMPTS = @PasswordAttempt,
+                  PASSWORD_ATTEMPTS = @PasswordAttempts,
                   ACCOUNT_LOCKED = @AccountLocked,
                   EMAIL = @Email,
                   MOBILE_NUMBER = @MobileNumber,
@@ -1005,11 +1005,11 @@
         <![CDATA[
                 UPDATE SEC_USER
                 SET IS_DELETED = 1
-                WHERE ROLE_ID = @RoleId
+                WHERE USER_ID = @UserId
                 AND   IS_DELETED = 0;
                 SELECT @@ROWCOUNT;
               ]]>
-        <Param Name="RoleId" Type="System.Int32"  Size="0"/>
+        <Param Name="UserId" Type="System.Int32"  Size="0"/>
       </Query>
   </Schema>
 </root>

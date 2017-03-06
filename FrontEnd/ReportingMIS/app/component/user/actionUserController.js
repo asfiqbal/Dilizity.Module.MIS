@@ -21,7 +21,7 @@
         vm.selectedPasswordPolicy = 0;
         vm.selectedManger = 0;
         vm.selectedDepartment = 0;
-        vm.accountLocked = 0;
+        vm.accountLocked = false;
         vm.name = '';
         vm.availableRoles = {};
         vm.assignedRoles = [];
@@ -57,6 +57,7 @@
             create: true,
             valueField: 'Id',
             labelField: 'Name',
+            searchField: ['Name'],
             onChange: function (value) {
                 console.log('onChange', value)
             }
@@ -161,13 +162,16 @@
                     var data = angular.fromJson(response.data);
 
                     if (response.data.ErrorCode == 0) {
+                        console.log("data.Data", data.Data);
+
                         id = data.Data.Id;
                         vm.name = data.Data.Name;
                         vm.email = data.Data.Email;
+                        vm.loginId = data.Data.LoginId;
                         vm.mobilenumber = data.Data.MobileNumber;
                         vm.myCroppedImage = data.Data.Picture;
                         vm.passwordAttempts = data.Data.PasswordAttempts;
-                        vm.accountLocked = data.Data.AccountLocked;
+                        vm.accountLocked = (data.Data.AccountLocked > 0) ? true : false;
                         vm.selectedPasswordPolicy = data.Data.PasswordPolicyId;
                         vm.selectedManger = data.Data.ManagerId;
                         vm.selectedDepartment = data.Data.DepartmentId;
@@ -179,6 +183,8 @@
                         vm.assignedRoles = data.Data.AssignedRoles;
                         vm.userPermission = data.Data.UserPermission;
                         vm.notes = data.Data.Notes;
+
+                        console.log("vm.accountLocked", vm.accountLocked);
                     }
                     else {
                         Notification.error({ message: response.data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
@@ -277,7 +283,7 @@
                     "MobileNumber": vm.mobilenumber,
                     "PasswordAttempts": vm.passwordAttempts,
                     "SelectedPasswordPolicy": vm.selectedPasswordPolicy,
-                    "AccountLocked": vm.accountLocked,
+                    "AccountLocked": (vm.accountLocked) ? 1 : 0,
                     "SelectedManager": vm.selectedManger,
                     "SelectedDepartment": vm.selectedDepartment,
                     "AssignedRoles": vm.assignedRoles,
@@ -295,8 +301,7 @@
                     "MobileNumber": vm.mobilenumber,
                     "PasswordAttempts": vm.passwordAttempts,
                     "SelectedPasswordPolicy": vm.selectedPasswordPolicy,
-                    "SelectedPasswordPolicy": vm.accountLocked,
-                    "AccountLocked": vm.accountLocked,
+                    "AccountLocked": (vm.accountLocked) ? 1 : 0,
                     "SelectedManager": vm.selectedManger,
                     "SelectedDepartment":vm.selectedDepartment,
                     "AssignedRoles": vm.assignedRoles,
@@ -326,7 +331,6 @@
         function validateForm(form) {
             console.log("form", form);
             console.log("form.$valid", form.$valid);
-            console.log("vm.assignedRoles.length", vm.assignedRoles.length);
 
             if (!form.$valid) {
                 if (!vm.name)  {
@@ -346,6 +350,13 @@
                 }
                 if (vm.selectedPasswordPolicy < 1) {
                     Notification.error({ message: 'Password Policy is required', positionY: 'bottom', positionX: 'right' });
+                }
+
+                for (var key in form.$error) {
+                    for (var index = 0; index < form.$error[key].length; index++) {
+                        var tMessage = form.$error[key][index].$name + ' is required.'
+                        Notification.error({ message: tMessage, positionY: 'bottom', positionX: 'right' });
+                    }
                 }
 
                 return false;
