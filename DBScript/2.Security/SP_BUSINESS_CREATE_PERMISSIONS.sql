@@ -40,70 +40,70 @@ BEGIN
 	SELECT @RootPermission+'.Delete', @P_BUSINESS+N'.Delete', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission)         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 	UNION ALL
 	SELECT @RootPermission+'.View', @P_BUSINESS+N'.View', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission)         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	UNION ALL
+	SELECT @RootPermission+N'.DeleteBulk', @PermissionFriendlyName+N'.DeleteBulk', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission)         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	UNION ALL
+	SELECT @RootPermission+'.AddMaker', @PermissionFriendlyName+N'.AddMaker', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission)         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	UNION ALL
+	SELECT @RootPermission+'.AddChecker', @PermissionFriendlyName+N'.AddChecker', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission)         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	UNION ALL
+	SELECT @RootPermission+'.EditMaker', @PermissionFriendlyName+N'.EditMaker', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission)         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	UNION ALL
+	SELECT @RootPermission+'.EditChecker', @PermissionFriendlyName+N'.EditChecker', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission)         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	UNION ALL
+	SELECT @RootPermission+N'.DeleteMaker', @PermissionFriendlyName+N'.DeleteMaker', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission)         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	UNION ALL
+	SELECT @RootPermission+N'.DeleteChecker', @PermissionFriendlyName+N'.DeleteChecker', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission)         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 
 
 	INSERT [dbo].[SEC_PERMISSION] ([SYSTEM_NAME], [PERMISSION_NAME], [PARENT_PERMISSION_ID], [CAN_ADD], [CAN_UPDATE], [CAN_DELETE], [CAN_VIEW], [CAN_MAKE], [CAN_CHECK],  [CAN_EXECUTE], [IS_SYSTEM], [IS_DELETED], [CREATED_ON], [CREATED_BY], [UPDATED_ON], [UPDATED_BY]) 
-	SELECT @RootPermission+'.Add.Maker', @PermissionFriendlyName+N'.Add.Maker', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+'.Add')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
-	UNION ALL
-	SELECT @RootPermission+'.Add.Checker', @PermissionFriendlyName+N'.Add.Checker', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+'.Add')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
-	UNION ALL
 	SELECT @RootPermission+'.Add.Save', @PermissionFriendlyName+N'.Add.Save', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+'.Add')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System';
 
 
 	INSERT [dbo].[SEC_PERMISSION] ([SYSTEM_NAME], [PERMISSION_NAME], [PARENT_PERMISSION_ID], [CAN_ADD], [CAN_UPDATE], [CAN_DELETE], [CAN_VIEW], [CAN_MAKE], [CAN_CHECK],  [CAN_EXECUTE], [IS_SYSTEM], [IS_DELETED], [CREATED_ON], [CREATED_BY], [UPDATED_ON], [UPDATED_BY]) 
-	SELECT @RootPermission+'.Add.Maker.Save', @PermissionFriendlyName+N'.Add.Maker.Save', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Add.Maker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	SELECT @RootPermission+'.AddMaker.Save', @PermissionFriendlyName+N'.AddMaker.Save', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.AddMaker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 	UNION ALL
-	SELECT @RootPermission+'.Add.Maker.ApprovalReady', @PermissionFriendlyName+N'.Add.Maker.ApprovalReady', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Add.Maker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System';
+	SELECT @RootPermission+'.AddMaker.ApprovalReady', @PermissionFriendlyName+N'.AddMaker.ApprovalReady', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.AddMaker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System';
 
 
 	INSERT [dbo].[SEC_PERMISSION] ([SYSTEM_NAME], [PERMISSION_NAME], [PARENT_PERMISSION_ID], [CAN_ADD], [CAN_UPDATE], [CAN_DELETE], [CAN_VIEW], [CAN_MAKE], [CAN_CHECK],  [CAN_EXECUTE], [IS_SYSTEM], [IS_DELETED], [CREATED_ON], [CREATED_BY], [UPDATED_ON], [UPDATED_BY]) 
-	SELECT @RootPermission+'.Add.Checker.Approve', @PermissionFriendlyName+N'.Add.Checker.Approve', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+'.Add.Checker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	SELECT @RootPermission+'.AddChecker.Approve', @PermissionFriendlyName+N'.AddChecker.Approve', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+'.AddChecker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 	UNION ALL
-	SELECT @RootPermission+'.Add.Checker.Reject', @PermissionFriendlyName+N'.Add.Checker.Reject', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+'.Add.Checker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	SELECT @RootPermission+'.AddChecker.Reject', @PermissionFriendlyName+N'.AddChecker.Reject', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+'.AddChecker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 	UNION ALL
-	SELECT @RootPermission+'.Add.Checker.Correction', @PermissionFriendlyName+N'.Add.Checker.Correction', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+'.Add.Checker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System';
+	SELECT @RootPermission+'.AddChecker.Correction', @PermissionFriendlyName+N'.AddChecker.Correction', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+'.AddChecker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System';
 
 
 	INSERT [dbo].[SEC_PERMISSION] ([SYSTEM_NAME], [PERMISSION_NAME], [PARENT_PERMISSION_ID], [CAN_ADD], [CAN_UPDATE], [CAN_DELETE], [CAN_VIEW], [CAN_MAKE], [CAN_CHECK],  [CAN_EXECUTE], [IS_SYSTEM], [IS_DELETED], [CREATED_ON], [CREATED_BY], [UPDATED_ON], [UPDATED_BY]) 
-	SELECT @RootPermission+'.Edit.Maker', @PermissionFriendlyName+N'.Edit.Maker', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Edit')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
-	UNION ALL
-	SELECT @RootPermission+'.Edit.Checker', @PermissionFriendlyName+N'.Edit.Checker', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+'.Edit')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
-	UNION ALL
 	SELECT @RootPermission+'.Edit.Save', @PermissionFriendlyName+N'.Edit.Save', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+'.Edit')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System';
 
 	INSERT [dbo].[SEC_PERMISSION] ([SYSTEM_NAME], [PERMISSION_NAME], [PARENT_PERMISSION_ID], [CAN_ADD], [CAN_UPDATE], [CAN_DELETE], [CAN_VIEW], [CAN_MAKE], [CAN_CHECK],  [CAN_EXECUTE], [IS_SYSTEM], [IS_DELETED], [CREATED_ON], [CREATED_BY], [UPDATED_ON], [UPDATED_BY]) 
-	SELECT @RootPermission+N'.Edit.Maker.Save', @PermissionFriendlyName+N'.Edit.Maker.Save', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Edit.Maker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	SELECT @RootPermission+N'.EditMaker.Save', @PermissionFriendlyName+N'.EditMaker.Save', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.EditMaker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 	UNION ALL
-	SELECT @RootPermission+N'.Edit.Maker.ApprovalReady', @PermissionFriendlyName+N'.Add.Edit.ApprovalReady', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Edit.Maker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	SELECT @RootPermission+N'.EditMaker.ApprovalReady', @PermissionFriendlyName+N'.EditMaker.ApprovalReady', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.EditMaker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 
 	INSERT [dbo].[SEC_PERMISSION] ([SYSTEM_NAME], [PERMISSION_NAME], [PARENT_PERMISSION_ID], [CAN_ADD], [CAN_UPDATE], [CAN_DELETE], [CAN_VIEW], [CAN_MAKE], [CAN_CHECK],  [CAN_EXECUTE], [IS_SYSTEM], [IS_DELETED], [CREATED_ON], [CREATED_BY], [UPDATED_ON], [UPDATED_BY]) 
-	SELECT @RootPermission+N'.Edit.Checker.Approve', @PermissionFriendlyName+N'.Edit.Checker.Approve', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Edit.Checker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	SELECT @RootPermission+N'.EditChecker.Approve', @PermissionFriendlyName+N'.EditChecker.Approve', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.EditChecker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 	UNION ALL
-	SELECT @RootPermission+N'.Edit.Checker.Reject', @PermissionFriendlyName+N'.Edit.Checker.Reject', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Edit.Checker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	SELECT @RootPermission+N'.EditChecker.Reject', @PermissionFriendlyName+N'.EditChecker.Reject', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.EditChecker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 	UNION ALL
-	SELECT @RootPermission+N'.Edit.Checker.Correction', @PermissionFriendlyName+N'.Edit.Checker.Correction', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Edit.Checker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	SELECT @RootPermission+N'.EditChecker.Correction', @PermissionFriendlyName+N'.EditChecker.Correction', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.EditChecker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 	UNION ALL
-	SELECT @RootPermission+N'.Edit.Checker.Compare', @PermissionFriendlyName+N'.Edit.Checker.Compare', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Edit.Checker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	SELECT @RootPermission+N'.EditChecker.Compare', @PermissionFriendlyName+N'.EditChecker.Compare', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.EditChecker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 
-	INSERT [dbo].[SEC_PERMISSION] ([SYSTEM_NAME], [PERMISSION_NAME], [PARENT_PERMISSION_ID], [CAN_ADD], [CAN_UPDATE], [CAN_DELETE], [CAN_VIEW], [CAN_MAKE], [CAN_CHECK],  [CAN_EXECUTE], [IS_SYSTEM], [IS_DELETED], [CREATED_ON], [CREATED_BY], [UPDATED_ON], [UPDATED_BY]) 
-	SELECT @RootPermission+N'.Delete.Maker', @PermissionFriendlyName+N'.Delete.Maker', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Delete')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
-	UNION ALL
-	SELECT @RootPermission+N'.Delete.Checker', @PermissionFriendlyName+N'.Delete.Checker', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Delete')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
-	UNION ALL
-	SELECT @RootPermission+N'.Delete.Bulk', @PermissionFriendlyName+N'.Delete.Bulk', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Delete')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 
 
 	INSERT [dbo].[SEC_PERMISSION] ([SYSTEM_NAME], [PERMISSION_NAME], [PARENT_PERMISSION_ID], [CAN_ADD], [CAN_UPDATE], [CAN_DELETE], [CAN_VIEW], [CAN_MAKE], [CAN_CHECK],  [CAN_EXECUTE], [IS_SYSTEM], [IS_DELETED], [CREATED_ON], [CREATED_BY], [UPDATED_ON], [UPDATED_BY]) 
-	SELECT @RootPermission+N'.Delete.Maker.Save', @PermissionFriendlyName+N'.Delete.Maker.Save', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Delete.Maker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	SELECT @RootPermission+N'.DeleteMaker.Save', @PermissionFriendlyName+N'.DeleteMaker.Save', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.DeleteMaker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 	UNION ALL
-	SELECT @RootPermission+N'.Delete.Maker.ApprovalReady', @PermissionFriendlyName+N'.Add.Delete.ApprovalReady', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Delete.Maker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	SELECT @RootPermission+N'.DeleteMaker.ApprovalReady', @PermissionFriendlyName+N'.DeleteMaker.ApprovalReady', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.DeleteMaker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 
 	INSERT [dbo].[SEC_PERMISSION] ([SYSTEM_NAME], [PERMISSION_NAME], [PARENT_PERMISSION_ID], [CAN_ADD], [CAN_UPDATE], [CAN_DELETE], [CAN_VIEW], [CAN_MAKE], [CAN_CHECK],  [CAN_EXECUTE], [IS_SYSTEM], [IS_DELETED], [CREATED_ON], [CREATED_BY], [UPDATED_ON], [UPDATED_BY]) 
-	SELECT @RootPermission+N'.Delete.Checker.Approve', @PermissionFriendlyName+N'.Delete.Checker.Approve', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Delete.Checker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	SELECT @RootPermission+N'.DeleteChecker.Approve', @PermissionFriendlyName+N'.DeleteChecker.Approve', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.DeleteChecker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 	UNION ALL
-	SELECT @RootPermission+N'.Delete.Checker.Reject', @PermissionFriendlyName+N'.Delete.Checker.Reject', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Delete.Checker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	SELECT @RootPermission+N'.DeleteChecker.Reject', @PermissionFriendlyName+N'.DeleteChecker.Reject', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.DeleteChecker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 	UNION ALL
-	SELECT @RootPermission+N'.Delete.Checker.Correction', @PermissionFriendlyName+N'.Delete.Checker.Correction', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.Delete.Checker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
+	SELECT @RootPermission+N'.DeleteChecker.Correction', @PermissionFriendlyName+N'.DeleteChecker.Correction', (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @RootPermission+N'.DeleteChecker')         , 0, 0, 0, 0, 0, 0, 0, 1, 0, getdate(), N'System', getdate(), N'System'
 
 
 	INSERT INTO SEC_ROLE_PERMISSION(ROLE_ID,PERMISSION_ID,CREATED_BY,UPDATED_BY)

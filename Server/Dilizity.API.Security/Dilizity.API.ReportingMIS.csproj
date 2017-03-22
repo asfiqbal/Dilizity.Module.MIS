@@ -141,7 +141,12 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Managers\ActionUserScreenManager.cs" />
+    <Compile Include="Managers\AuthenticationBusinessManager.cs" />
+    <Compile Include="Managers\BulkUnblockAccountBusinessManager.cs" />
+    <Compile Include="Managers\BulkBlockAccountBusinessManager.cs" />
+    <Compile Include="Managers\BulkResetPasswordBusinessManager.cs" />
     <Compile Include="Managers\BulkDeleteUserBusinessManager.cs" />
+    <Compile Include="Managers\BulkResetEmailBusinessManager.cs" />
     <Compile Include="Managers\UserAddUpdateBusinessManager.cs" />
     <Compile Include="Managers\SearchPasswordPolicyScreenManager.cs" />
     <Compile Include="Managers\PasswordPolicySearchBusinessManager.cs" />
@@ -169,7 +174,7 @@
     <Compile Include="Managers\ReportMetaDataBusinessManager.cs" />
     <Compile Include="Managers\WorkFlowActionManager.cs" />
     <Compile Include="Managers\ChangePasswordBusinessManager.cs" />
-    <Compile Include="Managers\AuthenticationBusinessManager.cs" />
+    <Compile Include="Managers\Generate2FATokenBusinessManager.cs" />
     <Compile Include="Managers\MenuBusinessManager.cs" />
     <Compile Include="Managers\PermissionValidationBusinessManager.cs" />
     <Compile Include="MessageResource.Designer.cs">

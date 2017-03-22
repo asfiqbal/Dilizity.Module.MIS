@@ -42,10 +42,15 @@
                         Notification.success({ message: "Login Successfull", positionY: 'bottom', positionX: 'right' });
                         $state.go('index');
                     }
-                    else {
+                    else if (data.ActionCode == 1) {
                         console.log("ActionCode", data.ActionCode);
                         $state.go('changePassword');
                     }
+                    else if (data.ActionCode == 2) {
+                        console.log("ActionCode", data.ActionCode);
+                        $state.go('twoFA');
+                    }
+
                 }
                 else  {
                     Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });

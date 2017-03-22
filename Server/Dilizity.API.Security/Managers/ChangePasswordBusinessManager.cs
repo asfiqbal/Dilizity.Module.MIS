@@ -85,8 +85,8 @@ namespace Dilizity.API.Security.Managers
                         string newEncryptedPassword = Utility.Encrypt(decNewPassword, false);
                         using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA, true, true))
                         {
-                            dataLayer.DelayExecuteNonQueryUsingKey(CHANGE_USER_PASSWORD, LOGIN_PARAM, loginId, PASSWORD_PARAM, newEncryptedPassword);
-                            dataLayer.DelayExecuteNonQueryUsingKey(INSERT_CHANGE_PASSWORD_HISTORY, LOGIN_PARAM, loginId, PASSWORD_PARAM, newEncryptedPassword);
+                            dataLayer.DelayExecuteNonQueryUsingKey(CHANGE_USER_PASSWORD, "UserId", secUser.UserId, PASSWORD_PARAM, newEncryptedPassword);
+                            dataLayer.DelayExecuteNonQueryUsingKey(INSERT_CHANGE_PASSWORD_HISTORY, "UserId", secUser.UserId, PASSWORD_PARAM, newEncryptedPassword, GlobalConstants.LOGIN_PARAM, loginId);
                             dataLayer.DelayExecuteBulk();
                             dataLayer.CommitTransaction();
                         }

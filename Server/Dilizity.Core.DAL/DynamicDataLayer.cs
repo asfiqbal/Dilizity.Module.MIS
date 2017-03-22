@@ -123,6 +123,9 @@ namespace Dilizity.Core.DAL
                         }
                         using (var reader = command.ExecuteReader())
                         {
+                            if (this.transaction != null)
+                                command.Transaction = this.transaction;
+
                             while (reader.Read())
                             {
                                 dynamic record = new ExpandoObject();
@@ -172,6 +175,8 @@ namespace Dilizity.Core.DAL
                         Log.Debug(this.GetType(), "Before Calling CommandSQL={0} with connection state = {1}", query.Sql, command.Connection.State);
                         using (var reader = command.ExecuteReader())
                         {
+                            if (this.transaction != null)
+                                command.Transaction = this.transaction;
                             while (reader.Read())
                             {
                                 dynamic record = new ExpandoObject();
@@ -218,6 +223,8 @@ namespace Dilizity.Core.DAL
                     Log.Debug(this.GetType(), "Before Calling CommandSQL={0} with connection state = {1}", queryObject.Sql, command.Connection.State);
                     using (var reader = command.ExecuteReader())
                     {
+                        if (this.transaction != null)
+                            command.Transaction = this.transaction;
                         while (reader.Read())
                         {
                             dynamic record = new ExpandoObject();
@@ -256,6 +263,9 @@ namespace Dilizity.Core.DAL
                 //{
                 using (var command = connection.CreateCommand())
                 {
+                    if (this.transaction != null)
+                        command.Transaction = this.transaction;
+
                     command.CommandText = query.Sql;
                     command.CommandTimeout = Utility.ConvertStringToInt(ConfigReader.Instance.Settings("CommandTimeOut"));
 
@@ -274,6 +284,9 @@ namespace Dilizity.Core.DAL
                     Log.Debug(this.GetType(), "Before Calling CommandSQL={0} with connection state = {1}", query.Sql, command.Connection.State);
                     using (var reader = command.ExecuteReader())
                     {
+                        if (this.transaction != null)
+                            command.Transaction = this.transaction;
+
                         if (reader.Read())
                         {
                             dynamic record = new ExpandoObject();
@@ -306,6 +319,9 @@ namespace Dilizity.Core.DAL
                 //{
                     using (var command = connection.CreateCommand())
                     {
+                        if (this.transaction != null)
+                            command.Transaction = this.transaction;
+
                         command.CommandText = commandText;
                         foreach (var parameter in parameters)
                         {
@@ -439,7 +455,6 @@ namespace Dilizity.Core.DAL
 
                 Log.Debug(this.GetType(), "commandKey={0}", commandKey);
 
-
                 QueryDTO query = MetaQueryManager.Instance[commandKey];
                 StringBuilder sqls = new StringBuilder();
                 IDictionary<string, object> tmpParams = Dilizity.Core.Util.Utility.Param2Dictionary(parameters);
@@ -471,6 +486,8 @@ namespace Dilizity.Core.DAL
                 //{
                     using (var command = connection.CreateCommand())
                     {
+                        if (this.transaction != null)
+                            command.Transaction = this.transaction;
                         commandText += "SELECT SCOPE_IDENTITY();";
                         command.CommandText = commandText;
                         Log.Debug(this.GetType(), "SQL={0}", commandText);

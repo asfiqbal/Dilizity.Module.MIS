@@ -61,6 +61,13 @@ namespace Dilizity.API.Security.Managers
                 try
                 {
                     dynamic permissionObject = null;
+
+                    string byPassTokenAuthen = System.Configuration.ConfigurationManager.AppSettings["ByPassTokenAuthentication"];
+                    bool byPassTokenAuthentication = false;
+                    bool.TryParse(byPassTokenAuthen, out byPassTokenAuthentication);
+                    if (byPassTokenAuthentication)
+                        return true;
+
                     using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                     {
                         string permissionId = (string)parameterBusService.Get(GlobalConstants.PERMISSION);

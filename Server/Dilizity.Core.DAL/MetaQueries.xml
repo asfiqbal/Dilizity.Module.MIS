@@ -89,6 +89,7 @@
             MULTIPLE_RESULT MultipleResult,
             CONTEXT_AWARE ContextAware,
             DATA_FUNCTION DataFunction,
+            IS_ENCRYPTED IsEncrypted,
             IS_DELETED IsDeleted,
             IS_SYSTEM IsSystem,
             CREATED_ON CreatedOn,
@@ -276,7 +277,7 @@
         </Query>
       <Query ID="GetUser" DataSource="">
         <![CDATA[
-            SELECT  USER_ID UserId, NAME Name, LOGIN_ID LoginId, PASSWORD Password, PASSWORD_POLICY_ID PasswordPolicyId, PASSWORD_ATTEMPTS PasswordAttempts, ACCOUNT_LOCKED AccountLocked, [CHANGE_PASSWORD_ON_LOGON] ChangePasswordOnLogon, EMAIL Email, MOBILE_NUMBER MobileNumber, LAST_PASSWORD_CHANGE_DATETIME LastPasswordChangeDateTime, [LAST_LOGIN_DATETIME] LastLoginDateTime, PICTURE Picture, [MANAGER_ID] ManagerId, [DEPARTMENT_ID] DepartmentId,CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
+            SELECT  USER_ID UserId, NAME Name, LOGIN_ID LoginId, PASSWORD Password, TWO_FA_TOKEN TwoFAToken, PASSWORD_POLICY_ID PasswordPolicyId, PASSWORD_ATTEMPTS PasswordAttempts, ACCOUNT_LOCKED AccountLocked, [CHANGE_PASSWORD_ON_LOGON] ChangePasswordOnLogon, EMAIL Email, MOBILE_NUMBER MobileNumber, LAST_PASSWORD_CHANGE_DATETIME LastPasswordChangeDateTime, [LAST_LOGIN_DATETIME] LastLoginDateTime, PICTURE Picture, [MANAGER_ID] ManagerId, [DEPARTMENT_ID] DepartmentId,CREATED_ON CreatedOn, CREATED_BY CreatedBy, UPDATED_ON UpdatedOn, UPDATED_BY UpdatedBy
             FROM    SEC_USER SU
             WHERE   SU.IS_DELETED = 0
             AND     SU.LOGIN_ID = @LoginId
@@ -307,20 +308,21 @@
                       LAST_PASSWORD_CHANGE_DATETIME = GETDATE(),
 		                  CHANGE_PASSWORD_ON_LOGON = 0
               WHERE   IS_DELETED = 0
-              AND     LOGIN_ID = @LoginId;
+              AND     USER_ID = @UserId;
               SELECT @@ROWCOUNT;
             ]]>
-        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="UserId" Type="System.Int32"  Size="0"/>
         <Param Name="Password" Type="System.String"  Size="200"/>
       </Query>        
       <Query ID="InsertChangePasswordHistory" DataSource="">
         <![CDATA[
               INSERT INTO [SEC_CHANGE_PASSWORD_HISTORY](USER_ID,PASSWORD,CREATED_ON,CREATED_BY)
-              VALUES((SELECT USER_ID FROM SEC_USER WHERE LOGIN_ID = @LoginId),@Password, GetDate(), @LoginId);
+              VALUES(@UserId, @Password, GetDate(), @LoginId);
               SELECT SCOPE_IDENTITY(); 
             ]]>
-        <Param Name="LoginId" Type="System.String"  Size="200"/>
+        <Param Name="UserId" Type="System.Int32"  Size="0"/>
         <Param Name="Password" Type="System.String"  Size="200"/>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
       </Query>
       <Query ID="CheckLastNPasswords" DataSource="">
         <![CDATA[
@@ -368,7 +370,7 @@
         <![CDATA[
             INSERT INTO SEC_AUDIT (USER_ID, PERMISSION_ID, IS_SUCCESS, DATA, CREATED_BY) VALUES ((SELECT USER_ID FROM SEC_USER WHERE LOGIN_ID = @LoginId), (SELECT PERMISSION_ID FROM SEC_PERMISSION WHERE SYSTEM_NAME = @PermissionName), @IsSuccess, @Data, @CreatedBy);
             SELECT SCOPE_IDENTITY(); 
-          ]]>
+        ]]>
         <Param Name="LoginId" Type="System.String"  Size="200"/>
         <Param Name="PermissionName" Type="System.String"  Size="200"/>
         <Param Name="IsSuccess" Type="System.String"  Size="200"/>
@@ -376,26 +378,14 @@
         <Param Name="CreatedBy" Type="System.String"  Size="200"/>
       </Query>
       <Query ID="ScreenUserPermission" DataSource="">
-      <![CDATA[
-          WITH WF ( Permission_id, PARENT_PERMISSION_ID)
-          AS
-          (
-          SELECT	Permission_id, PARENT_PERMISSION_ID
-          from	SEC_PERMISSION P
-          WHERE   P.SYSTEM_NAME = @PermissionId
-          UNION ALL
-          SELECT	P.Permission_id, P.PARENT_PERMISSION_ID
-          from	SEC_PERMISSION P
-		          INNER JOIN WF ON P.PARENT_PERMISSION_ID  = WF.Permission_id
-          WHERE	UPPER(P.SYSTEM_NAME) NOT LIKE '%.EMAIL%'
-          AND		UPPER(P.SYSTEM_NAME) NOT LIKE '%.CHECKER%'
-          )
-          select	[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.SYSTEM_NAME) FieldKey, V.SYSTEM_NAME PermissionName
-          from	WF
-		          INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION V ON WF.PERMISSION_ID = V.PERMISSION_ID
-          WHERE   V.LOGIN_ID = @LoginId
-          AND		[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](V.SYSTEM_NAME) in ('Search','Add','Edit','Delete','View','Maker', 'Bulk')
-          ]]>
+        <![CDATA[
+          select	[dbo].[FN_GET_FRIENDLY_PERMISSION_NAME](CHILD.SYSTEM_NAME) FieldKey, CHILD.SYSTEM_NAME PermissionName
+          from	SEC_PERMISSION PARENT
+		            INNER JOIN SEC_PERMISSION CHILD ON PARENT.PERMISSION_ID = CHILD.PARENT_PERMISSION_ID
+		            INNER JOIN SEC_VW_DISTINCT_USER_PERMISSION V ON CHILD.PERMISSION_ID = V.PERMISSION_ID
+          WHERE	PARENT.SYSTEM_NAME =  @PermissionId
+          AND		V.LOGIN_ID = @LoginId
+        ]]>
       <Param Name="LoginId" Type="System.String"  Size="200"/>
       <Param Name="PermissionId" Type="System.String"  Size="200"/>
       </Query>    
@@ -1003,13 +993,93 @@
       </Query>
       <Query ID="DeleteUser">
         <![CDATA[
-                UPDATE SEC_USER
-                SET IS_DELETED = 1
-                WHERE USER_ID = @UserId
-                AND   IS_DELETED = 0;
-                SELECT @@ROWCOUNT;
-              ]]>
+            UPDATE SEC_USER
+            SET IS_DELETED = 1
+            WHERE USER_ID = @UserId
+            AND   IS_DELETED = 0;
+            SELECT @@ROWCOUNT;
+        ]]>
         <Param Name="UserId" Type="System.Int32"  Size="0"/>
       </Query>
+      <Query ID="GetBulkPasswordPolicyByUserId" DataSource="">
+        <![CDATA[
+              SELECT	U.User_ID UserId,
+                      LENGTH_RULE LengthRule,
+                      EXPIRY_RULE ExpiryRule,
+                      NUMBER_CANT_REUSE NumberCantReuse,
+                      COMPLEXITY_RULE ComplexityRule,
+                      FIRST_LOGIN_CHANGE_PASSWORD FirstLoginChangePassword,
+                      DEFAULT_PASSWORD_ATTEMPTS DefaultPasswordAttempts,
+                      ACCOUNT_LOCK_ON_FAILED_ATTEMPTS AccountLockOnFailedAttempts,
+                      IS_2FA_ENABLED Is2FAEnabled,
+                      IS_CAPTCHA_ENABLED IsCaptchEnabled,
+                      SINGLE_SIGNON  SingleSignon
+              FROM	  SEC_PASSWORD_POLICY P
+		                  INNER JOIN SEC_USER U ON P.PASSWORD_POLICY_ID = U.PASSWORD_POLICY_ID
+		                  INNER JOIN dbo.CSV2Table(@UserIds) T ON U.USER_ID = T.Value
+              WHERE   P.IS_DELETED = 0;
+          ]]>
+        <Param Name="UserIds" Type="System.String"  Size="4000"/>
+      </Query>
+      <Query ID="ResetUserPassword" DataSource="">
+        <![CDATA[
+              UPDATE  SEC_USER
+              SET     PASSWORD = @Password,
+                      PASSWORD_ATTEMPTS = (select  DEFAULT_PASSWORD_ATTEMPTS from	SEC_PASSWORD_POLICY WHERE PASSWORD_POLICY_ID = SEC_USER.PASSWORD_POLICY_ID),
+		                  UPDATED_ON = GETDATE(),
+                      LAST_PASSWORD_CHANGE_DATETIME = GETDATE(),
+		                  CHANGE_PASSWORD_ON_LOGON = 1
+              WHERE   IS_DELETED = 0
+              AND     USER_ID = @UserId;
+              SELECT @@ROWCOUNT;
+              ]]>
+        <Param Name="UserId" Type="System.Int32"  Size="0"/>
+        <Param Name="Password" Type="System.String"  Size="200"/>
+      </Query>   
+      <Query ID="UpdateUserToken" DataSource="">
+        <![CDATA[
+              UPDATE  SEC_USER
+              SET     [TWO_FA_TOKEN] = @PassCode,
+		                  UPDATED_ON = GETDATE()
+              WHERE   IS_DELETED = 0
+              AND     USER_ID = @UserId;
+              SELECT @@ROWCOUNT;
+              ]]>
+        <Param Name="UserId" Type="System.Int32"  Size="0"/>
+        <Param Name="PassCode" Type="System.String"  Size="200"/>
+      </Query>   
+      <Query ID="InsertTokenHistory" DataSource="">
+        <![CDATA[
+              INSERT INTO [SEC_TOKEN_HISTORY](USER_ID,TWO_FA_TOKEN,CREATED_ON,CREATED_BY)
+              VALUES(@UserId, @PassCode, GetDate(), @LoginId);
+              SELECT SCOPE_IDENTITY(); 
+            ]]>
+        <Param Name="UserId" Type="System.Int32"  Size="0"/>
+        <Param Name="PassCode" Type="System.String"  Size="200"/>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+      </Query>
+      <Query ID="BlockUnblockUser" DataSource="">
+        <![CDATA[
+              UPDATE  S
+              SET     ACCOUNT_LOCKED = @BlockUnBlock,
+		                  UPDATED_ON = GETDATE()
+              FROM	  SEC_USER S
+		                  INNER JOIN dbo.CSV2Table(@UserIds) T ON S.USER_ID = T.Value
+              WHERE   IS_DELETED = 0;
+              SELECT  @@ROWCOUNT;
+              ]]>
+        <Param Name="UserIds" Type="System.String"  Size="4000"/>
+        <Param Name="BlockUnblock" Type="System.Int32"  Size="0"/>
+      </Query>   
+      <Query ID="GetUsersEmail" DataSource="">
+        <![CDATA[
+              select	EMAIL Email,
+                      USER_ID UserId
+              from	  SEC_USER U
+	                    INNER JOIN dbo.CSV2Table(@UserIds) T ON U.USER_ID = T.Value
+              WHERE	  U.IS_DELETED = 0
+        ]]>
+        <Param Name="UserIds" Type="System.String"  Size="4000"/>
+      </Query>   
   </Schema>
 </root>

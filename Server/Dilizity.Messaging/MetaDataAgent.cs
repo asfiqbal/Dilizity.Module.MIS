@@ -51,6 +51,7 @@ namespace Dilizity.Messaging
                         code.MultipleResult = templateCode.MultipleResult;
                         code.ContextAware = templateCode.ContextAware;
                         code.DataFunction = templateCode.DataFunction;
+                        code.IsEncrypted = templateCode.IsEncrypted;
 
                         hashTable.Add(code.Name.ToUpper(), code);
                     }
@@ -102,6 +103,13 @@ namespace Dilizity.Messaging
             TemplateCode tmpCode = (TemplateCode)hashTable[tag];
             return (tmpCode != null);
         }
+
+        public int isEncrypted(string tag)
+        {
+            TemplateCode tmpCode = (TemplateCode)hashTable[tag];
+            return tmpCode.IsEncrypted;
+        }
+
 
     }
 }

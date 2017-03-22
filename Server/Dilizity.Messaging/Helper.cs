@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dilizity.Core.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,6 +48,10 @@ namespace Dilizity.Messaging
             else
             {
                 pattern = string.Format(@"<{0} />", tagName);
+                if (code.IsEncrypted > 0)
+                {
+                    dataToBeReplaced = Utility.Decrypt(dataToBeReplaced, false);
+                }
                 outString = source.Replace(pattern, dataToBeReplaced);
             }
 

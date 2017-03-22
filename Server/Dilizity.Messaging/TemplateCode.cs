@@ -12,5 +12,6 @@ namespace Dilizity.Messaging
         public string MultipleResult;
         public string ContextAware;
         public string DataFunction;
+        public int IsEncrypted;
     }
 }

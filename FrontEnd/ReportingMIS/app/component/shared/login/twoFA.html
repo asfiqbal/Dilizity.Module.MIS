@@ -1,0 +1,21 @@
+﻿<div>
+    <div class="login-page">
+        <div class="form">
+            <form class="login-form" name="form" ng-submit="vm.validate()" role="form">
+                <fieldset>
+                    <input type="password"
+                           placeholder="Code"
+                           name="code"
+                           id="code"
+                           ng-model="vm.code"
+                           ng-minlength=5
+                           ng-maxlength=20
+                           required />
+
+                    <button type="submit" ng-disabled="form.$invalid">Validate</button>
+                    <i loader class="hidden fa fa-spinner fa-spin"></i>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

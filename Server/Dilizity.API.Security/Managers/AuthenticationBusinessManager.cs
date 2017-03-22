@@ -27,8 +27,7 @@ namespace Dilizity.API.Security.Managers
         private const string PASSOWRD_MATCHED = "Passowrd Matched";
         private const string UPDATE_USER_PASSWORD_ATTEMPT = "UpdateUserPasswordAttempt";
         private const int CHANGE_PASSWORD = 1;
-
-
+        private const int TWO_FA = 2;
 
         public void Do(BusService parameterBusService)
         {
@@ -70,25 +69,33 @@ namespace Dilizity.API.Security.Managers
                         success = GlobalConstants.SUCCESS;
                         Log.Info(typeof(AuthenticationBusinessManager), PASSOWRD_MATCHED);
 
-                        using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
+                        if (passwordPolicy.Is2FAEnabled > 0)
                         {
-                            dataLayer.ExecuteNonQueryUsingKey(UPDATE_USER_PASSWORD_ATTEMPT, GlobalConstants.LOGIN_PARAM, loginId, "PasswordAttempt", passwordPolicy.DefaultPasswordAttempts, "AccountLocked", secUser.AccountLocked);
+                            Log.Info(typeof(AuthenticationBusinessManager), "Two Factor Authentication enabled");
+                            actionCode = TWO_FA;
                         }
-
-                        if (passwordPolicy.FirstLoginChangePassword > 0)
+                        else
                         {
-                            Log.Info(typeof(AuthenticationBusinessManager), "Checking Password Policy for First Time login");
-                            if (secUser.ChangePasswordOnLogon > 0)
+                            using (DynamicDataLayer dataLayer = new DynamicDataLayer(GlobalConstants.SECURITY_SCHEMA))
                             {
-                                Log.Info(typeof(AuthenticationBusinessManager), "User has logged in for the first time");
+                                dataLayer.ExecuteNonQueryUsingKey(UPDATE_USER_PASSWORD_ATTEMPT, GlobalConstants.LOGIN_PARAM, loginId, "PasswordAttempt", passwordPolicy.DefaultPasswordAttempts, "AccountLocked", secUser.AccountLocked);
+                            }
+
+                            if (passwordPolicy.FirstLoginChangePassword > 0)
+                            {
+                                Log.Info(typeof(AuthenticationBusinessManager), "Checking Password Policy for First Time login");
+                                if (secUser.ChangePasswordOnLogon > 0)
+                                {
+                                    Log.Info(typeof(AuthenticationBusinessManager), "User has logged in for the first time");
+                                    actionCode = CHANGE_PASSWORD;
+                                }
+                            }
+
+                            if (CheckPasswordExpiry(passwordPolicy.ExpiryRule, secUser.LastPasswordChangeDateTime))
+                            {
+                                Log.Info(typeof(AuthenticationBusinessManager), "User Password Expired");
                                 actionCode = CHANGE_PASSWORD;
                             }
-                        }
-
-                        if (CheckPasswordExpiry(passwordPolicy.ExpiryRule, secUser.LastPasswordChangeDateTime))
-                        {
-                            Log.Info(typeof(AuthenticationBusinessManager), "User Password Expired");
-                            actionCode = CHANGE_PASSWORD;
                         }
 
                         encodedToken = TokenManager.Generate(parameterBusService);

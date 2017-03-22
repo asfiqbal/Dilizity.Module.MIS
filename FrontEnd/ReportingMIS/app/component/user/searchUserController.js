@@ -6,8 +6,8 @@
         .module('ReportingMIS')
         .controller('searchUserController', searchUserController);
 
-    searchUserController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'UniversalService', 'Notification'];
-    function searchUserController($scope, $stateParams, $rootScope, AuthenticationService, UniversalService, Notification) {
+    searchUserController.$inject = ['$scope', '$stateParams', '$rootScope', 'AuthenticationService', 'UniversalService', 'Notification', 'HelperService'];
+    function searchUserController($scope, $stateParams, $rootScope, AuthenticationService, UniversalService, Notification, HelperService) {
         var vm = this;
 
         vm.slide = false;
@@ -15,6 +15,9 @@
         vm.loadScreenPermissionsAndInfo = loadScreenPermissionsAndInfo;
         vm.load = load;
         vm.deleteUsers = deleteUsers;
+        vm.resetPasswords = resetPasswords;
+        vm.blockUsers = blockUsers;
+        vm.unBlockUsers = unBlockUsers;
         vm.isMakerDelete = isMakerDelete;
 
         vm.userId = '';
@@ -27,7 +30,8 @@
         vm.roleList = [];
         vm.selectedRole = -1;
         vm.selectedUsers = [];
-        
+        vm.selectedDialogButton = '';
+
         $scope.sort = { fieldName: "Role Id", order: "asc" };
 
         $scope.pagination = {
@@ -89,7 +93,7 @@
                                                '</div>' }
             ],
             data:[],
-            exporterCsvFilename: 'Roles.csv',
+            exporterCsvFilename: 'Users.csv',
             onRegisterApi: function (gridApi) {
             $scope.gridApi = gridApi;
             $scope.gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
@@ -149,6 +153,8 @@
 
                       if (data.ErrorCode == 0) {
                           vm.userPermission = data.Data.UserPermission;
+                          console.log("vm.userPermission.ResetPasswordBulk", vm.userPermission.ResetPasswordBulk);
+                          
                           vm.roleList = data.Data.RoleList;
                       }
                       else {
@@ -246,6 +252,116 @@
 
         };
 
+        function resetPasswords() {
+            console.log("resetPasswords Begin");
+            angular.element('#modal').modal('hide');
+            var tmpUserName = $rootScope.globals.currentUser.username;
+            //Notification.error({ message: 'Error Bottom Right', positionY: 'bottom', positionX: 'right' });
+            var resetPermission = vm.permissionId + ".ResetPasswordBulk";
+            console.log("permissionId", resetPermission);
+            console.log("vm.selectedUsers", vm.selectedUsers);
+
+            var model = {
+                Users: vm.selectedUsers
+            }
+
+            UniversalService.Do(resetPermission, tmpUserName, model,
+                function (response) {
+                    console.log("Success!");
+                    var data = angular.fromJson(response.data);
+
+                    if (data.ErrorCode == 0) {
+                        Notification.success({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                        vm.selectedUsers = [];
+                        searchUser();
+                    }
+                    else {
+                        Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                        vm.selectedUsers = [];
+                    }
+                },
+                function (response) {
+                    console.log("response!", response);
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+                }
+            );
+            console.log("resetPasswords End");
+
+        };
+
+        function blockUsers() {
+            console.log("blockUser Begin");
+            angular.element('#modal').modal('hide');
+            var tmpUserName = $rootScope.globals.currentUser.username;
+            //Notification.error({ message: 'Error Bottom Right', positionY: 'bottom', positionX: 'right' });
+            var resetPermission = vm.permissionId + ".BlockAccountBulk";
+            console.log("permissionId", resetPermission);
+            console.log("vm.selectedUsers", vm.selectedUsers);
+
+            var model = {
+                Users: vm.selectedUsers
+            }
+
+            UniversalService.Do(resetPermission, tmpUserName, model,
+                function (response) {
+                    console.log("Success!");
+                    var data = angular.fromJson(response.data);
+
+                    if (data.ErrorCode == 0) {
+                        Notification.success({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                        vm.selectedUsers = [];
+                        searchUser();
+                    }
+                    else {
+                        Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                        vm.selectedUsers = [];
+                    }
+                },
+                function (response) {
+                    console.log("response!", response);
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+                }
+            );
+            console.log("blockUser End");
+
+        };
+
+        function unBlockUsers() {
+            console.log("unBlockUser Begin");
+            angular.element('#modal').modal('hide');
+            var tmpUserName = $rootScope.globals.currentUser.username;
+            //Notification.error({ message: 'Error Bottom Right', positionY: 'bottom', positionX: 'right' });
+            var resetPermission = vm.permissionId + ".UnblockAccountBulk";
+            console.log("permissionId", resetPermission);
+            console.log("vm.selectedUsers", vm.selectedUsers);
+
+            var model = {
+                Users: vm.selectedUsers
+            }
+
+            UniversalService.Do(resetPermission, tmpUserName, model,
+                function (response) {
+                    console.log("Success!");
+                    var data = angular.fromJson(response.data);
+
+                    if (data.ErrorCode == 0) {
+                        Notification.success({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                        vm.selectedUsers = [];
+                        searchUser();
+                    }
+                    else {
+                        Notification.error({ message: data.ErrorMessage, positionY: 'bottom', positionX: 'right' });
+                        vm.selectedUsers = [];
+                    }
+                },
+                function (response) {
+                    console.log("response!", response);
+                    Notification.error({ message: response.statusText, positionY: 'bottom', positionX: 'right' });
+                }
+            );
+            console.log("unBlockUser End");
+
+        };
 
         function isMakerDelete() {
             console.log("isMakerDelete Begin");

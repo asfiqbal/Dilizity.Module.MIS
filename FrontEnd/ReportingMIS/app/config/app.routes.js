@@ -101,6 +101,12 @@
             controller: 'changePasswordController',
             controllerAs: 'vm'
         })
+        .state('twoFA', {
+            url: '^/twoFA',
+            templateUrl: 'app/component/shared/login/twoFA.html',
+            controller: 'twoFAController',
+            controllerAs: 'vm'
+        })
         .state('logout', {
             url: '^/logout',
             controller: 'logoutController',

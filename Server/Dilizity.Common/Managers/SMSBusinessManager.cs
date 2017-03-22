@@ -17,6 +17,8 @@ namespace Dilizity.Business.Common.Managers
         private const string INSERT_NOTIFICATION = "InsertNotification";
         private const string MOBILE_FROM_NUMBER = "MOBILE_FROM_NUMBER";
         private const int SMS_TEMPLATE_TYPE = 2;
+        private const string ENCRYPT_MSG_BODY = "ENCRYPT_MSG_BODY";
+
 
         public void Do(BusService parameterBusService)
         {
@@ -46,8 +48,12 @@ namespace Dilizity.Business.Common.Managers
                             string subject = templateObject.Subject;
                             MessagingTemplateHelper mtHelper = new MessagingTemplateHelper();
                             templateBody = mtHelper.Resolve(templateBody, childOperation.ParentOperationId.ToString());
-                            string encryptBody = Utility.Encrypt(templateBody, false);
-                            dataLayer.DelayExecuteNonQueryUsingKey(INSERT_NOTIFICATION, "OperationId", op.OperationId, "NotificationType", "SMS", "From", fromMobileNo, "To", secUser.MobileNumber, "CC", "", "Subject", subject, "Body", encryptBody, "Status", "Pending", "CreatedBy", loginId);
+                            string needToEncryptMessage = SystemConfigurationManager.Instance.Get(ENCRYPT_MSG_BODY);
+                            if (needToEncryptMessage.ToUpper() == "TRUE")
+                            {
+                                templateBody = Utility.Encrypt(templateBody, false);
+                            }
+                            dataLayer.DelayExecuteNonQueryUsingKey(INSERT_NOTIFICATION, "OperationId", op.OperationId, "NotificationType", "SMS", "From", fromMobileNo, "To", secUser.MobileNumber, "CC", "", "Subject", subject, "Body", templateBody, "Status", "Pending", "CreatedBy", loginId);
                         }
                         dataLayer.DelayExecuteBulk();
                     }

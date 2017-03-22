@@ -198,12 +198,19 @@ namespace Dilizity.Core.Util
             return outString;
         }
 
+        public static string GenerateRandomCode()
+        {
+            Random rnd = new Random();
+            int myRandomNo = rnd.Next(10000000, 99999999);
+            return myRandomNo.ToString();
+        }
+
         //public static string DeCodeBase64(string base64String)
         //{
         //    string keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
         //    StringBuilder output = new StringBuilder();
-            
+
         //    char chr1;
         //    char chr2;
         //    char chr3;

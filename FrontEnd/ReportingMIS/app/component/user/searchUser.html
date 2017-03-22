@@ -5,7 +5,7 @@
         </div>
     </div>
     <div class="clearfix"></div>
-    <div class="row">
+    <div class="row" ng-cloak>
         <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="x_panel">
                 <div class="x_title">
@@ -13,10 +13,19 @@
                     <ul class="nav navbar-right panel_toolbox">
                         <li>
                             <a ng-show="vm.userPermission.Add=='Dilizity.Backoffice.User.Add'" uib-tooltip="Add User" tooltip-placement="left" ui-sref="index.ActionUser({ id: 0, makerId:0, permissionName: 'Dilizity.Backoffice.User.Add' })" class="collapse-link"><i class="fa fa-plus"></i></a>
-                            <a ng-show="vm.userPermission.Add=='Dilizity.Backoffice.User.Add.Maker'" uib-tooltip="Add User [Maker]" tooltip-placement="left" ui-sref="index.ActionUser({ id: 0, makerId:0, permissionName: 'Dilizity.Backoffice.User.Add.Maker' })" class="collapse-link"><i class="fa fa-plus"></i></a>
+                            <a ng-show="vm.userPermission.Add=='Dilizity.Backoffice.User.AddMaker'" uib-tooltip="Add User [Maker]" tooltip-placement="left" ui-sref="index.ActionUser({ id: 0, makerId:0, permissionName: 'Dilizity.Backoffice.User.AddMaker' })" class="collapse-link"><i class="fa fa-plus"></i></a>
                         </li>
-                        <li class="dropdown">
-                            <a ng-show="vm.userPermission.Bulk=='Dilizity.Backoffice.User.Delete.Bulk'" data-toggle="modal" data-target=".bs-example-modal-sm" uib-tooltip="Delete User" tooltip-placement="left" class="collapse-link"><i class="fa fa-trash"></i></a>
+                        <li>
+                            <a ng-show="vm.userPermission.ResetPasswordBulk=='Dilizity.Backoffice.User.ResetPasswordBulk'" ng-click="vm.selectedDialogButton='ResetPasswordBulk'" data-toggle="modal" data-target=".bs-example-modal-sm" uib-tooltip="Reset Password" tooltip-placement="left" class="collapse-link"><i class="fa fa-key"></i></a>
+                        </li>
+                        <li>
+                            <a ng-show="vm.userPermission.UnblockAccountBulk=='Dilizity.Backoffice.User.UnblockAccountBulk'" ng-click="vm.selectedDialogButton='UnblockAccountBulk'" data-toggle="modal" data-target=".bs-example-modal-sm" uib-tooltip="Unblock User" tooltip-placement="left" class="collapse-link"><i class="fa fa-unlock"></i></a>
+                        </li>
+                        <li>
+                            <a ng-show="vm.userPermission.BlockAccountBulk=='Dilizity.Backoffice.User.BlockAccountBulk'" ng-click="vm.selectedDialogButton='BlockAccountBulk'" data-toggle="modal" data-target=".bs-example-modal-sm" uib-tooltip="Block User" tooltip-placement="left" class="collapse-link"><i class="fa fa-ban"></i></a>
+                        </li>
+                        <li>
+                            <a ng-show="vm.userPermission.DeleteBulk=='Dilizity.Backoffice.User.DeleteBulk'" ng-click="vm.selectedDialogButton='DeleteBulk'" data-toggle="modal" data-target=".bs-example-modal-sm" uib-tooltip="Delete User" tooltip-placement="left" class="collapse-link"><i class="fa fa-trash"></i></a>
                         </li>
                         <li>
                             <a ng-show="vm.userPermission.Search=='Dilizity.Backoffice.User.Search'" uib-tooltip="Search User" tooltip-placement="left" ng-click="vm.searchUser()" class="collapse-link"><i class="fa fa-search"></i></a>
@@ -124,7 +133,10 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="vm.deleteUsers()">Delete</button>
+                                <button type="button" ng-show="vm.selectedDialogButton=='ResetPasswordBulk'" class="btn btn-primary" data-dismiss="modal" ng-click="vm.resetPasswords()">Reset Password</button>
+                                <button type="button" ng-show="vm.selectedDialogButton=='UnblockAccountBulk'" class="btn btn-primary" data-dismiss="modal" ng-click="vm.unBlockUsers()">Unblock User</button>
+                                <button type="button" ng-show="vm.selectedDialogButton=='BlockAccountBulk'" class="btn btn-primary" data-dismiss="modal" ng-click="vm.blockUsers()">Block User</button>
+                                <button type="button" ng-show="vm.selectedDialogButton=='DeleteBulk'" class="btn btn-primary" data-dismiss="modal" ng-click="vm.deleteUsers()">Delete</button>
                             </div>
                         </div>
                     </div>

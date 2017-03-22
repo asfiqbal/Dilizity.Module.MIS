@@ -10,6 +10,7 @@
         var service = {};
 
         service.Login = Login;
+        service.TwoFAValidate = TwoFAValidate;
         service.ChangePassword = ChangePassword;
 
         service.SetCredentials = SetCredentials;
@@ -31,6 +32,21 @@
 
             console.log("Login End");
         }
+
+        function TwoFAValidate(permission, username, twoFACode, successCallBack, errorCallBack) {
+            console.log("TwoFAValidate Begin");
+
+            var encCode = Base64.encode(twoFACode);
+
+            var model = {
+                Code: encCode
+            }
+
+            UniversalService.Do(permission, username, model, successCallBack, errorCallBack);
+
+            console.log("TwoFAValidate End");
+        }
+
 
         function ChangePassword(permission, loginId, oldPassword, newPassword, successCallBack, errorCallBack) {
             console.log("ChangePassword Begin");
