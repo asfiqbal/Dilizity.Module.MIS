@@ -105,6 +105,7 @@
             url: '^/twoFA',
             templateUrl: 'app/component/shared/login/twoFA.html',
             controller: 'twoFAController',
+            params: {userId: null, permissionId: null},
             controllerAs: 'vm'
         })
         .state('logout', {

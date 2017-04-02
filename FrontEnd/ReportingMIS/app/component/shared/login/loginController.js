@@ -5,8 +5,8 @@
         .module('ReportingMIS')
         .controller('loginController', loginController);
 
-    loginController.$inject = ['$window', '$location', '$state', 'AuthenticationService', 'Notification'];
-    function loginController($window, $location, $state, AuthenticationService, Notification) {
+    loginController.$inject = ['$window', '$location', '$state', 'AuthenticationService', 'Notification','CommunicationService'];
+    function loginController($window, $location, $state, AuthenticationService, Notification, CommunicationService) {
         var vm = this;
 
         vm.login = login;
@@ -48,7 +48,8 @@
                     }
                     else if (data.ActionCode == 2) {
                         console.log("ActionCode", data.ActionCode);
-                        $state.go('twoFA');
+                        CommunicationService.Set("LOGIN_ID", vm.username);
+                        $state.go('twoFA', { userId: vm.username, permissionId: vm.permission });
                     }
 
                 }

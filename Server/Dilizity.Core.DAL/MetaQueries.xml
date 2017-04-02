@@ -867,11 +867,13 @@
         <![CDATA[
           SELECT	P.PASSWORD_POLICY_ID Id, P.POLICY_NAME Name
           FROM	SEC_PASSWORD_POLICY P
+          WHERE IS_DELETED=0
         ]]>
       </Query>
       <Query ID="GetPasswordPolicyById" DataSource="">
         <![CDATA[
-            SELECT	LENGTH_RULE LengthRule,
+            SELECT	POLICY_NAME Name,
+                    LENGTH_RULE LengthRule,
                     EXPIRY_RULE ExpiryRule,
                     NUMBER_CANT_REUSE NumberCantReuse,
                     COMPLEXITY_RULE ComplexityRule,
@@ -1081,5 +1083,58 @@
         ]]>
         <Param Name="UserIds" Type="System.String"  Size="4000"/>
       </Query>   
+      <Query ID="InsertPasswordPolicy" DataSource="">
+        <![CDATA[
+            INSERT INTO SEC_PASSWORD_POLICY(POLICY_NAME,LENGTH_RULE,EXPIRY_RULE,NUMBER_CANT_REUSE,COMPLEXITY_RULE,FIRST_LOGIN_CHANGE_PASSWORD,DEFAULT_PASSWORD_ATTEMPTS,ACCOUNT_LOCK_ON_FAILED_ATTEMPTS,IS_SYSTEM,IS_DELETED,IS_EMAIL_SENT_ON_LOGON,IS_SMS_SENT_ON_LOGON,IS_2FA_ENABLED,IS_CAPTCHA_ENABLED,SINGLE_SIGNON, CREATED_BY,UPDATED_BY)
+            VALUES (@Name, @LengthRule, @ExpiryRule, @NumberCantReuse, @ComplexityRule, @FirstLoginChangePassword, @DefaultPasswordAttempts, @AccountLockOnFailedAttempts, 0, 0 , 0, 0, @Is2FAEnabled, @IsCaptchEnabled, @SingleSignOn, @LoginId, @LoginId);
+            SELECT SCOPE_IDENTITY(); 
+        ]]>
+        <Param Name="Name" Type="System.String"  Size="200"/>
+        <Param Name="LengthRule" Type="System.Int32"  Size="0"/>
+        <Param Name="ExpiryRule" Type="System.Int32"  Size="0"/>
+        <Param Name="NumberCantReuse" Type="System.Int32"  Size="0"/>
+        <Param Name="ComplexityRule" Type="System.Int32"  Size="0"/>
+        <Param Name="FirstLoginChangePassword" Type="System.Int32"  Size="0"/>
+        <Param Name="DefaultPasswordAttempts" Type="System.Int32"  Size="0"/>
+        <Param Name="AccountLockOnFailedAttempts" Type="System.Int32"  Size="0"/>
+        <Param Name="Is2FAEnabled" Type="System.Int32"  Size="0"/>
+        <Param Name="IsCaptchEnabled" Type="System.Int32"  Size="0"/>
+        <Param Name="SingleSignOn" Type="System.Int32"  Size="0"/>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+      </Query>
+      <Query ID="UpdatePasswordPolicy" DataSource="">
+        <![CDATA[
+          UPDATE  SEC_PASSWORD_POLICY
+          SET     POLICY_NAME = @Name,
+                  LENGTH_RULE = @LengthRule,
+                  EXPIRY_RULE = @ExpiryRule,
+                  NUMBER_CANT_REUSE = @NumberCantReuse,
+                  COMPLEXITY_RULE = @ComplexityRule,
+                  FIRST_LOGIN_CHANGE_PASSWORD = @FirstLoginChangePassword,
+                  DEFAULT_PASSWORD_ATTEMPTS = @DefaultPasswordAttempts,
+                  ACCOUNT_LOCK_ON_FAILED_ATTEMPTS = @AccountLockOnFailedAttempts,
+                  IS_2FA_ENABLED = @Is2FAEnabled,
+                  IS_CAPTCHA_ENABLED = @IsCaptchEnabled,
+                  SINGLE_SIGNON = @SingleSignOn,
+                  UPDATED_ON = GetDate(),
+                  UPDATED_BY = @LoginId
+          WHERE   IS_DELETED = 0
+          AND     USER_ID = @Id;
+          SELECT @@ROWCOUNT;
+        ]]>
+        <Param Name="Id" Type="System.Int32"  Size="0"/>
+        <Param Name="Name" Type="System.String"  Size="200"/>
+        <Param Name="LengthRule" Type="System.Int32"  Size="0"/>
+        <Param Name="ExpiryRule" Type="System.Int32"  Size="0"/>
+        <Param Name="NumberCantReuse" Type="System.Int32"  Size="0"/>
+        <Param Name="ComplexityRule" Type="System.Int32"  Size="0"/>
+        <Param Name="FirstLoginChangePassword" Type="System.Int32"  Size="0"/>
+        <Param Name="DefaultPasswordAttempts" Type="System.Int32"  Size="0"/>
+        <Param Name="AccountLockOnFailedAttempts" Type="System.Int32"  Size="0"/>
+        <Param Name="Is2FAEnabled" Type="System.Int32"  Size="0"/>
+        <Param Name="IsCaptchEnabled" Type="System.Int32"  Size="0"/>
+        <Param Name="SingleSignOn" Type="System.Int32"  Size="0"/>
+        <Param Name="LoginId" Type="System.String"  Size="200"/>
+      </Query>  
   </Schema>
 </root>

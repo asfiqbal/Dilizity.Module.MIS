@@ -112,3 +112,26 @@ UPDATED_BY
 SELECT 9, 'ENCRYPT_MSG_BODY', 'False', 'Encrypt Message Bosy', '0.1', 'System', 'System'
 GO
 --delete from SYSTEM_CONFIGURATION
+
+INSERT INTO SYSTEM_CONFIGURATION
+(
+SYSTEM_CONFIGURATION_ID,
+NAME,
+VALUE,
+DESCRIPTION,
+VERSION,
+CREATED_BY,
+UPDATED_BY
+)
+SELECT 10, 'PASSWORD_POLICY_LENGTH_RULE', '8', 'Password Policy Length Rule', '0.1', 'System', 'System'
+UNION ALL
+SELECT 11, 'PASSWORD_POLICY_COMPLEXITY_RULE', '2', 'Password Policy Complexity Rule', '0.1', 'System', 'System'
+UNION ALL
+SELECT 12, 'PASSWORD_POLICY_EXPIRY_RULE', '30', 'Password Policy Expiry Rule', '0.1', 'System', 'System'
+UNION ALL
+SELECT 13, 'PASSWORD_POLICY_NUMBER_CANT_REUSE', '5', 'Password Policy Number can''t reuse', '0.1', 'System', 'System'
+UNION ALL
+SELECT 14, 'PASSWORD_POLICY_DEFAULT_PASSWORD_ATTEMPTS', '5', 'Password Policy Default Password Attempts', '0.1', 'System', 'System'
+
+GO
+--delete from SYSTEM_CONFIGURATION

@@ -9,96 +9,39 @@
     function actionPasswordPolicyController($uibModal, $window, $scope, $stateParams, $rootScope, AuthenticationService, Notification, HelperService, UniversalService, CommunicationService) {
         var vm = this;
 
-        var roleId = -1;
+        var id = -1;
         var makerId = -1;
 
+        vm.permissionName = '';
         vm.title = '';
         vm.newMessage = '';
-
-
         vm.doAction = doAction;
         vm.isMakerCheckerMode = isMakerCheckerMode;
         vm.isMakerMode = isMakerMode;
         vm.isCheckerMode = isCheckerMode;
 
         vm.loadScreenPermissionsAndInfo = loadScreenPermissionsAndInfo;
-        vm.roleName = '';
-        vm.availablePermissions = {};
-        vm.assignedPermissions = [];
-        vm.userPermission = {};
+        vm.name = '';
+        vm.lengthRule = 0;
+        vm.expiryRule = 0;
+        vm.complexityRule = 0;
+        vm.passwordCantReuse = 0;
+        vm.firstLoginChangePassword = 0;
+        vm.failedPasswordAttempts = 0;
+        vm.accountLockOnFailedAttempts = 0;
+        vm.twoFA = 0;
+        vm.captchEnable = 0;
+        vm.sso = 0;
         vm.notes = [];
+        vm.userPermission = {};
 
-        vm.permissionName = '';
-
-        vm.deleteTreeItem = function (tree, id) {
-            for (var i = 0; i < tree.length; i++) {
-                if (tree[i].Id == id) {
-                    tree.splice(i, 1);
-                    i = 0;
-                } else {
-                    if (tree[i].children.length > 0) {
-                        tree[i].children = vm.deleteTreeItem(tree[i].children, id);
-                    }
-                }
-            }
-            return tree;
-        }
-
-        vm.movePermissions = function (sourceTree, targetTree, sourceModel, targetModel) {
-            console.log('movePermissions Begin');
-
-            var sourceId = sourceTree.currentNode.Id;
-            var targetId = targetTree.currentNode.Id;
-
-            var sourceNode = HelperService.deepSearch(sourceModel, 'Id', sourceId);
-            var targetNode = HelperService.deepSearch(targetModel, 'Id', targetId);
-
-            vm.deleteTreeItem(sourceModel, sourceId);
-            targetNode.children.push(angular.copy(sourceNode));
-            console.log('movePermissions End');
-        }
-
-        vm.copyPermissions = function (sourceTree, targetTree, sourceModel, targetModel) {
-            console.log('copyPermissions Begin');
-
-            var sourceId = sourceTree.currentNode.Id;
-            var targetId = targetTree.currentNode.Id;
-
-            //console.log('sourceId', sourceId);
-            //console.log('targetId', targetId);
-
-            var sourceNode = HelperService.deepSearch(sourceModel, 'Id', sourceId);
-            var targetNode = HelperService.deepSearch(targetModel, 'Id', targetId);
-            //console.log('sourceNode', sourceNode);
-            //console.log('targetNode', targetNode);
-
-            targetNode.children.push(angular.copy(sourceNode));
-            console.log('copyPermissions End');
-        }
-
-        vm.RemovePermissions = function (targetTree, targetModel) {
-            console.log('RemovePermissions Begin');
-
-            var targetId = targetTree.currentNode.Id;
-
-            //console.log('sourceId', sourceId);
-            //console.log('targetId', targetId);
-
-            var targetNode = HelperService.deepSearch(targetModel, 'Id', targetId);
-            //console.log('sourceNode', sourceNode);
-            //console.log('targetNode', targetNode);
-
-            vm.deleteTreeItem(targetModel, targetId);
-            console.log('RemovePermissions End');
-        }
 
         function loadScreenPermissionsAndInfo() {
             console.log("loadScreenPermissionsAndInfo Begin");
             var tmpUserName = $rootScope.globals.currentUser.username;
 
-
             var model = {
-                RoleId: roleId,
+                Id: id,
                 MakerId: makerId
             }
 
@@ -108,10 +51,18 @@
                     var data = angular.fromJson(response.data);
 
                     if (response.data.ErrorCode == 0) {
-                        roleId = data.Data.Id;
-                        vm.roleName = data.Data.Name;
-                        vm.availablePermissions = data.Data.AvailablePermissions;
-                        vm.assignedPermissions = data.Data.AssignedPermissions;
+                        id = data.Data.Id;
+                        vm.name = data.Data.Name;
+                        vm.lengthRule = data.Data.LengthRule;
+                        vm.expiryRule = data.Data.ExpiryRule;
+                        vm.complexityRule = data.Data.ComplexityRule;
+                        vm.passwordCantReuse = data.Data.NumberCantReuse;
+                        vm.firstLoginChangePassword = !!+data.Data.FirstLoginChangePassword;
+                        vm.failedPasswordAttempts = data.Data.DefaultPasswordAttempts;
+                        vm.accountLockOnFailedAttempts = !!+data.Data.AccountLockOnFailedAttempts;
+                        vm.twoFA = !!+data.Data.Is2FAEnabled;
+                        vm.captchEnable = !!+data.Data.IsCaptchEnabled;
+                        vm.sso = !!+data.Data.SingleSignon;
                         vm.userPermission = data.Data.UserPermission;
                         vm.notes = data.Data.Notes;
                     }
@@ -133,11 +84,11 @@
             console.log("$stateParams.roleId", $stateParams.roleId);
             console.log("$stateParams.permissionName", $stateParams.permissionName);
 
-            roleId = parseInt($stateParams.roleId);
-            if (!HelperService.IsNumber(roleId)) {
-                roleId = 0;
+            id = parseInt($stateParams.id);
+            if (!HelperService.IsNumber(id)) {
+                id = 0;
             }
-            console.log("roleId", roleId);
+            console.log("id", id);
 
             vm.permissionName = $stateParams.permissionName;
             makerId = parseInt($stateParams.makerId);
@@ -148,7 +99,7 @@
             console.log("makerId", makerId);
 
             var arr = vm.permissionName.split(".");
-            vm.title = arr[arr.length - 1] + ' Role';
+            vm.title = arr[arr.length - 1] + ' Password Policy';
             console.log("vm.title", vm.title);
 
 
@@ -195,25 +146,52 @@
             //vm.dataLoading = true;
             var tmpUserName = $rootScope.globals.currentUser.username;
             var model = {};
+            vm.name = data.Data.Name;
+            vm.lengthRule = data.Data.LengthRule;
+            vm.expiryRule = data.Data.ExpiryRule;
+            vm.complexityRule = data.Data.ComplexityRule;
+            vm.passwordCantReuse = data.Data.NumberCantReuse;
+            vm.firstLoginChangePassword = !!+data.Data.FirstLoginChangePassword;
+            vm.failedPasswordAttempts = data.Data.DefaultPasswordAttempts;
+            vm.accountLockOnFailedAttempts = !!+data.Data.AccountLockOnFailedAttempts;
+            vm.twoFA = !!+data.Data.Is2FAEnabled;
+            vm.captchEnable = !!+data.Data.IsCaptchEnabled;
+            vm.sso = !!+data.Data.SingleSignon;
+
 
             if (isMakerCheckerMode()) {
                 model = {
-                    "Id": roleId,
+                    "Id": id,
                     "MakerId": makerId,
-                    "Name": vm.roleName,
-                    "Status": makerStatus,
-                    "AvailablePermissions": vm.availablePermissions,
-                    "AssignedPermissions": vm.assignedPermissions,
+                    "Name": vm.name,
+                    "LengthRule": vm.lengthRule,
+                    "ExpiryRule": vm.expiryRule,
+                    "ComplexityRule": vm.complexityRule,
+                    "PasswordCantReuse": vm.passwordCantReuse,
+                    "FirstLoginChangePassword": vm.firstLoginChangePassword,
+                    "FailedPasswordAttempts": vm.failedPasswordAttempts,
+                    "AccountLockOnFailedAttempts": vm.accountLockOnFailedAttempts,
+                    "TwoFA": vm.twoFA,
+                    "CaptchEnable": vm.captchEnable,
+                    "SSO": vm.sso,
                     "Notes": vm.notes
                 };
             }
             else {
 
                 model = {
-                    "Id": roleId,
-                    "Name": vm.roleName,
-                    "AvailablePermissions": vm.availablePermissions,
-                    "AssignedPermissions": vm.assignedPermissions
+                    "Id": id,
+                    "Name": vm.name,
+                    "LengthRule": vm.lengthRule,
+                    "ExpiryRule": vm.expiryRule,
+                    "ComplexityRule": vm.complexityRule,
+                    "PasswordCantReuse": vm.passwordCantReuse,
+                    "FirstLoginChangePassword": vm.firstLoginChangePassword,
+                    "FailedPasswordAttempts": vm.failedPasswordAttempts,
+                    "AccountLockOnFailedAttempts": vm.accountLockOnFailedAttempts,
+                    "TwoFA": vm.twoFA,
+                    "CaptchEnable": vm.captchEnable,
+                    "SSO": vm.sso
                 };
             }
 
@@ -239,14 +217,14 @@
         function validateForm(form) {
             console.log("form", form);
             console.log("form.$valid", form.$valid);
-            console.log("vm.assignedPermissions.length", vm.assignedPermissions.length);
+            console.log("vm.lengthRule", vm.lengthRule);
 
             if (!form.$valid) {
-                if (!vm.roleName)  {
-                    Notification.error({ message: 'Role Name is Required', positionY: 'bottom', positionX: 'right' });
+                if (!vm.name)  {
+                    Notification.error({ message: 'Name is Required', positionY: 'bottom', positionX: 'right' });
                 }
-                if (vm.assignedPermissions.length < 2) {
-                    Notification.error({ message: 'Permissions are not correctly defined', positionY: 'bottom', positionX: 'right' });
+                if (vm.lengthRule < 8) {
+                    Notification.error({ message: 'Length Rule is invalid', positionY: 'bottom', positionX: 'right' });
                 }
 
                 return false;

@@ -1,7 +1,7 @@
 ﻿<div>
     <div class="login-page">
         <div class="form">
-            <form class="login-form" name="form" ng-submit="vm.validate()" role="form">
+            <form class="login-form" name="form" ng-submit="vm.validate()" role="form" novalidate>
                 <fieldset>
                     <input type="password"
                            placeholder="Code"
@@ -13,6 +13,7 @@
                            required />
 
                     <button type="submit" ng-disabled="form.$invalid">Validate</button>
+                    <p class="message">Did not receive code? <a href="" ng-click="vm.generate()">Generate</a></p>
                     <i loader class="hidden fa fa-spinner fa-spin"></i>
                 </fieldset>
             </form>

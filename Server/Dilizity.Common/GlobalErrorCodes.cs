@@ -20,6 +20,7 @@ namespace Dilizity.Business.Common
         public const int IncorrectPassword = 101;
         public const int AccountIsLocked = 102;
         public const int PasswordCantReuse = 103;
+        public const int IncorrectPassCode = 104;
 
         public const int ActivityAlreadyPending = 2001;
 

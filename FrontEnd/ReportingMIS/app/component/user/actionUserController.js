@@ -72,21 +72,6 @@
 
         vm.loadScreenPermissionsAndInfo = loadScreenPermissionsAndInfo;
 
-
-        vm.deleteTreeItem = function (tree, id) {
-            for (var i = 0; i < tree.length; i++) {
-                if (tree[i].Id == id) {
-                    tree.splice(i, 1);
-                    i = 0;
-                } else {
-                    if (tree[i].children.length > 0) {
-                        tree[i].children = vm.deleteTreeItem(tree[i].children, id);
-                    }
-                }
-            }
-            return tree;
-        }
-
         var handleFileSelect = function (evt) {
             var file = evt.currentTarget.files[0];
             var reader = new FileReader();
@@ -97,54 +82,6 @@
             };
             reader.readAsDataURL(file);
         };
-
-        vm.movePermissions = function (sourceTree, targetTree, sourceModel, targetModel) {
-            console.log('movePermissions Begin');
-
-            var sourceId = sourceTree.currentNode.Id;
-            var targetId = targetTree.currentNode.Id;
-
-            var sourceNode = HelperService.deepSearch(sourceModel, 'Id', sourceId);
-            var targetNode = HelperService.deepSearch(targetModel, 'Id', targetId);
-
-            vm.deleteTreeItem(sourceModel, sourceId);
-            targetNode.children.push(angular.copy(sourceNode));
-            console.log('movePermissions End');
-        }
-
-        vm.copyPermissions = function (sourceTree, targetTree, sourceModel, targetModel) {
-            console.log('copyPermissions Begin');
-
-            var sourceId = sourceTree.currentNode.Id;
-            var targetId = targetTree.currentNode.Id;
-
-            //console.log('sourceId', sourceId);
-            //console.log('targetId', targetId);
-
-            var sourceNode = HelperService.deepSearch(sourceModel, 'Id', sourceId);
-            var targetNode = HelperService.deepSearch(targetModel, 'Id', targetId);
-            //console.log('sourceNode', sourceNode);
-            //console.log('targetNode', targetNode);
-
-            targetNode.children.push(angular.copy(sourceNode));
-            console.log('copyPermissions End');
-        }
-
-        vm.RemovePermissions = function (targetTree, targetModel) {
-            console.log('RemovePermissions Begin');
-
-            var targetId = targetTree.currentNode.Id;
-
-            //console.log('sourceId', sourceId);
-            //console.log('targetId', targetId);
-
-            var targetNode = HelperService.deepSearch(targetModel, 'Id', targetId);
-            //console.log('sourceNode', sourceNode);
-            //console.log('targetNode', targetNode);
-
-            vm.deleteTreeItem(targetModel, targetId);
-            console.log('RemovePermissions End');
-        }
 
         function loadScreenPermissionsAndInfo() {
             console.log("loadScreenPermissionsAndInfo Begin");

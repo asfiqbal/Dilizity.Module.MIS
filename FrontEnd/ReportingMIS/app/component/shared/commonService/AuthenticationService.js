@@ -12,6 +12,7 @@
         service.Login = Login;
         service.TwoFAValidate = TwoFAValidate;
         service.ChangePassword = ChangePassword;
+        service.Generate = Generate;
 
         service.SetCredentials = SetCredentials;
         service.ClearCredentials = ClearCredentials;
@@ -47,6 +48,16 @@
             console.log("TwoFAValidate End");
         }
 
+        function Generate(permission, username, successCallBack, errorCallBack) {
+            console.log("Generate Begin");
+
+            var model = {
+            }
+
+            UniversalService.Do(permission, username, model, successCallBack, errorCallBack);
+
+            console.log("Generate End");
+        }
 
         function ChangePassword(permission, loginId, oldPassword, newPassword, successCallBack, errorCallBack) {
             console.log("ChangePassword Begin");

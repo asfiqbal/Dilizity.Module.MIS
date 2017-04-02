@@ -140,6 +140,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Managers\ActionPasswordPolicyScreenManager.cs" />
     <Compile Include="Managers\ActionUserScreenManager.cs" />
     <Compile Include="Managers\AuthenticationBusinessManager.cs" />
     <Compile Include="Managers\BulkUnblockAccountBusinessManager.cs" />
@@ -147,6 +148,8 @@
     <Compile Include="Managers\BulkResetPasswordBusinessManager.cs" />
     <Compile Include="Managers\BulkDeleteUserBusinessManager.cs" />
     <Compile Include="Managers\BulkResetEmailBusinessManager.cs" />
+    <Compile Include="Managers\TwoFAVerificationBusinessManager.cs" />
+    <Compile Include="Managers\PasswordPolicyAddUpdateBusinessManager.cs" />
     <Compile Include="Managers\UserAddUpdateBusinessManager.cs" />
     <Compile Include="Managers\SearchPasswordPolicyScreenManager.cs" />
     <Compile Include="Managers\PasswordPolicySearchBusinessManager.cs" />
